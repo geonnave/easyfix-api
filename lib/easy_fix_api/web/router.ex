@@ -20,7 +20,9 @@ defmodule EasyFixApi.Web.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", EasyFixApi.Web do
-  #   pipe_through :api
-  # end
+  scope "/api", EasyFixApi.Web do
+    pipe_through :api
+
+    resources "/obd_codes", OBDCodeController, except: [:new, :edit]
+  end
 end
