@@ -19,7 +19,6 @@ defmodule EasyFixApi.Web.Router do
     get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
   scope "/api", EasyFixApi.Web do
     pipe_through :api
 

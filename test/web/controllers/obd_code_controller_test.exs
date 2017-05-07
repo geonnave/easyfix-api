@@ -5,7 +5,7 @@ defmodule EasyFixApi.Web.OBDCodeControllerTest do
   alias EasyFixApi.OBDCodes.OBDCode
 
   @create_attrs %{code: "some code", description: "some description"}
-  @update_attrs %{code: "some updated code", description: "some updated description"}
+  @update_attrs %{code: "some code", description: "some updated description"}
   @invalid_attrs %{code: nil, description: nil}
 
   def fixture(:obd_code) do
@@ -24,11 +24,10 @@ defmodule EasyFixApi.Web.OBDCodeControllerTest do
 
   test "creates obd_code and renders obd_code when data is valid", %{conn: conn} do
     conn = post conn, obd_code_path(conn, :create), obd_code: @create_attrs
-    assert %{"id" => id} = json_response(conn, 201)["data"]
+    assert %{"code" => code} = json_response(conn, 201)["data"]
 
-    conn = get conn, obd_code_path(conn, :show, id)
+    conn = get conn, obd_code_path(conn, :show, code)
     assert json_response(conn, 200)["data"] == %{
-      "id" => id,
       "code" => "some code",
       "description" => "some description"}
   end
@@ -39,14 +38,13 @@ defmodule EasyFixApi.Web.OBDCodeControllerTest do
   end
 
   test "updates chosen obd_code and renders obd_code when data is valid", %{conn: conn} do
-    %OBDCode{id: id} = obd_code = fixture(:obd_code)
+    %OBDCode{code: code} = obd_code = fixture(:obd_code)
     conn = put conn, obd_code_path(conn, :update, obd_code), obd_code: @update_attrs
-    assert %{"id" => ^id} = json_response(conn, 200)["data"]
+    assert %{"code" => ^code} = json_response(conn, 200)["data"]
 
-    conn = get conn, obd_code_path(conn, :show, id)
+    conn = get conn, obd_code_path(conn, :show, code)
     assert json_response(conn, 200)["data"] == %{
-      "id" => id,
-      "code" => "some updated code",
+      "code" => "some code",
       "description" => "some updated description"}
   end
 

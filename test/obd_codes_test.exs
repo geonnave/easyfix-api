@@ -20,7 +20,7 @@ defmodule EasyFixApi.OBDCodesTest do
 
   test "get_obd_code! returns the obd_code with given id" do
     obd_code = fixture(:obd_code)
-    assert OBDCodes.get_obd_code!(obd_code.id) == obd_code
+    assert OBDCodes.get_obd_code!(obd_code.code) == obd_code
   end
 
   test "create_obd_code/1 with valid data creates a obd_code" do
@@ -44,13 +44,13 @@ defmodule EasyFixApi.OBDCodesTest do
   test "update_obd_code/2 with invalid data returns error changeset" do
     obd_code = fixture(:obd_code)
     assert {:error, %Ecto.Changeset{}} = OBDCodes.update_obd_code(obd_code, @invalid_attrs)
-    assert obd_code == OBDCodes.get_obd_code!(obd_code.id)
+    assert obd_code == OBDCodes.get_obd_code!(obd_code.code)
   end
 
   test "delete_obd_code/1 deletes the obd_code" do
     obd_code = fixture(:obd_code)
     assert {:ok, %OBDCode{}} = OBDCodes.delete_obd_code(obd_code)
-    assert_raise Ecto.NoResultsError, fn -> OBDCodes.get_obd_code!(obd_code.id) end
+    assert_raise Ecto.NoResultsError, fn -> OBDCodes.get_obd_code!(obd_code.code) end
   end
 
   test "change_obd_code/1 returns a obd_code changeset" do

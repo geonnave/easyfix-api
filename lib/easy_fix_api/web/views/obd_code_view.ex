@@ -11,8 +11,7 @@ defmodule EasyFixApi.Web.OBDCodeView do
   end
 
   def render("obd_code.json", %{obd_code: obd_code}) do
-    %{id: obd_code.id,
-      code: obd_code.code,
+    %{code: obd_code.code,
       description: obd_code.description}
   end
 end
