@@ -1,7 +1,7 @@
-defmodule EasyFixApi.AdministrativeDataLoaderTest do
+defmodule EasyFixApi.StaticDataLoaderTest do
   use ExUnit.Case, async: true
 
-  import EasyFixApi.AdministrativeDataLoader
+  import EasyFixApi.StaticDataLoader
 
   test "read and prepare csv" do
     raw_csv = """

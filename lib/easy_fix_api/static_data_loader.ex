@@ -1,8 +1,8 @@
-defmodule EasyFixApi.AdministrativeDataLoader do
+defmodule EasyFixApi.StaticDataLoader do
   alias NimbleCSV.RFC4180, as: CSV
 
   def read_from_path_priv_repo(name) do
-    Path.join([:code.priv_dir(:easy_fix_api), "repo", name])
+    Path.join([:code.priv_dir(:easy_fix_api), "repo", "static_data", name])
     |> File.read!
   end
   def prepare_csv(raw_csv), do: CSV.parse_string(raw_csv)
@@ -13,9 +13,6 @@ defmodule EasyFixApi.AdministrativeDataLoader do
       |> prepare_csv()
       |> Enum.reduce({%{}, ""}, fn([brand, model], {acc, last_brand}) ->
       brand = if brand == "", do: last_brand, else: brand
-      if model == "" do
-        IO.inspect [brand, model]
-      end
       brand_models = Map.get(acc, brand, [])
       acc = put_in(acc, [brand], [model | brand_models])
       {acc, brand}
