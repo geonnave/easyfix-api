@@ -1,4 +1,4 @@
-defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Parts.GarageCategory do
+defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Parts do
   use Ecto.Migration
 
   def change do

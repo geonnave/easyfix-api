@@ -1,4 +1,4 @@
-defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Cars.Brand do
+defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Cars do
   use Ecto.Migration
 
   def change do

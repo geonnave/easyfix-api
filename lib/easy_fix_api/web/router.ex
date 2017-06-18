@@ -31,6 +31,6 @@ defmodule EasyFixApi.Web.Router do
     resources "/part_sub_groups", PartSubGroupController, except: [:new, :edit]
     resources "/part", PartController, except: [:new, :edit]
 
-    # resources "/repair_by_fixer_parts", RepairByFixerPartController, except: [:new, :edit]
+    resources "/repair_by_fixer_parts", RepairByFixerPartController, except: [:new, :edit]
   end
 end
