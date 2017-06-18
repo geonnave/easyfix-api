@@ -8,5 +8,12 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Cars.Brand do
       timestamps()
     end
 
+    create table(:models) do
+      add :name, :string
+      add :brand_id, references(:brands)
+
+      timestamps()
+    end
+
   end
 end
