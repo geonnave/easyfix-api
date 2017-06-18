@@ -22,7 +22,7 @@ defmodule EasyFixApi.Web.Router do
   scope "/api", EasyFixApi.Web do
     pipe_through :api
 
-    # resources "/models", ModelController, except: [:new, :edit]
-    # resources "/brands", BrandController, except: [:new, :edit]
+    resources "/models", ModelController, except: [:new, :edit]
+    resources "/brands", BrandController, except: [:new, :edit]
   end
 end

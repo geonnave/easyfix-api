@@ -23,7 +23,7 @@ defmodule EasyFixApi.StaticDataLoaderTest do
     ,Hummer Wagon 6.5 4x4 Diesel TB
     """
 
-    brands_to_models = %{"Acura" => acura_models, "AM Gen" => am_gen_models} = transform_vehicles_models(raw_csv)
+    %{"Acura" => acura_models, "AM Gen" => am_gen_models} = transform_vehicles_models(raw_csv)
     assert 3 == length(acura_models)
     assert 3 == length(am_gen_models)
   end
