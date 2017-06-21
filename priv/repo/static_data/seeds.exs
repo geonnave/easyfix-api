@@ -1,7 +1,11 @@
 defmodule EasyFixApi.StaticDataSeeds do
-  import EasyFixApi.AdministrativeDataLoader
+  import EasyFixApi.StaticDataLoader
+  import Ecto.Changeset
+
   alias EasyFixApi.Repo
-  alias EasyFixApi.Cars.{Brand, Model}
+  alias EasyFixApi.Cars.{Brand}
+  alias EasyFixApi.Parts.{Part, PartSubGroup, PartGroup, PartSystem, GarageCategory}
+  alias EasyFixApi.Business.RepairByFixerPart
 
   def run_vehicles_models do
     "lista_veiculos_modelos.csv"
@@ -27,8 +31,8 @@ defmodule EasyFixApi.StaticDataSeeds do
     "lista_pecas_#{system}.csv"
     |> read_from_path_priv_repo()
     |> transform_parts()
-    |> Enum.map(fn(%{name: name, group: group, sub_group: sub_group, garage_type: garage_type, repair_by_fixer: repair_by_fixer}) ->
-      Ecto.transaction(fn ->
+    |> Enum.map(fn(p = %{name: name, group: group, sub_group: sub_group, garage_type: garage_type, repair_by_fixer: repair_by_fixer}) ->
+      Repo.transaction(fn ->
         # part_system = Repo.insert! %PartSystem{name: system}
 
         # part_group = Ecto.build_assoc(part_system, :part_groups, name: group)
@@ -39,13 +43,25 @@ defmodule EasyFixApi.StaticDataSeeds do
 
         # garage_category = Repo.insert! %GarageCategory{name: garage_type}
 
-        # part = %Part{name: name, repair_by_fixer: repair_by_fixer}
+        # part_changeset =
+        #   %Part{}
+        #   |> cast(%{name: name}, [:name])
+        #   |> put_assoc(:part_sub_group, part_sub_group)
+        #   |> put_assoc(:garage_category, garage_category)
+        # part = Repo.insert! part_changeset
 
+        # by_fixer =
+        #   %RepairByFixerPart{}
+        #   |> change()
+        #   |> put_assoc(:part, part)
+        # by_fixer = Repo.insert! by_fixer
+
+        0
       end)
-      IO.inspect part
+      IO.inspect p
     end)
   end
 end
 
-EasyFixApi.StaticDataSeeds.run_parts_system("chassis")
+# EasyFixApi.StaticDataSeeds.run_parts_system("chassis")
 # EasyFixApi.StaticDataSeeds.run_vehicles_models

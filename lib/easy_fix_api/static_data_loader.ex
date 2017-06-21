@@ -25,7 +25,9 @@ defmodule EasyFixApi.StaticDataLoader do
       raw_csv
       |> prepare_csv()
       |> Enum.reduce({[], "", ""}, fn(part, {acc, last_group, last_sub_group}) ->
-        [group, sub_group, name, garage_type, _, repair_by_fixer, _, _, _] = part
+        [group, sub_group, name, garage_type, _, repair_by_fixer, _, _, _] =
+          part
+          |> Enum.map(&String.capitalize/1)
 
         {group, sub_group, last_group, last_sub_group} =
           cond do
