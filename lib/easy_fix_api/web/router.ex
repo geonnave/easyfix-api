@@ -25,11 +25,11 @@ defmodule EasyFixApi.Web.Router do
     resources "/models", ModelController, except: [:new, :edit]
     resources "/brands", BrandController, except: [:new, :edit]
 
+    resources "/parts", PartController, except: [:new, :edit]
     resources "/garage_categories", GarageCategoryController, except: [:new, :edit]
     resources "/part_systems", PartSystemController, except: [:new, :edit]
     resources "/part_groups", PartGroupController, except: [:new, :edit]
     resources "/part_sub_groups", PartSubGroupController, except: [:new, :edit]
-    resources "/parts", PartController, except: [:new, :edit]
 
     resources "/repair_by_fixer_parts", RepairByFixerPartController, except: [:new, :edit]
   end
