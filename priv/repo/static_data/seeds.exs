@@ -32,7 +32,7 @@ defmodule EasyFixApi.StaticDataSeeds do
     |> read_from_path_priv_repo()
     |> transform_parts()
     |> Enum.map(fn(p = %{name: name, group: group, sub_group: sub_group, garage_type: garage_type, repair_by_fixer: repair_by_fixer}) ->
-      IO.inspect name
+      IO.inspect repair_by_fixer
       Repo.transaction(fn ->
         part_system = case Repo.get_by(PartSystem, name: system) do
                         nil ->
@@ -71,11 +71,13 @@ defmodule EasyFixApi.StaticDataSeeds do
           |> put_assoc(:garage_category, garage_category)
         part = Repo.insert! part_changeset
 
-        by_fixer =
-          %RepairByFixerPart{}
-          |> change()
-          |> put_assoc(:part, part)
-        by_fixer = Repo.insert! by_fixer
+        if repair_by_fixer do
+          by_fixer =
+            %RepairByFixerPart{}
+            |> change()
+            |> put_assoc(:part, part)
+          by_fixer = Repo.insert! by_fixer
+        end
 
       end)
     end)
