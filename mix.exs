@@ -48,6 +48,7 @@ defmodule EasyFixApi.Mixfile do
   defp aliases do
     ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
      "ecto.reset": ["ecto.drop", "ecto.setup"],
+     "ecto.reseed": ["ecto.drop", "ecto.setup", "run priv/repo/static_data/seeds.exs"],
      "test": ["ecto.create --quiet", "ecto.migrate", "test"]]
   end
 end

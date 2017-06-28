@@ -7,12 +7,14 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Parts do
 
       timestamps()
     end
+    create index(:garage_categories, [:name], unique: true)
 
     create table(:part_systems) do
       add :name, :string
 
       timestamps()
     end
+    create index(:part_systems, [:name], unique: true)
 
     create table(:part_groups) do
       add :name, :string
@@ -20,6 +22,7 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Parts do
 
       timestamps()
     end
+    create index(:part_groups, [:name], unique: true)
 
     create table(:part_sub_groups) do
       add :name, :string
@@ -27,6 +30,7 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Parts do
 
       timestamps()
     end
+    create index(:part_sub_groups, [:name], unique: true)
 
     create table(:parts) do
       add :name, :string

@@ -12,6 +12,7 @@ defmodule EasyFixApi.Web.ModelView do
 
   def render("model.json", %{model: model}) do
     %{id: model.id,
-      name: model.name}
+      name: model.name,
+      brand: model.brand.name}
   end
 end
