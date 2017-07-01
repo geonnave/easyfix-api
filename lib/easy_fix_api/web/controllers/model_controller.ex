@@ -14,5 +14,4 @@ defmodule EasyFixApi.Web.ModelController do
     model = Cars.get_model!(id)
     render(conn, "show.json", model: model)
   end
-
 end

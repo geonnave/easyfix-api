@@ -14,5 +14,4 @@ defmodule EasyFixApi.Web.BrandController do
     brand = Cars.get_brand!(id)
     render(conn, "show.json", brand: brand)
   end
-
 end
