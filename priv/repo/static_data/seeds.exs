@@ -23,7 +23,7 @@ defmodule EasyFixApi.StaticDataSeeds do
   end
 
   def run_parts do
-    ~w[chassis, motor, interior, exterior, eletronica]
+    ~w[chassis motor interior exterior eletronica]
     |> Enum.each(&run_parts_system/1)
   end
 
@@ -34,6 +34,7 @@ defmodule EasyFixApi.StaticDataSeeds do
     |> Enum.map(fn(p = %{name: name, group: group, sub_group: sub_group, garage_type: garage_type, repair_by_fixer: repair_by_fixer}) ->
       IO.inspect repair_by_fixer
       Repo.transaction(fn ->
+        system = String.capitalize(system)
         part_system = case Repo.get_by(PartSystem, name: system) do
                         nil ->
                           Repo.insert! %PartSystem{name: system}
@@ -84,5 +85,5 @@ defmodule EasyFixApi.StaticDataSeeds do
   end
 end
 
-EasyFixApi.StaticDataSeeds.run_parts_system("chassis")
+EasyFixApi.StaticDataSeeds.run_parts
 EasyFixApi.StaticDataSeeds.run_vehicles_models
