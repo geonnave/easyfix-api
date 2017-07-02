@@ -12,6 +12,7 @@ defmodule EasyFixApi.Web.GarageController do
   end
 
   def create(conn, %{"garage" => garage_params}) do
+    garage_params = %{garage: garage_params, garage_categories: garage_params["garage_categories"]}
     with {:ok, %Garage{} = garage} <- Garages.create_garage(garage_params) do
       garage = Garages.garage_preload(garage, :garage_categories)
 
@@ -28,6 +29,7 @@ defmodule EasyFixApi.Web.GarageController do
   end
 
   def update(conn, %{"id" => id, "garage" => garage_params}) do
+    garage_params = %{garage: garage_params, garage_categories: garage_params["garage_categories"]}
     garage = Garages.get_garage!(id)
 
     with {:ok, %Garage{} = garage} <- Garages.update_garage(garage, garage_params) do
