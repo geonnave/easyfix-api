@@ -4,9 +4,30 @@ defmodule EasyFixApi.Web.GarageControllerTest do
   alias EasyFixApi.Garages
   alias EasyFixApi.Garages.Garage
 
-  @create_attrs %{cnpj: "some cnpj", email: "some email", name: "some name", owner_name: "some owner_name", password_hash: "some password_hash", phone: "some phone"}
-  @update_attrs %{cnpj: "some updated cnpj", email: "some updated email", name: "some updated name", owner_name: "some updated owner_name", password_hash: "some updated password_hash", phone: "some updated phone"}
-  @invalid_attrs %{cnpj: nil, email: nil, name: nil, owner_name: nil, password_hash: nil, phone: nil}
+  @create_attrs %{
+    "cnpj" => "some cnpj",
+    "email" => "some email",
+    "name" => "some name",
+    "owner_name" => "some owner_name",
+    "password_hash" => "some password_hash",
+    "phone" => "some phone",
+    "garage_categories" => []}
+  @update_attrs %{
+    "cnpj" => "some updated cnpj",
+    "email" => "some updated email",
+    "name" => "some updated name",
+    "owner_name" => "some updated owner_name",
+    "password_hash" => "some updated password_hash",
+    "phone" => "some updated phone",
+    "garage_categories" => []}
+  @invalid_attrs %{
+    "cnpj" => nil,
+    "email" => nil,
+    "name" => nil,
+    "owner_name" => nil,
+    "password_hash" => nil,
+    "phone" => nil,
+    "garage_categories" => []}
 
   def fixture(:garage) do
     {:ok, garage} = Garages.create_garage(@create_attrs)
@@ -34,7 +55,8 @@ defmodule EasyFixApi.Web.GarageControllerTest do
       "name" => "some name",
       "owner_name" => "some owner_name",
       "password_hash" => "some password_hash",
-      "phone" => "some phone"}
+      "phone" => "some phone",
+      "garage_categories" => []}
   end
 
   test "does not create garage and renders errors when data is invalid", %{conn: conn} do
@@ -55,7 +77,8 @@ defmodule EasyFixApi.Web.GarageControllerTest do
       "name" => "some updated name",
       "owner_name" => "some updated owner_name",
       "password_hash" => "some updated password_hash",
-      "phone" => "some updated phone"}
+      "phone" => "some updated phone",
+      "garage_categories" => []}
   end
 
   test "does not update chosen garage and renders errors when data is invalid", %{conn: conn} do

@@ -19,7 +19,6 @@ defmodule EasyFixApi.Garages do
   def create_garage(attrs \\ %{}) do
     garage_categories =
       attrs["garage_categories"]
-      # |> Enum.map(fn %{"id" => id} -> id end)
       |> Enum.map(&Repo.get(GarageCategory, &1))
 
     %Garage{}
@@ -29,8 +28,16 @@ defmodule EasyFixApi.Garages do
   end
 
   def update_garage(%Garage{} = garage, attrs) do
+    inserted_category_ids = for %{id: id} <- garage.garage_categories, do: id
+
+    garage_categories =
+      attrs["garage_categories"]
+      |> Enum.concat(inserted_category_ids)
+      |> Enum.map(&Repo.get(GarageCategory, &1))
+
     garage
     |> garage_changeset(attrs)
+    |> put_assoc(:garage_categories, garage_categories)
     |> Repo.update()
   end
 
