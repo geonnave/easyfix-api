@@ -22,7 +22,7 @@ defmodule EasyFixApi.Garages do
       |> Enum.map(&Repo.get(GarageCategory, &1))
 
     %Garage{}
-    |> garage_changeset(attrs[:garage])
+    |> Garage.registration_changeset(attrs[:garage])
     |> put_assoc(:garage_categories, garage_categories)
     |> Repo.insert()
   end
@@ -36,7 +36,7 @@ defmodule EasyFixApi.Garages do
       |> Enum.map(&Repo.get(GarageCategory, &1))
 
     garage
-    |> garage_changeset(attrs[:garage])
+    |> Garage.changeset(attrs[:garage])
     |> put_assoc(:garage_categories, garage_categories)
     |> Repo.update()
   end
@@ -46,13 +46,7 @@ defmodule EasyFixApi.Garages do
   end
 
   def change_garage(%Garage{} = garage) do
-    garage_changeset(garage, %{})
-  end
-
-  def garage_changeset(%Garage{} = garage, attrs) do
-    garage
-    |> cast(attrs, [:name, :owner_name, :email, :password_hash, :phone, :cnpj])
-    |> validate_required([:name, :owner_name, :email, :password_hash, :phone, :cnpj])
+    Garage.changeset(garage, %{})
   end
 
   def garage_preload(garage_or_garages, field) do

@@ -6,18 +6,18 @@ defmodule EasyFixApi.Web.GarageControllerTest do
 
   @create_attrs %{
     cnpj: "some cnpj",
-    email: "some email",
+    email: "foo@example.com",
     name: "some name",
     owner_name: "some owner_name",
-    password_hash: "some password_hash",
+    password: "some password",
     phone: "some phone",
     garage_categories: []}
   @update_attrs %{
     cnpj: "some updated cnpj",
-    email: "some updated email",
+    email: "bar@example.com",
     name: "some updated name",
     owner_name: "some updated owner_name",
-    password_hash: "some updated password_hash",
+    password: "some updated password",
     phone: "some updated phone",
     garage_categories: []}
   @invalid_attrs %{
@@ -51,10 +51,9 @@ defmodule EasyFixApi.Web.GarageControllerTest do
     assert json_response(conn, 200)["data"] == %{
       "id" => id,
       "cnpj" => "some cnpj",
-      "email" => "some email",
+      "email" => "foo@example.com",
       "name" => "some name",
       "owner_name" => "some owner_name",
-      "password_hash" => "some password_hash",
       "phone" => "some phone",
       "garage_categories" => []}
   end
@@ -73,10 +72,9 @@ defmodule EasyFixApi.Web.GarageControllerTest do
     assert json_response(conn, 200)["data"] == %{
       "id" => id,
       "cnpj" => "some updated cnpj",
-      "email" => "some updated email",
+      "email" => "bar@example.com",
       "name" => "some updated name",
       "owner_name" => "some updated owner_name",
-      "password_hash" => "some updated password_hash",
       "phone" => "some updated phone",
       "garage_categories" => []}
   end

@@ -15,7 +15,6 @@ defmodule EasyFixApi.Web.GarageView do
       name: garage.name,
       owner_name: garage.owner_name,
       email: garage.email,
-      password_hash: garage.password_hash,
       phone: garage.phone,
       garage_categories: render_many(garage.garage_categories, EasyFixApi.Web.GarageCategoryView, "garage_category.json"),
       cnpj: garage.cnpj}

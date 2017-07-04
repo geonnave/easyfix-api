@@ -7,24 +7,24 @@ defmodule EasyFixApi.GaragesTest do
 
   @create_attrs %{
     cnpj: "some cnpj",
-    email: "some email",
+    email: "foo@example.com",
     name: "some name",
     owner_name: "some owner_name",
-    password_hash: "some password_hash",
+    password: "some password",
     phone: "some phone"}
   @update_attrs %{
     cnpj: "some updated cnpj",
-    email: "some updated email",
+    email: "bar@example.com",
     name: "some updated name",
     owner_name: "some updated owner_name",
-    password_hash: "some updated password_hash",
+    password: "some updated password",
     phone: "some updated phone"}
   @invalid_attrs %{
     cnpj: nil,
     email: nil,
     name: nil,
     owner_name: nil,
-    password_hash: nil,
+    password: nil,
     phone: nil,
     garage_categories: []}
 
@@ -40,7 +40,7 @@ defmodule EasyFixApi.GaragesTest do
   def fixture(:garage, attrs \\ @create_attrs, cat_ids \\ []) do
     attrs = put_in attrs[:garage_categories], cat_ids
     {:ok, garage} = Garages.create_garage(%{garage: attrs, garage_categories: cat_ids})
-    garage
+    %{garage | password: nil}
   end
 
   test "list_garages/1 returns all garages", %{category_a_id: category_a_id} do
@@ -63,10 +63,9 @@ defmodule EasyFixApi.GaragesTest do
     garage_attrs = %{garage: @create_attrs, garage_categories: [category_a_id]}
     assert {:ok, %Garage{} = garage} = Garages.create_garage(garage_attrs)
     assert garage.cnpj == "some cnpj"
-    assert garage.email == "some email"
+    assert garage.email == "foo@example.com"
     assert garage.name == "some name"
     assert garage.owner_name == "some owner_name"
-    assert garage.password_hash == "some password_hash"
     assert garage.phone == "some phone"
   end
 
@@ -82,10 +81,9 @@ defmodule EasyFixApi.GaragesTest do
     assert {:ok, garage} = Garages.update_garage(garage, garage_attrs)
     assert %Garage{} = garage
     assert garage.cnpj == "some updated cnpj"
-    assert garage.email == "some updated email"
+    assert garage.email == "bar@example.com"
     assert garage.name == "some updated name"
     assert garage.owner_name == "some updated owner_name"
-    assert garage.password_hash == "some updated password_hash"
     assert garage.phone == "some updated phone"
 
     category_ids = Enum.map(garage.garage_categories, fn %{id: id} -> id end) |> Enum.sort

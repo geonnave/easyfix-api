@@ -17,3 +17,7 @@ config :easy_fix_api, EasyFixApi.Repo,
   database: "easy_fix_api_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
+
+# Make comeonin run faster when testing
+config :comeonin, :bcrypt_log_rounds, 4
+config :comeonin, :pbkdf2_rounds, 1
