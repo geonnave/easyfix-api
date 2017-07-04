@@ -33,6 +33,7 @@ defmodule EasyFixApi.Web.Router do
 
     resources "/repair_by_fixer_parts", RepairByFixerPartController, except: [:new, :edit]
 
+    resources "/users", UserController, except: [:new, :edit]
     resources "/garages", GarageController, except: [:new, :edit]
   end
 end
