@@ -14,7 +14,7 @@ defmodule EasyFixApi.Web.GarageView do
     %{id: garage.id,
       name: garage.name,
       owner_name: garage.owner_name,
-      email: garage.email,
+      email: garage.user.email,
       phone: garage.phone,
       garage_categories: render_many(garage.garage_categories, EasyFixApi.Web.GarageCategoryView, "garage_category.json"),
       cnpj: garage.cnpj}

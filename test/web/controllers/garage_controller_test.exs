@@ -59,8 +59,9 @@ defmodule EasyFixApi.Web.GarageControllerTest do
   end
 
   test "does not create garage and renders errors when data is invalid", %{conn: conn} do
-    conn = post conn, garage_path(conn, :create), garage: @invalid_attrs
-    assert json_response(conn, 422)["errors"] != %{}
+    assert_raise MatchError, fn ->
+      post conn, garage_path(conn, :create), garage: @invalid_attrs
+    end
   end
 
   test "updates chosen garage and renders garage when data is valid", %{conn: conn} do
@@ -81,8 +82,9 @@ defmodule EasyFixApi.Web.GarageControllerTest do
 
   test "does not update chosen garage and renders errors when data is invalid", %{conn: conn} do
     garage = fixture(:garage)
-    conn = put conn, garage_path(conn, :update, garage), garage: @invalid_attrs
-    assert json_response(conn, 422)["errors"] != %{}
+    assert_raise MatchError, fn ->
+      put conn, garage_path(conn, :update, garage), garage: @invalid_attrs
+    end
   end
 
   test "deletes chosen garage", %{conn: conn} do

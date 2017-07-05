@@ -4,9 +4,9 @@ defmodule EasyFixApi.Web.UserControllerTest do
   alias EasyFixApi.Accounts
   alias EasyFixApi.Accounts.User
 
-  @create_attrs %{email: "some email", password_hash: "some password_hash"}
-  @update_attrs %{email: "some updated email", password_hash: "some updated password_hash"}
-  @invalid_attrs %{email: nil, password_hash: nil}
+  @create_attrs %{email: "some@email.com", password: "some password"}
+  @update_attrs %{email: "some@updated_email.com", password: "some updated password"}
+  @invalid_attrs %{email: nil, password: nil}
 
   def fixture(:user) do
     {:ok, user} = Accounts.create_user(@create_attrs)
@@ -29,8 +29,7 @@ defmodule EasyFixApi.Web.UserControllerTest do
     conn = get conn, user_path(conn, :show, id)
     assert json_response(conn, 200)["data"] == %{
       "id" => id,
-      "email" => "some email",
-      "password_hash" => "some password_hash"}
+      "email" => "some@email.com"}
   end
 
   test "does not create user and renders errors when data is invalid", %{conn: conn} do
@@ -46,8 +45,7 @@ defmodule EasyFixApi.Web.UserControllerTest do
     conn = get conn, user_path(conn, :show, id)
     assert json_response(conn, 200)["data"] == %{
       "id" => id,
-      "email" => "some updated email",
-      "password_hash" => "some updated password_hash"}
+      "email" => "some@updated_email.com"}
   end
 
   test "does not update chosen user and renders errors when data is invalid", %{conn: conn} do

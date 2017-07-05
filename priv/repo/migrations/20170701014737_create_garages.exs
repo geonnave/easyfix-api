@@ -5,10 +5,9 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Garages do
     create table(:garages) do
       add :name, :string
       add :owner_name, :string
-      add :email, :string
-      add :password_hash, :string
       add :phone, :string
       add :cnpj, :string
+      add :user_id, references(:users)
 
       timestamps()
     end

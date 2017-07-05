@@ -22,7 +22,7 @@ defmodule EasyFixApi.Accounts do
 
   def update_user(%User{} = user, attrs) do
     user
-    |> User.registration_changeset(attrs)
+    |> User.changeset(attrs)
     |> Repo.update()
   end
 
@@ -31,6 +31,6 @@ defmodule EasyFixApi.Accounts do
   end
 
   def change_user(%User{} = user) do
-    User.registration_changeset(user, %{})
+    User.changeset(user, %{})
   end
 end
