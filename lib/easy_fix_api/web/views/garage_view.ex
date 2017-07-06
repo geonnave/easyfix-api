@@ -10,6 +10,10 @@ defmodule EasyFixApi.Web.GarageView do
     %{data: render_one(garage, GarageView, "garage.json")}
   end
 
+  def render("show_registration.json", %{garage: garage, jwt: jwt}) do
+    %{data: render_one(garage, GarageView, "garage.json"), jwt: jwt}
+  end
+
   def render("garage.json", %{garage: garage}) do
     %{id: garage.id,
       name: garage.name,

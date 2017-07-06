@@ -46,6 +46,7 @@ defmodule EasyFixApi.Web.GarageControllerTest do
   test "creates garage and renders garage when data is valid", %{conn: conn} do
     conn = post conn, garage_path(conn, :create), garage: @create_attrs
     assert %{"id" => id} = json_response(conn, 201)["data"]
+    assert json_response(conn, 201)["jwt"]
 
     conn = get conn, garage_path(conn, :show, id)
     assert json_response(conn, 200)["data"] == %{

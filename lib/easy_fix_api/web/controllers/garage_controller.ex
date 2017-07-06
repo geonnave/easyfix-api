@@ -15,11 +15,12 @@ defmodule EasyFixApi.Web.GarageController do
     garage_params = %{garage: garage_params, garage_categories: garage_params["garage_categories"]}
     with {:ok, %Garage{} = garage} <- Garages.create_garage(garage_params) do
       garage = Garages.garage_preload(garage, :garage_categories)
+      {:ok, jwt, _full_claims} = Guardian.encode_and_sign(garage.user, :token)
 
       conn
       |> put_status(:created)
       |> put_resp_header("location", garage_path(conn, :show, garage))
-      |> render("show.json", garage: garage)
+      |> render("show_registration.json", garage: garage, jwt: jwt)
     end
   end
 
