@@ -11,6 +11,8 @@ defmodule EasyFixApi.Web.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug Guardian.Plug.VerifyHeader, realm: "Bearer"
+    plug Guardian.Plug.LoadResource
   end
 
   scope "/", EasyFixApi.Web do
@@ -22,6 +24,12 @@ defmodule EasyFixApi.Web.Router do
   scope "/api", EasyFixApi.Web do
     pipe_through :api
 
+    post "/sessions", SessionController, :create
+    delete "/sessions", SessionController, :delete
+
+    resources "/garages", GarageController, except: [:new, :edit]
+    resources "/users", UserController, except: [:new, :edit]
+
     resources "/models", ModelController, except: [:new, :edit]
     resources "/brands", BrandController, except: [:new, :edit]
 
@@ -32,8 +40,5 @@ defmodule EasyFixApi.Web.Router do
     resources "/part_sub_groups", PartSubGroupController, except: [:new, :edit]
 
     resources "/repair_by_fixer_parts", RepairByFixerPartController, except: [:new, :edit]
-
-    resources "/users", UserController, except: [:new, :edit]
-    resources "/garages", GarageController, except: [:new, :edit]
   end
 end

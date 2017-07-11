@@ -2,10 +2,8 @@ defmodule EasyFixApi.Web.UserControllerTest do
   use EasyFixApi.Web.ConnCase
 
   alias EasyFixApi.Accounts
-  alias EasyFixApi.Accounts.User
 
   @create_attrs %{email: "some@email.com", password: "some password"}
-  @update_attrs %{email: "some@updated_email.com", password: "some updated password"}
   @invalid_attrs %{email: nil, password: nil}
 
   def fixture(:user) do
@@ -17,6 +15,7 @@ defmodule EasyFixApi.Web.UserControllerTest do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
+  @tag :skip # TOOD: only an admin can list all users.. but we don't have 'admin users' yet.
   test "lists all entries on index", %{conn: conn} do
     conn = get conn, user_path(conn, :index)
     assert json_response(conn, 200)["data"] == []
@@ -26,7 +25,12 @@ defmodule EasyFixApi.Web.UserControllerTest do
     conn = post conn, user_path(conn, :create), user: @create_attrs
     assert %{"id" => id} = json_response(conn, 201)["data"]
 
-    conn = get conn, user_path(conn, :show, id)
+    jwt = json_response(conn, 201)["jwt"]
+    conn =
+      conn
+      |> recycle()
+      |> put_req_header("authorization", "Bearer #{jwt}")
+      |> get(user_path(conn, :show, id))
     assert json_response(conn, 200)["data"] == %{
       "id" => id,
       "email" => "some@email.com"}
@@ -35,31 +39,5 @@ defmodule EasyFixApi.Web.UserControllerTest do
   test "does not create user and renders errors when data is invalid", %{conn: conn} do
     conn = post conn, user_path(conn, :create), user: @invalid_attrs
     assert json_response(conn, 422)["errors"] != %{}
-  end
-
-  test "updates chosen user and renders user when data is valid", %{conn: conn} do
-    %User{id: id} = user = fixture(:user)
-    conn = put conn, user_path(conn, :update, user), user: @update_attrs
-    assert %{"id" => ^id} = json_response(conn, 200)["data"]
-
-    conn = get conn, user_path(conn, :show, id)
-    assert json_response(conn, 200)["data"] == %{
-      "id" => id,
-      "email" => "some@updated_email.com"}
-  end
-
-  test "does not update chosen user and renders errors when data is invalid", %{conn: conn} do
-    user = fixture(:user)
-    conn = put conn, user_path(conn, :update, user), user: @invalid_attrs
-    assert json_response(conn, 422)["errors"] != %{}
-  end
-
-  test "deletes chosen user", %{conn: conn} do
-    user = fixture(:user)
-    conn = delete conn, user_path(conn, :delete, user)
-    assert response(conn, 204)
-    assert_error_sent 404, fn ->
-      get conn, user_path(conn, :show, user)
-    end
   end
 end

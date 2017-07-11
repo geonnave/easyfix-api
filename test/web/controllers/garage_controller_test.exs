@@ -38,6 +38,7 @@ defmodule EasyFixApi.Web.GarageControllerTest do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
+  @tag :skip # TOOD: only an admin can list all users.. but we don't have 'admin users' yet.
   test "lists all entries on index", %{conn: conn} do
     conn = get conn, garage_path(conn, :index)
     assert json_response(conn, 200)["data"] == []
@@ -48,7 +49,12 @@ defmodule EasyFixApi.Web.GarageControllerTest do
     assert %{"id" => id} = json_response(conn, 201)["data"]
     assert json_response(conn, 201)["jwt"]
 
-    conn = get conn, garage_path(conn, :show, id)
+    jwt = json_response(conn, 201)["jwt"]
+    conn =
+      conn
+      |> recycle()
+      |> put_req_header("authorization", "Bearer #{jwt}")
+      |> get(garage_path(conn, :show, id))
     assert json_response(conn, 200)["data"] == %{
       "id" => id,
       "cnpj" => "some cnpj",
@@ -67,10 +73,17 @@ defmodule EasyFixApi.Web.GarageControllerTest do
 
   test "updates chosen garage and renders garage when data is valid", %{conn: conn} do
     %Garage{id: id} = garage = fixture(:garage)
-    conn = put conn, garage_path(conn, :update, garage), garage: @update_attrs
+
+    conn =
+      conn
+      |> authenticate(garage.user)
+      |> put(garage_path(conn, :update, garage), garage: @update_attrs)
     assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
-    conn = get conn, garage_path(conn, :show, id)
+    conn =
+      conn
+      |> authenticate(garage.user)
+      |> get(garage_path(conn, :show, id))
     assert json_response(conn, 200)["data"] == %{
       "id" => id,
       "cnpj" => "some updated cnpj",
@@ -84,16 +97,30 @@ defmodule EasyFixApi.Web.GarageControllerTest do
   test "does not update chosen garage and renders errors when data is invalid", %{conn: conn} do
     garage = fixture(:garage)
     assert_raise MatchError, fn ->
-      put conn, garage_path(conn, :update, garage), garage: @invalid_attrs
+      conn
+      |> authenticate(garage.user)
+      |> put(garage_path(conn, :update, garage), garage: @invalid_attrs)
     end
   end
 
   test "deletes chosen garage", %{conn: conn} do
     garage = fixture(:garage)
-    conn = delete conn, garage_path(conn, :delete, garage)
+    conn =
+      conn
+      |> authenticate(garage.user)
+      |> delete(garage_path(conn, :delete, garage))
     assert response(conn, 204)
     assert_error_sent 404, fn ->
-      get conn, garage_path(conn, :show, garage)
+      conn
+      |> authenticate(garage.user)
+      |> get(garage_path(conn, :show, garage))
     end
+  end
+
+  def authenticate(conn, user) do
+    {:ok, jwt, _full_claims} = Guardian.encode_and_sign(user, :token)
+    conn
+    |> recycle()
+    |> put_req_header("authorization", "Bearer #{jwt}")
   end
 end

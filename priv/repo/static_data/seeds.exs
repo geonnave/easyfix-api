@@ -86,4 +86,4 @@ defmodule EasyFixApi.StaticDataSeeds do
 end
 
 EasyFixApi.StaticDataSeeds.run_parts
-EasyFixApi.StaticDataSeeds.run_vehicles_models
+# EasyFixApi.StaticDataSeeds.run_vehicles_models

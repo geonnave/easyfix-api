@@ -10,6 +10,10 @@ defmodule EasyFixApi.Web.UserView do
     %{data: render_one(user, UserView, "user.json")}
   end
 
+  def render("show_registration.json", %{user: user, jwt: jwt}) do
+    %{data: render_one(user, UserView, "user.json"), jwt: jwt}
+  end
+
   def render("user.json", %{user: user}) do
     %{id: user.id,
       email: user.email}
