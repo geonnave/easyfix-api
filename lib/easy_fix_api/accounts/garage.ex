@@ -1,4 +1,4 @@
-defmodule EasyFixApi.Garages.Garage do
+defmodule EasyFixApi.Accounts.Garage do
   use Ecto.Schema
   import Ecto.Changeset, warn: false
 

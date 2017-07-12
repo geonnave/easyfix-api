@@ -1,8 +1,8 @@
 defmodule EasyFixApi.GaragesTest do
   use EasyFixApi.DataCase
 
-  alias EasyFixApi.Garages
-  alias EasyFixApi.Garages.Garage
+  alias EasyFixApi.Accounts
+  alias EasyFixApi.Accounts.Garage
   alias EasyFixApi.Parts.GarageCategory
 
   @create_attrs %{
@@ -39,29 +39,29 @@ defmodule EasyFixApi.GaragesTest do
 
   def fixture(:garage, attrs \\ @create_attrs, cat_ids \\ []) do
     attrs = put_in attrs[:garage_categories], cat_ids
-    {:ok, garage} = Garages.create_garage(%{garage: attrs, garage_categories: cat_ids})
+    {:ok, garage} = Accounts.create_garage(%{garage: attrs, garage_categories: cat_ids})
     %{garage | user: %{garage.user | password: nil}}
   end
 
   test "list_garages/1 returns all garages", %{category_a_id: category_a_id} do
     garage = fixture(:garage, @create_attrs, [category_a_id])
-    assert Garages.list_garages() == [garage]
+    assert Accounts.list_garages() == [garage]
   end
 
   test "get_garage! returns the garage with given id", %{category_a_id: category_a_id} do
     garage = fixture(:garage, @create_attrs, [category_a_id])
-    assert Garages.get_garage!(garage.id) == garage
+    assert Accounts.get_garage!(garage.id) == garage
   end
 
   test "get_garage! returns the correct associations", %{category_a_id: category_a_id} do
     garage = fixture(:garage, @create_attrs, [category_a_id])
-    %{garage_categories: gc} = Garages.get_garage!(garage.id)
+    %{garage_categories: gc} = Accounts.get_garage!(garage.id)
     assert Enum.map(gc, fn %{id: id} -> id end) == [category_a_id]
   end
 
   test "create_garage/1 with valid data creates a garage", %{category_a_id: category_a_id} do
     garage_attrs = %{garage: @create_attrs, garage_categories: [category_a_id]}
-    assert {:ok, %Garage{} = garage} = Garages.create_garage(garage_attrs)
+    assert {:ok, %Garage{} = garage} = Accounts.create_garage(garage_attrs)
     assert garage.cnpj == "some cnpj"
     assert garage.user.email == "some@email.com"
     assert garage.name == "some name"
@@ -72,7 +72,7 @@ defmodule EasyFixApi.GaragesTest do
   test "create_garage/1 with invalid data returns error changeset" do
     garage_attrs = %{garage: @invalid_attrs, garage_categories: []}
     assert_raise Ecto.InvalidChangesetError, fn ->
-      Garages.create_garage(garage_attrs)
+      Accounts.create_garage(garage_attrs)
     end
   end
 
@@ -80,7 +80,7 @@ defmodule EasyFixApi.GaragesTest do
     garage = fixture(:garage, @create_attrs, [category_a_id])
     garage_attrs = %{garage: @update_attrs, garage_categories: [category_b_id]}
 
-    assert {:ok, garage} = Garages.update_garage(garage, garage_attrs)
+    assert {:ok, garage} = Accounts.update_garage(garage, garage_attrs)
     assert %Garage{} = garage
     assert garage.cnpj == "some updated cnpj"
     assert garage.user.email == "some@updated_email.com"
@@ -97,19 +97,19 @@ defmodule EasyFixApi.GaragesTest do
     garage = fixture(:garage)
     garage_attrs = %{garage: @invalid_attrs, garage_categories: []}
     assert_raise Ecto.InvalidChangesetError, fn ->
-     Garages.update_garage(garage, garage_attrs)
+     Accounts.update_garage(garage, garage_attrs)
     end
-    assert garage == Garages.get_garage!(garage.id)
+    assert garage == Accounts.get_garage!(garage.id)
   end
 
   test "delete_garage/1 deletes the garage" do
     garage = fixture(:garage)
-    assert {:ok, %Garage{}} = Garages.delete_garage(garage)
-    assert_raise Ecto.NoResultsError, fn -> Garages.get_garage!(garage.id) end
+    assert {:ok, %Garage{}} = Accounts.delete_garage(garage)
+    assert_raise Ecto.NoResultsError, fn -> Accounts.get_garage!(garage.id) end
   end
 
   test "change_garage/1 returns a garage changeset" do
     garage = fixture(:garage)
-    assert %Ecto.Changeset{} = Garages.change_garage(garage)
+    assert %Ecto.Changeset{} = Accounts.change_garage(garage)
   end
 end

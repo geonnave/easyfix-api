@@ -8,7 +8,8 @@ defmodule EasyFixApi.Web.SessionController do
   action_fallback EasyFixApi.Web.FallbackController
 
   def create(conn, %{"email" => email, "password" => password}) do
-    with user when not is_nil(user) <- Accounts.get_user_by(email),
+    with user when not is_nil(user) <- Accounts.get_user_by(email: email),
+         # true <- Accounts.check_user_type(user, type) # type :: "garage" | "customer" | "fixer" | "admin"
          true <- check_password(user, password) do
       {:ok, jwt, _full_claims} = Guardian.encode_and_sign(user, :token)
 

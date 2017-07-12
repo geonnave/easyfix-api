@@ -1,8 +1,8 @@
 defmodule EasyFixApi.Web.GarageControllerTest do
   use EasyFixApi.Web.ConnCase
 
-  alias EasyFixApi.Garages
-  alias EasyFixApi.Garages.Garage
+  alias EasyFixApi.Accounts
+  alias EasyFixApi.Accounts.Garage
 
   @create_attrs %{
     cnpj: "some cnpj",
@@ -30,7 +30,7 @@ defmodule EasyFixApi.Web.GarageControllerTest do
     garage_categories: []}
 
   def fixture(:garage) do
-    {:ok, garage} = Garages.create_garage(%{garage: @create_attrs, garage_categories: []})
+    {:ok, garage} = Accounts.create_garage(%{garage: @create_attrs, garage_categories: []})
     garage
   end
 
