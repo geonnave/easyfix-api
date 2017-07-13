@@ -2,21 +2,19 @@ defmodule EasyFixApi.Web.SessionController do
   use EasyFixApi.Web, :controller
 
   alias EasyFixApi.Accounts
-  alias EasyFixApi.Accounts.User
-  alias EasyFixApi.Web.{UserView, ErrorView}
+  alias EasyFixApi.Web.{SessionView, ErrorView}
 
   action_fallback EasyFixApi.Web.FallbackController
 
-  def create(conn, %{"email" => email, "password" => password}) do
-    with user when not is_nil(user) <- Accounts.get_user_by(email: email),
-         # true <- Accounts.check_user_type(user, type) # type :: "garage" | "customer" | "fixer" | "admin"
-         true <- check_password(user, password) do
-      {:ok, jwt, _full_claims} = Guardian.encode_and_sign(user, :token)
+  def create(conn, %{"email" => email, "password" => password, "user_type" => user_type}) do
+    with account when not is_nil(account) <- Accounts.get_by_email(user_type, email),
+         true <- check_password(account.user, password) do
+      {:ok, jwt, _full_claims} = Guardian.encode_and_sign(account.user, :token)
 
       conn
       |> put_status(:created)
       |> put_resp_header("authorization", "Bearer #{jwt}")
-      |> render(UserView, "show_registration.json", user: user, jwt: jwt)
+      |> render(SessionView, "show.json", account: account, jwt: jwt)
     else
       _err ->
         conn

@@ -7,6 +7,17 @@ defmodule EasyFixApi.Accounts do
   alias EasyFixApi.Repo
 
   alias EasyFixApi.Accounts.User
+  alias EasyFixApi.Accounts.Garage
+  alias EasyFixApi.Parts.GarageCategory
+
+  def get_by_email("garage", email) do
+    from(g in Garage,
+      join: u in User,
+      on: g.user_id == u.id,
+      where: u.email == ^email,
+      preload: [:user, :garage_categories]
+    ) |> Repo.one
+  end
 
   def list_users do
     Repo.all(User)
@@ -37,9 +48,6 @@ defmodule EasyFixApi.Accounts do
   def change_user(%User{} = user) do
     User.changeset(user, %{})
   end
-
-  alias EasyFixApi.Accounts.Garage
-  alias EasyFixApi.Parts.GarageCategory
 
   def list_garages do
     Repo.all(Garage)
