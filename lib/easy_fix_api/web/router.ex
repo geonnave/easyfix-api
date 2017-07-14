@@ -30,6 +30,8 @@ defmodule EasyFixApi.Web.Router do
     resources "/garages", GarageController, except: [:new, :edit]
     resources "/users", UserController, except: [:new, :edit]
 
+    resources "/addresses", AddressController, except: [:new, :edit]
+
     resources "/models", ModelController, except: [:new, :edit]
     resources "/brands", BrandController, except: [:new, :edit]
 
