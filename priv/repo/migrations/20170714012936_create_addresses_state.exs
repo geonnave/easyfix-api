@@ -21,6 +21,7 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Addresses do
       add :address_line2, :string
       add :neighborhood, :string
       add :city_id, references(:cities)
+      add :user_id, references(:users)
 
       timestamps()
     end

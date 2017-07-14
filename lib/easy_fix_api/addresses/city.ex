@@ -1,6 +1,7 @@
 defmodule EasyFixApi.Addresses.City do
   use Ecto.Schema
   import Ecto.{Changeset}, warn: false
+  alias EasyFixApi.Repo
 
   schema "cities" do
     field :name, :string

@@ -6,6 +6,8 @@ defmodule EasyFixApi.Addresses do
   import Ecto.{Query, Changeset}, warn: false
   alias EasyFixApi.Repo
 
+  alias EasyFixApi.Accounts
+
   alias EasyFixApi.Addresses.State
 
   def list_states do
@@ -43,8 +45,11 @@ defmodule EasyFixApi.Addresses do
   def get_city!(id), do: Repo.get!(City, id)
 
   def create_city(attrs \\ %{}) do
+    state = get_state!(attrs[:state][:id])
+
     %City{}
     |> City.changeset(attrs)
+    |> put_assoc(:state, state)
     |> Repo.insert()
   end
 
@@ -71,14 +76,33 @@ defmodule EasyFixApi.Addresses do
   def get_address!(id), do: Repo.get!(Address, id)
 
   def create_address(attrs \\ %{}) do
+    city = get_city!(attrs[:city][:id])
+    user = Accounts.get_user!(attrs[:user][:id])
+
     %Address{}
-    |> Address.changeset(attrs)
+    |> Address.changeset(attrs[:address])
+    |> put_assoc(:city, city)
+    |> put_assoc(:user, user)
     |> Repo.insert()
   end
 
+  # FIXME: ainda não funciona
+  #  dúvida: aprender como fazer update de assocs
   def update_address(%Address{} = address, attrs) do
+    city = case attrs[:city][:id] do
+      nil -> nil
+      id -> get_city!(id)
+    end |> IO.inspect
+    user = case attrs[:user][:id] do
+      nil -> nil
+      id -> Accounts.get_user!(id)
+    end
+
     address
-    |> Address.changeset(attrs)
+    |> Repo.preload([:user, :city])
+    |> Address.changeset(attrs[:address])
+    |> put_assoc(:city, city)
+    |> put_assoc(:user, user)
     |> Repo.update()
   end
 

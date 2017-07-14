@@ -6,6 +6,7 @@ defmodule EasyFixApi.Accounts.User do
     field :email, :string
     field :password_hash, :string
     field :password, :string, virtual: true
+    has_many :addresses, EasyFixApi.Addresses.Address
 
     timestamps()
   end

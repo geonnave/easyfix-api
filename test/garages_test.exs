@@ -28,11 +28,11 @@ defmodule EasyFixApi.GaragesTest do
     phone: nil,
     garage_categories: []}
 
-  @catagory_a %GarageCategory{name: "foo"}
+  @category_a %GarageCategory{name: "foo"}
   @category_b %GarageCategory{name: "bar"}
 
   setup do
-    %{id: category_a_id} = Repo.insert! @catagory_a
+    %{id: category_a_id} = Repo.insert! @category_a
     %{id: category_b_id} = Repo.insert! @category_b
     [category_a_id: category_a_id, category_b_id: category_b_id]
   end
