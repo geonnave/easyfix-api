@@ -10,6 +10,7 @@ defmodule EasyFixApi.Web.AddressView do
     %{data: render_one(address, AddressView, "address.json")}
   end
 
+  # TODO: decide wether to render city and state as nested or flat structures
   def render("address.json", %{address: address}) do
     %{id: address.id,
       postal_code: address.postal_code,

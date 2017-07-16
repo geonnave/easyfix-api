@@ -69,11 +69,19 @@ defmodule EasyFixApi.Addresses do
 
   alias EasyFixApi.Addresses.Address
 
-  def list_addresses do
-    Repo.all(Address)
+  defp preload_all_nested_associations(address) do
+    Repo.preload(address, [city: [:state]])
   end
 
-  def get_address!(id), do: Repo.get!(Address, id)
+  def list_addresses do
+    Repo.all(Address)
+    |> preload_all_nested_associations()
+  end
+
+  def get_address!(id) do
+    Repo.get!(Address, id)
+    |> preload_all_nested_associations()
+  end
 
   def create_address(attrs \\ %{}) do
     case Address.assoc_changeset(attrs) do

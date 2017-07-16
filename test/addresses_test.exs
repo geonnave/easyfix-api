@@ -63,6 +63,7 @@ defmodule EasyFixApi.AddressesTest do
     assert address.address_line1 == "some address_line1"
     assert address.city.id == city_a.id
     assert address.user.id == user.id
+    ^city_a = Repo.preload(address.city, :state)
   end
 
   test "does not create address when data is invalid" do
