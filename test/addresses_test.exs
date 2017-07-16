@@ -3,7 +3,6 @@ defmodule EasyFixApi.AddressesTest do
 
   alias EasyFixApi.Addresses
   alias EasyFixApi.Accounts
-  alias EasyFixApi.Addresses.{Address, City, State}
 
   @create_attrs %{address_line1: "some address_line1",
   address_line2: "some address_line2",
@@ -17,13 +16,13 @@ defmodule EasyFixApi.AddressesTest do
   address_line2: nil,
   neighborhood: nil,
   city: nil,
-  state: nil,
+  user: nil,
   postal_code: nil}
 
   setup do
     {:ok, state_x = %{id: id_x}} = Addresses.create_state(%{name: "state_x"})
-    {:ok, city_a} = Addresses.create_city(%{name: "city_a", state: %{id: id_x}})
-    {:ok, city_b} = Addresses.create_city(%{name: "city_b", state: %{id: id_x}})
+    {:ok, city_a} = Addresses.create_city(%{name: "city_a", state: id_x})
+    {:ok, city_b} = Addresses.create_city(%{name: "city_b", state: id_x})
 
     {:ok, user} = Accounts.create_user(%{email: "user@email.com", password: "password"})
 
@@ -35,34 +34,46 @@ defmodule EasyFixApi.AddressesTest do
     ]
   end
 
-  def fixture(:address, address, city, user) do
-    attrs = %{address: address, city: %{id: city.id}, user: %{id: user.id}}
-    {:ok, address} = Addresses.create_address(attrs)
+  def fixture(:address, attrs, city, user) do
+    {:ok, address} =
+      attrs
+      |> put_in([:city], city.id)
+      |> put_in([:user], user.id)
+      |> Addresses.create_address()
+
     address
   end
 
   test "creates a state and a city and associates them" do
     {:ok, state = %{id: id}} = Addresses.create_state(%{name: "São Paulo"})
-    attrs = %{name: "São Paulo", state: %{id: id}}
+    attrs = %{name: "São Paulo", state: id}
     {:ok, city} = Addresses.create_city(attrs)
 
     %{cities: cities} = Repo.preload(state, :cities)
-    assert [city] = cities
+    [^city] = Repo.preload(cities, :state)
   end
 
   test "creates an address", %{city_a: city_a, user: user} do
-    attrs = %{address: @create_attrs, city: %{id: city_a.id}, user: %{id: user.id}}
+    attrs =
+      @create_attrs
+      |> put_in([:city], city_a.id)
+      |> put_in([:user], user.id)
+
     assert {:ok, address} = Addresses.create_address(attrs)
     assert address.address_line1 == "some address_line1"
     assert address.city.id == city_a.id
     assert address.user.id == user.id
   end
 
+  test "does not create address when data is invalid" do
+    assert {:error, _changeset_errors} = Addresses.create_address(@invalid_attrs)
+  end
+
   @tag :skip # FIXME: dando skip pois ainda não sei como fazer update de assocs
   test "updates an address", %{city_a: city_a, city_b: city_b, user: user} do
     address = fixture(:address, @create_attrs, city_a, user)
 
-    attrs = %{address: @update_attrs, city: %{id: city_b.id}}
+    attrs = %{address: @update_attrs, city: city_b.id}
     assert {:ok, address} = Addresses.update_address(address, attrs)
     assert address.address_line1 == "some updated address_line1"
     assert address.city.id == city_b.id

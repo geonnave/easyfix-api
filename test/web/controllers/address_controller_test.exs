@@ -9,15 +9,18 @@ defmodule EasyFixApi.Web.AddressControllerTest do
   @update_attrs %{address_line1: "some updated address_line1", address_line2: "some updated address_line2", neighborhood: "some updated neighborhood", postal_code: "some updated postal_code"}
   @invalid_attrs %{address_line1: nil, address_line2: nil, neighborhood: nil, postal_code: nil}
 
-  def fixture(:address, address, city, user) do
-    attrs = %{address: address, city: %{id: city.id}, user: %{id: user.id}}
-    {:ok, address} = Addresses.create_address(attrs)
+  def fixture(:address, attrs, city, user) do
+    {:ok, address} =
+      attrs
+      |> put_in([:city], city.id)
+      |> put_in([:user], user.id)
+      |> Addresses.create_address()
     address
   end
 
   setup %{conn: conn} do
     {:ok, state_x = %{id: id_x}} = Addresses.create_state(%{name: "state_x"})
-    {:ok, city_a} = Addresses.create_city(%{name: "city_a", state: %{id: id_x}})
+    {:ok, city_a} = Addresses.create_city(%{name: "city_a", state: id_x})
     {:ok, user} = Accounts.create_user(%{email: "user@email.com", password: "password"})
 
     {:ok, 
@@ -34,7 +37,11 @@ defmodule EasyFixApi.Web.AddressControllerTest do
   end
 
   test "creates address and renders address when data is valid", %{conn: conn, city_a: city_a, user: user} do
-    attrs = %{address: @create_attrs, city: %{id: city_a.id}, user: %{id: user.id}}
+    attrs = 
+      @create_attrs
+      |> put_in([:city], city_a.id)
+      |> put_in([:user], user.id)
+
     conn = post conn, address_path(conn, :create), address: attrs
     assert %{"id" => id} = json_response(conn, 201)["data"]
 
@@ -69,7 +76,7 @@ defmodule EasyFixApi.Web.AddressControllerTest do
 
   @tag :skip # FIXME: dando skip pois ainda não sei como fazer update de assocs
   test "does not update chosen address and renders errors when data is invalid", %{conn: conn, city_a: city_a, user: user} do
-    %Address{id: id} = address = fixture(:address, @create_attrs, city_a, user)
+    %Address{} = address = fixture(:address, @create_attrs, city_a, user)
     conn = put conn, address_path(conn, :update, address), address: @invalid_attrs
     assert json_response(conn, 422)["errors"] != %{}
   end

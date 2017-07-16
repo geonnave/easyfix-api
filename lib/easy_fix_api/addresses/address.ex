@@ -13,9 +13,19 @@ defmodule EasyFixApi.Addresses.Address do
     timestamps()
   end
 
+  @optional_attrs ~w()
+  @required_attrs ~w(postal_code address_line1 address_line2 neighborhood)a
+
   def changeset(address, attrs) do
     address
-    |> cast(attrs, [:postal_code, :address_line1, :address_line2, :neighborhood])
-    |> validate_required([:postal_code, :address_line1, :address_line2, :neighborhood])
+    |> cast(attrs, @optional_attrs ++ @required_attrs)
+    |> validate_required(@required_attrs)
+  end
+
+  @assoc_types %{city: :integer, user: :integer}
+  def assoc_changeset(attrs) do
+    {attrs, @assoc_types}
+    |> cast(attrs, Map.keys(@assoc_types))
+    |> validate_required(Map.keys(@assoc_types))
   end
 end

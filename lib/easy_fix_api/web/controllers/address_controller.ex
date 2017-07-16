@@ -12,12 +12,6 @@ defmodule EasyFixApi.Web.AddressController do
   end
 
   def create(conn, %{"address" => address_params}) do
-    address_params = 
-      %{
-        address: address_params,
-        city: address_params["city"],
-        user: address_params["user"]
-      }
     with {:ok, %Address{} = address} <- Addresses.create_address(address_params) do
       conn
       |> put_status(:created)
