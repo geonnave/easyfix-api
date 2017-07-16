@@ -14,8 +14,6 @@ defmodule EasyFixApi.Web.GarageController do
   end
 
   def create(conn, %{"garage" => garage_params}) do
-    garage_categories = garage_params["garage_categories"] || []
-    garage_params = %{garage: garage_params, garage_categories: garage_categories}
     with {:ok, %Garage{} = garage} <- Accounts.create_garage(garage_params) do
       garage = Accounts.garage_preload(garage, :garage_categories)
       {:ok, jwt, _full_claims} = Guardian.encode_and_sign(garage.user, :token)
@@ -33,10 +31,7 @@ defmodule EasyFixApi.Web.GarageController do
   end
 
   def update(conn, %{"id" => id, "garage" => garage_params}) do
-    garage_categories = garage_params["garage_categories"] || []
-    garage_params = %{garage: garage_params, garage_categories: garage_categories}
     garage = Accounts.get_garage!(id)
-
     with {:ok, %Garage{} = garage} <- Accounts.update_garage(garage, garage_params) do
       render(conn, "show.json", garage: garage)
     end

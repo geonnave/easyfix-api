@@ -18,4 +18,11 @@ defmodule EasyFixApi.Accounts.Garage do
     |> cast(attrs, [:name, :owner_name, :phone, :cnpj])
     |> validate_required([:name, :owner_name, :phone, :cnpj])
   end
+
+  @assoc_types %{garage_categories: {:array, :integer}}
+  def assoc_changeset(attrs) do
+    {attrs, @assoc_types}
+    |> cast(attrs, Map.keys(@assoc_types))
+    |> validate_required(Map.keys(@assoc_types))
+  end
 end

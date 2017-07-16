@@ -30,7 +30,7 @@ defmodule EasyFixApi.Web.GarageControllerTest do
     garage_categories: []}
 
   def fixture(:garage) do
-    {:ok, garage} = Accounts.create_garage(%{garage: @create_attrs, garage_categories: []})
+    {:ok, garage} = Accounts.create_garage(@create_attrs)
     garage
   end
 

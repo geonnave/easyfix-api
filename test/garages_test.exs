@@ -38,8 +38,11 @@ defmodule EasyFixApi.GaragesTest do
   end
 
   def fixture(:garage, attrs \\ @create_attrs, cat_ids \\ []) do
-    attrs = put_in attrs[:garage_categories], cat_ids
-    {:ok, garage} = Accounts.create_garage(%{garage: attrs, garage_categories: cat_ids})
+    {:ok, garage} =
+      attrs
+      |> put_in([:garage_categories], cat_ids)
+      |> Accounts.create_garage()
+
     %{garage | user: %{garage.user | password: nil}}
   end
 
@@ -60,8 +63,11 @@ defmodule EasyFixApi.GaragesTest do
   end
 
   test "create_garage/1 with valid data creates a garage", %{category_a_id: category_a_id} do
-    garage_attrs = %{garage: @create_attrs, garage_categories: [category_a_id]}
-    assert {:ok, %Garage{} = garage} = Accounts.create_garage(garage_attrs)
+    {:ok, garage} =
+      @create_attrs
+      |> put_in([:garage_categories], [category_a_id])
+      |> Accounts.create_garage()
+
     assert garage.cnpj == "some cnpj"
     assert garage.user.email == "some@email.com"
     assert garage.name == "some name"
@@ -70,15 +76,14 @@ defmodule EasyFixApi.GaragesTest do
   end
 
   test "create_garage/1 with invalid data returns error changeset" do
-    garage_attrs = %{garage: @invalid_attrs, garage_categories: []}
     assert_raise Ecto.InvalidChangesetError, fn ->
-      Accounts.create_garage(garage_attrs)
+      Accounts.create_garage(@invalid_attrs)
     end
   end
 
   test "update_garage/2 with valid data updates the garage", %{category_a_id: category_a_id, category_b_id: category_b_id} do
     garage = fixture(:garage, @create_attrs, [category_a_id])
-    garage_attrs = %{garage: @update_attrs, garage_categories: [category_b_id]}
+    garage_attrs = put_in(@update_attrs, [:garage_categories], [category_b_id])
 
     assert {:ok, garage} = Accounts.update_garage(garage, garage_attrs)
     assert %Garage{} = garage
@@ -95,9 +100,8 @@ defmodule EasyFixApi.GaragesTest do
 
   test "update_garage/2 with invalid data returns error changeset" do
     garage = fixture(:garage)
-    garage_attrs = %{garage: @invalid_attrs, garage_categories: []}
     assert_raise Ecto.InvalidChangesetError, fn ->
-     Accounts.update_garage(garage, garage_attrs)
+     Accounts.update_garage(garage, @invalid_attrs)
     end
     assert garage == Accounts.get_garage!(garage.id)
   end

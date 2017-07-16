@@ -62,39 +62,51 @@ defmodule EasyFixApi.Accounts do
   end
 
   def create_garage(attrs \\ %{}) do
-    garage_categories =
-      attrs[:garage_categories]
-      |> Enum.map(&Repo.get(GarageCategory, &1))
+    case Garage.assoc_changeset(attrs) do
+      assoc_changeset = %{valid?: true} ->
+        garage_assocs = apply_changes(assoc_changeset)
+        garage_categories =
+          garage_assocs[:garage_categories]
+          |> Enum.map(&Repo.get(GarageCategory, &1))
 
-    Repo.transaction fn ->
-      {:ok, user} = create_user(attrs[:garage])
+        Repo.transaction fn ->
+          {:ok, user} = create_user(attrs)
 
-      %Garage{}
-      |> Garage.changeset(attrs[:garage])
-      |> put_assoc(:user, user)
-      |> put_assoc(:garage_categories, garage_categories)
-      |> Repo.insert!()
+          %Garage{}
+          |> Garage.changeset(attrs)
+          |> put_assoc(:user, user)
+          |> put_assoc(:garage_categories, garage_categories)
+          |> Repo.insert!()
+        end
+      invalid_assoc_changeset ->
+        {:error, invalid_assoc_changeset}
     end
   end
 
   def update_garage(%Garage{} = garage, attrs) do
-    inserted_category_ids = for %{id: id} <- garage.garage_categories, do: id
+    case Garage.assoc_changeset(attrs) do
+      assoc_changeset = %{valid?: true} ->
+        inserted_category_ids = for %{id: id} <- garage.garage_categories, do: id
 
-    garage_categories =
-      attrs[:garage_categories]
-      |> Enum.concat(inserted_category_ids)
-      |> Enum.map(&Repo.get(GarageCategory, &1))
+        garage_assocs = apply_changes(assoc_changeset)
+        garage_categories =
+          garage_assocs[:garage_categories]
+          |> Enum.concat(inserted_category_ids)
+          |> Enum.map(&Repo.get(GarageCategory, &1))
 
-    Repo.transaction fn ->
-      {:ok, user} = update_user(garage.user, attrs[:garage])
+        Repo.transaction fn ->
+          {:ok, user} = update_user(garage.user, attrs)
 
-      garage
-      |> Garage.changeset(attrs[:garage])
-      |> put_assoc(:user, user)
-      |> put_assoc(:garage_categories, garage_categories)
-      |> Repo.update!()
+          garage
+          |> Garage.changeset(attrs)
+          |> put_assoc(:user, user)
+          |> put_assoc(:garage_categories, garage_categories)
+          |> Repo.update!()
 
-      get_garage!(garage.id)
+          get_garage!(garage.id)
+        end
+      invalid_assoc_changeset ->
+        {:error, invalid_assoc_changeset}
     end
   end
 
