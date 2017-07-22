@@ -90,6 +90,7 @@ defmodule EasyFixApi.Accounts do
     end
   end
 
+  # FIXME: ainda não funciona, mas não é prioridade
   def update_garage(%Garage{} = garage, attrs) do
     case Garage.assoc_changeset(attrs) do
       assoc_changeset = %{valid?: true} ->

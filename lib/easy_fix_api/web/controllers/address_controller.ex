@@ -3,6 +3,7 @@ defmodule EasyFixApi.Web.AddressController do
 
   alias EasyFixApi.Addresses
   alias EasyFixApi.Addresses.Address
+  alias EasyFixApi.Web.CityView
 
   action_fallback EasyFixApi.Web.FallbackController
 
@@ -38,5 +39,10 @@ defmodule EasyFixApi.Web.AddressController do
     with {:ok, %Address{}} <- Addresses.delete_address(address) do
       send_resp(conn, :no_content, "")
     end
+  end
+
+  def cities(conn, _params) do
+    cities = Addresses.list_cities()
+    render(conn, CityView, "cities.json", cities: cities)
   end
 end

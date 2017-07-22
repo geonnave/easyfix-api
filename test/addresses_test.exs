@@ -21,8 +21,8 @@ defmodule EasyFixApi.AddressesTest do
 
   setup do
     {:ok, state_x = %{id: id_x}} = Addresses.create_state(%{name: "state_x"})
-    {:ok, city_a} = Addresses.create_city(%{name: "city_a", state: id_x})
-    {:ok, city_b} = Addresses.create_city(%{name: "city_b", state: id_x})
+    {:ok, city_a} = Addresses.create_city(%{name: "city_a", state_id: id_x})
+    {:ok, city_b} = Addresses.create_city(%{name: "city_b", state_id: id_x})
 
     {:ok, user} = Accounts.create_user(%{email: "user@email.com", password: "password"})
 
@@ -46,7 +46,7 @@ defmodule EasyFixApi.AddressesTest do
 
   test "creates a state and a city and associates them" do
     {:ok, state = %{id: id}} = Addresses.create_state(%{name: "São Paulo"})
-    attrs = %{name: "São Paulo", state: id}
+    attrs = %{name: "São Paulo", state_id: id}
     {:ok, city} = Addresses.create_city(attrs)
 
     %{cities: cities} = Repo.preload(state, :cities)

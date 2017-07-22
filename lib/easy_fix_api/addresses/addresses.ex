@@ -38,12 +38,13 @@ defmodule EasyFixApi.Addresses do
 
   def list_cities do
     Repo.all(City)
+    |> Repo.preload([:state])
   end
 
   def get_city!(id), do: Repo.get!(City, id)
 
   def create_city(attrs \\ %{}) do
-    state = get_state!(attrs[:state])
+    state = get_state!(attrs[:state_id])
 
     %City{}
     |> City.changeset(attrs)

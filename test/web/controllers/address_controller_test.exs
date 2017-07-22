@@ -19,7 +19,7 @@ defmodule EasyFixApi.Web.AddressControllerTest do
 
   setup %{conn: conn} do
     {:ok, state_x = %{id: id_x}} = Addresses.create_state(%{name: "state_x"})
-    {:ok, city_a} = Addresses.create_city(%{name: "city_a", state: id_x})
+    {:ok, city_a} = Addresses.create_city(%{name: "city_a", state_id: id_x})
     {:ok, user} = Accounts.create_user(%{email: "user@email.com", password: "password"})
 
     {:ok, 
