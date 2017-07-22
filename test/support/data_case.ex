@@ -22,6 +22,7 @@ defmodule EasyFixApi.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import EasyFixApi.DataCase
+      import EasyFixApi.Factory
     end
   end
 

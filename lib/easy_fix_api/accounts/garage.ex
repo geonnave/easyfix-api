@@ -13,13 +13,18 @@ defmodule EasyFixApi.Accounts.Garage do
     timestamps()
   end
 
+  def create_changeset(attrs) do
+    %__MODULE__{}
+    |> changeset(attrs)
+  end
+
   def changeset(struct, attrs) do
     struct
     |> cast(attrs, [:name, :owner_name, :phone, :cnpj])
     |> validate_required([:name, :owner_name, :phone, :cnpj])
   end
 
-  @assoc_types %{garage_categories: {:array, :integer}}
+  @assoc_types %{garage_categories_ids: {:array, :integer}, address: :map}
   def assoc_changeset(attrs) do
     {attrs, @assoc_types}
     |> cast(attrs, Map.keys(@assoc_types))

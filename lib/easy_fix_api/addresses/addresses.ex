@@ -4,9 +4,7 @@ defmodule EasyFixApi.Addresses do
   """
 
   import Ecto.{Query, Changeset}, warn: false
-  alias EasyFixApi.Repo
-
-  alias EasyFixApi.Accounts
+  alias EasyFixApi.{Repo, Accounts, Helpers}
 
   alias EasyFixApi.Addresses.State
 
@@ -83,21 +81,22 @@ defmodule EasyFixApi.Addresses do
     |> preload_all_nested_associations()
   end
 
-  def create_address(attrs \\ %{}) do
-    case Address.assoc_changeset(attrs) do
-      assoc_changeset = %{valid?: true} ->
-        address_assocs = apply_changes(assoc_changeset)
-        city = get_city!(address_assocs[:city])
-        user = Accounts.get_user!(address_assocs[:user])
+  def create_address(attrs \\ %{}, user_id) do
+    with address_changeset = %{valid?: true} <- Address.create_changeset(attrs),
+         address_assoc_changeset = %{valid?: true} <- Address.assoc_changeset(attrs),
+         address_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(address_assoc_changeset) do
 
-        %Address{}
-        |> Address.changeset(attrs)
-        |> put_assoc(:city, city)
-        |> put_assoc(:user, user)
-        |> Repo.insert()
-      invalid_assoc_changeset ->
-        {:error, invalid_assoc_changeset}
-    end
+      city = get_city!(address_assoc_attrs[:city_id])
+      user = Accounts.get_user!(user_id)
+
+      address_changeset
+      |> put_assoc(:city, city)
+      |> put_assoc(:user, user)
+      |> Repo.insert()
+    else
+      %{valid?: false} = changeset ->
+        {:error, changeset}
+     end
   end
 
   # FIXME: ainda não funciona

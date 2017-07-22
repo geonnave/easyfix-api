@@ -16,13 +16,18 @@ defmodule EasyFixApi.Addresses.Address do
   @optional_attrs ~w()
   @required_attrs ~w(postal_code address_line1 address_line2 neighborhood)a
 
+  def create_changeset(attrs) do
+    %__MODULE__{}
+    |> changeset(attrs)
+  end
+
   def changeset(address, attrs) do
     address
     |> cast(attrs, @optional_attrs ++ @required_attrs)
     |> validate_required(@required_attrs)
   end
 
-  @assoc_types %{city: :integer, user: :integer}
+  @assoc_types %{city_id: :integer}
   def assoc_changeset(attrs) do
     {attrs, @assoc_types}
     |> cast(attrs, Map.keys(@assoc_types))

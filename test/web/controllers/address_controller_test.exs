@@ -12,9 +12,8 @@ defmodule EasyFixApi.Web.AddressControllerTest do
   def fixture(:address, attrs, city, user) do
     {:ok, address} =
       attrs
-      |> put_in([:city], city.id)
-      |> put_in([:user], user.id)
-      |> Addresses.create_address()
+      |> put_in([:city_id], city.id)
+      |> Addresses.create_address(user.id)
     address
   end
 
@@ -39,8 +38,8 @@ defmodule EasyFixApi.Web.AddressControllerTest do
   test "creates address and renders address when data is valid", %{conn: conn, city_a: city_a, user: user} do
     attrs = 
       @create_attrs
-      |> put_in([:city], city_a.id)
-      |> put_in([:user], user.id)
+      |> put_in([:city_id], city_a.id)
+      |> put_in([:user_id], user.id)
 
     conn = post conn, address_path(conn, :create), address: attrs
     assert %{"id" => id} = json_response(conn, 201)["data"]

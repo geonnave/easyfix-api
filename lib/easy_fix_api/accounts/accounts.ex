@@ -4,10 +4,9 @@ defmodule EasyFixApi.Accounts do
   """
 
   import Ecto.{Query, Changeset}, warn: false
-  alias EasyFixApi.Repo
+  alias EasyFixApi.{Repo, Addresses, Helpers}
 
-  alias EasyFixApi.Accounts.User
-  alias EasyFixApi.Accounts.Garage
+  alias EasyFixApi.Accounts.{User, Garage}
   alias EasyFixApi.Parts.GarageCategory
 
   def get_by_email("garage", email) do
@@ -62,24 +61,32 @@ defmodule EasyFixApi.Accounts do
   end
 
   def create_garage(attrs \\ %{}) do
-    case Garage.assoc_changeset(attrs) do
-      assoc_changeset = %{valid?: true} ->
-        garage_assocs = apply_changes(assoc_changeset)
-        garage_categories =
-          garage_assocs[:garage_categories]
-          |> Enum.map(&Repo.get(GarageCategory, &1))
+    with garage_changeset = %{valid?: true} <- Garage.create_changeset(attrs),
+         garage_assoc_changeset = %{valid?: true} <- Garage.assoc_changeset(attrs),
+         garage_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(garage_assoc_changeset) do
 
-        Repo.transaction fn ->
-          {:ok, user} = create_user(attrs)
+      garage_categories =
+        (garage_assoc_attrs[:garage_categories_ids] || [])
+        |> Enum.map(&Repo.get(GarageCategory, &1))
 
-          %Garage{}
-          |> Garage.changeset(attrs)
+      Repo.transaction fn ->
+        {:ok, user} = create_user(attrs)
+
+        garage =
+          garage_changeset
           |> put_assoc(:user, user)
           |> put_assoc(:garage_categories, garage_categories)
           |> Repo.insert!()
-        end
-      invalid_assoc_changeset ->
-        {:error, invalid_assoc_changeset}
+
+        {:ok, _address} =
+          garage_assoc_attrs[:address]
+          |> Addresses.create_address(garage.user.id)
+
+        garage
+      end
+    else
+      %{valid?: false} = changeset ->
+        {:error, changeset}
     end
   end
 
@@ -90,7 +97,7 @@ defmodule EasyFixApi.Accounts do
 
         garage_assocs = apply_changes(assoc_changeset)
         garage_categories =
-          garage_assocs[:garage_categories]
+          garage_assocs[:garage_categories_ids]
           |> Enum.concat(inserted_category_ids)
           |> Enum.map(&Repo.get(GarageCategory, &1))
 

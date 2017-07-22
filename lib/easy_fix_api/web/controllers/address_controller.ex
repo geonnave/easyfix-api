@@ -12,7 +12,7 @@ defmodule EasyFixApi.Web.AddressController do
   end
 
   def create(conn, %{"address" => address_params}) do
-    with {:ok, %Address{} = address} <- Addresses.create_address(address_params) do
+    with {:ok, %Address{} = address} <- Addresses.create_address(address_params, address_params["user_id"]) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", address_path(conn, :show, address))

@@ -56,10 +56,9 @@ defmodule EasyFixApi.AddressesTest do
   test "creates an address", %{city_a: city_a, user: user} do
     attrs =
       @create_attrs
-      |> put_in([:city], city_a.id)
-      |> put_in([:user], user.id)
+      |> put_in([:city_id], city_a.id)
 
-    assert {:ok, address} = Addresses.create_address(attrs)
+    assert {:ok, address} = Addresses.create_address(attrs, user.id)
     assert address.address_line1 == "some address_line1"
     assert address.city.id == city_a.id
     assert address.user.id == user.id

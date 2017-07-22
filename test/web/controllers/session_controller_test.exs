@@ -9,11 +9,16 @@ defmodule EasyFixApi.Web.SessionControllerTest do
     name: "some name",
     owner_name: "some owner_name",
     password: "some password",
-    garage_categories: [],
+    garage_categories_ids: [],
     phone: "some phone"}
 
   test "creates a session for garage", %{conn: conn} do
-    Accounts.create_garage(@create_garage_attrs)
+    address = params_with_assocs(:address)
+
+    {:ok, _garage} =
+      @create_garage_attrs
+      |> put_in([:address], address)
+      |> Accounts.create_garage()
 
     conn = post conn, session_path(conn, :create), email: "email@example.com", password: "some password", user_type: "garage"
     %{"data" => %{
