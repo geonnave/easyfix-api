@@ -7,7 +7,7 @@ defmodule EasyFixApi.StaticDataLoader do
   end
   def prepare_csv(raw_csv), do: CSV.parse_string(raw_csv)
 
-  def transform_vehicles_models(raw_csv) do
+  def parse_vehicles_models(raw_csv) do
     {brands_to_models, _} =
       raw_csv
       |> prepare_csv()
@@ -20,7 +20,7 @@ defmodule EasyFixApi.StaticDataLoader do
       brands_to_models
   end
 
-  def transform_parts(raw_csv) do
+  def parse_parts(raw_csv) do
     {parts, _, _} =
       raw_csv
       |> prepare_csv()
@@ -53,7 +53,7 @@ defmodule EasyFixApi.StaticDataLoader do
     parts
   end
 
-  def transform_banks(raw_csv) do
+  def parse_banks(raw_csv) do
     raw_csv
     |> prepare_csv()
     |> Enum.map(fn [_ispb, _short_name, code, _is_compe_member, _access, name, _birth] ->
