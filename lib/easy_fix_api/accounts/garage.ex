@@ -9,6 +9,7 @@ defmodule EasyFixApi.Accounts.Garage do
     field :phone, :string
     many_to_many :garage_categories, EasyFixApi.Parts.GarageCategory, join_through: "garages_garage_categories"
     belongs_to :user, EasyFixApi.Accounts.User
+    belongs_to :bank_account, EasyFixApi.Payments.BankAccount
 
     timestamps()
   end

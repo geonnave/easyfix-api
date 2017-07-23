@@ -9,5 +9,16 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Payments do
       timestamps()
     end
 
+    create table(:bank_accounts) do
+      add :agency, :string
+      add :number, :string
+      add :bank_id, references(:banks)
+
+      timestamps()
+    end
+
+    alter table(:garages) do
+      add :bank_account_id, references(:bank_accounts)
+    end
   end
 end

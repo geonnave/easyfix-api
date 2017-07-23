@@ -5,6 +5,7 @@ defmodule EasyFixApi.Payments.Bank do
   schema "banks" do
     field :code, :string
     field :name, :string
+    has_many :bank_accounts, EasyFixApi.Payments.BankAccount
 
     timestamps()
   end

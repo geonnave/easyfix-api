@@ -30,7 +30,7 @@ defmodule EasyFixApi.StaticDataSeeds do
         brand = Repo.insert!(%Brand{name: brand_name})
         for model <- models do
           model = Ecto.build_assoc(brand, :models, %{name: model})
-          model = Repo.insert! model
+          Repo.insert! model
         end
       end)
     end)
@@ -45,8 +45,7 @@ defmodule EasyFixApi.StaticDataSeeds do
     "lista_pecas_#{system}.csv"
     |> read_from_path_priv_repo()
     |> parse_parts()
-    |> Enum.map(fn(p = %{name: name, group: group, sub_group: sub_group, garage_type: garage_type, repair_by_fixer: repair_by_fixer}) ->
-      IO.inspect repair_by_fixer
+    |> Enum.map(fn(%{name: name, group: group, sub_group: sub_group, garage_type: garage_type, repair_by_fixer: repair_by_fixer}) ->
       Repo.transaction(fn ->
         system = String.capitalize(system)
         part_system = case Repo.get_by(PartSystem, name: system) do
@@ -91,7 +90,7 @@ defmodule EasyFixApi.StaticDataSeeds do
             %RepairByFixerPart{}
             |> change()
             |> put_assoc(:part, part)
-          by_fixer = Repo.insert! by_fixer
+          Repo.insert! by_fixer
         end
 
       end)
@@ -103,7 +102,7 @@ defmodule EasyFixApi.StaticDataSeeds do
     |> read_from_path_priv_repo()
     |> parse_banks()
     |> Enum.map(fn(%{code: code, name: name}) ->
-      brand = Repo.insert!(%Bank{code: code, name: name})
+      Repo.insert!(%Bank{code: code, name: name})
     end)
   end
 
@@ -116,4 +115,4 @@ end
 # EasyFixApi.StaticDataSeeds.run_parts
 # EasyFixApi.StaticDataSeeds.run_vehicles_models
 # EasyFixApi.StaticDataSeeds.run_banks
-EasyFixApi.StaticDataSeeds.run_cities
+# EasyFixApi.StaticDataSeeds.run_cities

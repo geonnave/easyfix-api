@@ -97,7 +97,7 @@ defmodule EasyFixApi.Addresses do
     else
       %{valid?: false} = changeset ->
         {:error, changeset}
-     end
+    end
   end
 
   # FIXME: ainda não funciona

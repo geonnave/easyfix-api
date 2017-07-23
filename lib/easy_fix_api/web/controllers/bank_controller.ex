@@ -2,7 +2,6 @@ defmodule EasyFixApi.Web.BankController do
   use EasyFixApi.Web, :controller
 
   alias EasyFixApi.Payments
-  alias EasyFixApi.Payments.Bank
 
   action_fallback EasyFixApi.Web.FallbackController
 

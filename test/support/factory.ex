@@ -3,6 +3,7 @@ defmodule EasyFixApi.Factory do
 
   alias EasyFixApi.Addresses.{Address, City, State}
   alias EasyFixApi.Accounts.{User, Garage}
+  alias EasyFixApi.Payments.{Bank, BankAccount}
   alias EasyFixApi.Parts.GarageCategory
 
   def state_factory do
@@ -54,6 +55,21 @@ defmodule EasyFixApi.Factory do
   def garage_category_factory do
     %GarageCategory{
       name: sequence("some category")
+    }
+  end
+
+  def bank_factory do
+    %Bank{
+      name: "Itau",
+      code: "341"
+    }
+  end
+
+  def bank_account_factory do
+    %BankAccount{
+      agency: "2222",
+      number: "2345",
+      bank: build(:bank)
     }
   end
 end

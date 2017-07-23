@@ -4,8 +4,9 @@ defmodule EasyFixApi.Accounts do
   """
 
   import Ecto.{Query, Changeset}, warn: false
-  alias EasyFixApi.{Repo, Addresses, Helpers}
+  import EasyFixApi.Helpers
 
+  alias EasyFixApi.{Repo, Addresses}
   alias EasyFixApi.Accounts.{User, Garage}
   alias EasyFixApi.Parts.GarageCategory
 
@@ -63,7 +64,7 @@ defmodule EasyFixApi.Accounts do
   def create_garage(attrs \\ %{}) do
     with garage_changeset = %{valid?: true} <- Garage.create_changeset(attrs),
          garage_assoc_changeset = %{valid?: true} <- Garage.assoc_changeset(attrs),
-         garage_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(garage_assoc_changeset) do
+         garage_assoc_attrs <- apply_changes_ensure_atom_keys(garage_assoc_changeset) do
 
       garage_categories =
         (garage_assoc_attrs[:garage_categories_ids] || [])
