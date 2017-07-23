@@ -52,4 +52,15 @@ defmodule EasyFixApi.StaticDataLoader do
 
     parts
   end
+
+  def transform_banks(raw_csv) do
+    raw_csv
+    |> prepare_csv()
+    |> Enum.map(fn [_ispb, _short_name, code, _is_compe_member, _access, name, _birth] ->
+      %{
+        code: (if code == "n/a", do: nil, else: code),
+        name: String.trim(name)
+      }
+    end)
+  end
 end

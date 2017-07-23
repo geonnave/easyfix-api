@@ -33,6 +33,8 @@ defmodule EasyFixApi.Web.Router do
     resources "/addresses", AddressController, except: [:new, :edit]
     get "/cities", AddressController, :cities
 
+    get "/banks", BankController, :index
+
     resources "/models", ModelController, except: [:new, :edit]
     resources "/brands", BrandController, except: [:new, :edit]
 
