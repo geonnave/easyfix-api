@@ -25,7 +25,7 @@ defmodule EasyFixApi.Accounts.Garage do
     |> validate_required([:name, :owner_name, :phone, :cnpj])
   end
 
-  @assoc_types %{garage_categories_ids: {:array, :integer}, address: :map}
+  @assoc_types %{garage_categories_ids: {:array, :integer}, address: :map, bank_account: :map}
   def assoc_changeset(attrs) do
     {attrs, @assoc_types}
     |> cast(attrs, Map.keys(@assoc_types))

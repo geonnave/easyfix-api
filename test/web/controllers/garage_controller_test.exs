@@ -29,10 +29,11 @@ defmodule EasyFixApi.Web.GarageControllerTest do
     phone: nil,
     garage_categories_ids: []}
 
-  def fixture(:garage, address) do
+  def fixture(:garage, address, bank_account) do
     {:ok, garage} =
       @create_attrs
       |> put_in([:address], address)
+      |> put_in([:bank_account], bank_account)
       |> Accounts.create_garage()
 
     garage
@@ -50,7 +51,11 @@ defmodule EasyFixApi.Web.GarageControllerTest do
 
   test "creates garage and renders garage when data is valid", %{conn: conn} do
     address = params_with_assocs(:address)
-    garage_attrs = put_in(@create_attrs, [:address], address)
+    bank_account = params_with_assocs(:bank_account)
+    garage_attrs =
+      @create_attrs
+      |> put_in([:address], address)
+      |> put_in([:bank_account], bank_account)
 
     conn = post conn, garage_path(conn, :create), garage: garage_attrs
     assert %{"id" => id} = json_response(conn, 201)["data"]
@@ -80,7 +85,8 @@ defmodule EasyFixApi.Web.GarageControllerTest do
   @tag :skip # skipping update tests for now
   test "updates chosen garage and renders garage when data is valid", %{conn: conn} do
     address = params_with_assocs(:address)
-    %Garage{id: id} = garage = fixture(:garage, address)
+    bank_account = params_with_assocs(:bank_account)
+    %Garage{id: id} = garage = fixture(:garage, address, bank_account)
 
     conn =
       conn
@@ -104,7 +110,8 @@ defmodule EasyFixApi.Web.GarageControllerTest do
 
   test "does not update chosen garage and renders errors when data is invalid", %{conn: conn} do
     address = params_with_assocs(:address)
-    garage = fixture(:garage, address)
+    bank_account = params_with_assocs(:bank_account)
+    garage = fixture(:garage, address, bank_account)
 
     conn =
       conn
@@ -116,7 +123,8 @@ defmodule EasyFixApi.Web.GarageControllerTest do
 
   test "deletes chosen garage", %{conn: conn} do
     address = params_with_assocs(:address)
-    garage = fixture(:garage, address)
+    bank_account = params_with_assocs(:bank_account)
+    garage = fixture(:garage, address, bank_account)
 
     conn =
       conn

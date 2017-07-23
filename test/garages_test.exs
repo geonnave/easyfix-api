@@ -38,42 +38,53 @@ defmodule EasyFixApi.GaragesTest do
     [category_a_id: category_a_id, category_b_id: category_b_id]
   end
 
-  def fixture(:garage, attrs \\ @create_attrs, cat_ids \\ [], address \\ %{}) do
+  def fixture(:garage) do
+    garage_category = insert(:garage_category)
+    address = params_with_assocs(:address)
+    bank_account = params_with_assocs(:bank_account)
+    fixture(:garage, @create_attrs, [garage_category.id], address, bank_account)
+  end
+
+  def fixture(:garage, attrs \\ @create_attrs, cat_ids \\ [], address \\ %{}, bank_account \\ %{}) do
     {:ok, garage} =
       attrs
       |> put_in([:garage_categories_ids], cat_ids)
       |> put_in([:address], address)
+      |> put_in([:bank_account], bank_account)
       |> Accounts.create_garage()
 
     %{garage | user: %{garage.user | password: nil}}
   end
 
-  test "list_garages/1 returns all garages", %{category_a_id: category_a_id} do
-    address = params_with_assocs(:address)
-    garage = fixture(:garage, @create_attrs, [category_a_id], address)
+  test "list_garages/1 returns all garages" do
+    garage = fixture(:garage)
     assert Accounts.list_garages() == [garage]
   end
 
-  test "get_garage! returns the garage with given id", %{category_a_id: category_a_id} do
-    address = params_with_assocs(:address)
-    garage = fixture(:garage, @create_attrs, [category_a_id], address)
+  test "get_garage! returns the garage with given id" do
+    garage = fixture(:garage)
     assert Accounts.get_garage!(garage.id) == garage
   end
 
-  test "get_garage! returns the correct associations", %{category_a_id: category_a_id} do
+  test "get_garage! returns the correct associations" do
+    garage_category = insert(:garage_category)
     address = params_with_assocs(:address)
-    garage = fixture(:garage, @create_attrs, [category_a_id], address)
+    bank_account = params_with_assocs(:bank_account)
+    garage = fixture(:garage, @create_attrs, [garage_category.id], address, bank_account)
     %{garage_categories: gc} = Accounts.get_garage!(garage.id)
-    assert Enum.map(gc, fn %{id: id} -> id end) == [category_a_id]
+    assert Enum.map(gc, fn %{id: id} -> id end) == [garage_category.id]
   end
 
-  test "create_garage/1 with valid data creates a garage", %{category_a_id: category_a_id} do
+  test "create_garage/1 with valid data creates a garage" do
+    garage_category = insert(:garage_category)
     address = params_with_assocs(:address)
+    bank_account = params_with_assocs(:bank_account)
 
     {:ok, garage} =
       @create_attrs
-      |> put_in([:garage_categories_ids], [category_a_id])
+      |> put_in([:garage_categories_ids], [garage_category.id])
       |> put_in([:address], address)
+      |> put_in([:bank_account], bank_account)
       |> Accounts.create_garage()
 
     assert garage.cnpj == "some cnpj"
@@ -88,13 +99,16 @@ defmodule EasyFixApi.GaragesTest do
   end
 
   @tag :skip # TODO: learn how to properly manage updates..
-  test "update_garage/2 with valid data updates the garage", %{category_a_id: category_a_id, category_b_id: category_b_id} do
+  test "update_garage/2 with valid data updates the garage" do
+    garage_category = insert(:garage_category)
     address = params_with_assocs(:address)
-    garage = fixture(:garage, @create_attrs, [category_a_id], address)
-    garage_attrs = put_in(@update_attrs, [:garage_categories_ids], [category_b_id])
+    bank_account = params_with_assocs(:bank_account)
+    garage = fixture(:garage, @create_attrs, [garage_category.id], address, bank_account)
 
+    other_garage_category = insert(:garage_category)
+    garage_attrs = put_in(@update_attrs, [:garage_categories_ids], [other_garage_category.id])
     assert {:ok, garage} = Accounts.update_garage(garage, garage_attrs)
-    assert %Garage{} = garage
+
     assert garage.cnpj == "some updated cnpj"
     assert garage.user.email == "some@updated_email.com"
     assert garage.name == "some updated name"
@@ -102,27 +116,26 @@ defmodule EasyFixApi.GaragesTest do
     assert garage.phone == "some updated phone"
 
     category_ids = Enum.map(garage.garage_categories_ids, fn %{id: id} -> id end) |> Enum.sort
-    category_a_and_b_ids = Enum.sort([category_a_id, category_b_id])
+    category_a_and_b_ids = Enum.sort([garage_category.id, other_garage_category.id])
     assert category_a_and_b_ids == category_ids
   end
 
   test "update_garage/2 with invalid data returns error changeset" do
-    address = params_with_assocs(:address)
-    garage = fixture(:garage, @create_attrs, [], address)
+    garage = fixture(:garage)
     {:error, _changeset} = Accounts.update_garage(garage, @invalid_attrs)
     assert garage == Accounts.get_garage!(garage.id)
   end
 
   test "delete_garage/1 deletes the garage" do
     address = params_with_assocs(:address)
-    garage = fixture(:garage, @create_attrs, [], address)
+    bank_account = params_with_assocs(:bank_account)
+    garage = fixture(:garage, @create_attrs, [], address, bank_account)
     assert {:ok, %Garage{}} = Accounts.delete_garage(garage)
     assert_raise Ecto.NoResultsError, fn -> Accounts.get_garage!(garage.id) end
   end
 
   test "change_garage/1 returns a garage changeset" do
-    address = params_with_assocs(:address)
-    garage = fixture(:garage, @create_attrs, [], address)
+    garage = fixture(:garage)
     assert %Ecto.Changeset{} = Accounts.change_garage(garage)
   end
 end

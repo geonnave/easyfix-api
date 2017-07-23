@@ -6,7 +6,7 @@ defmodule EasyFixApi.Accounts do
   import Ecto.{Query, Changeset}, warn: false
   import EasyFixApi.Helpers
 
-  alias EasyFixApi.{Repo, Addresses}
+  alias EasyFixApi.{Repo, Addresses, Payments}
   alias EasyFixApi.Accounts.{User, Garage}
   alias EasyFixApi.Parts.GarageCategory
 
@@ -72,6 +72,10 @@ defmodule EasyFixApi.Accounts do
 
       Repo.transaction fn ->
         {:ok, user} = create_user(attrs)
+
+        {:ok, bank_account} =
+          garage_assoc_attrs[:bank_account]
+          |> Payments.create_bank_account()
 
         garage =
           garage_changeset
