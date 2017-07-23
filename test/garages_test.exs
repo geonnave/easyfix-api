@@ -58,7 +58,8 @@ defmodule EasyFixApi.GaragesTest do
 
   test "list_garages/1 returns all garages" do
     garage = fixture(:garage)
-    assert Accounts.list_garages() == [garage]
+    [listed_garage] = Accounts.list_garages()
+    assert listed_garage.id == garage.id
   end
 
   test "get_garage! returns the garage with given id" do

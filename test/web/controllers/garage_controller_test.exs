@@ -67,14 +67,11 @@ defmodule EasyFixApi.Web.GarageControllerTest do
       |> recycle()
       |> put_req_header("authorization", "Bearer #{jwt}")
       |> get(garage_path(conn, :show, id))
-    assert json_response(conn, 200)["data"] == %{
-      "id" => id,
-      "cnpj" => "some cnpj",
-      "email" => "foo@example.com",
-      "name" => "some name",
-      "owner_name" => "some owner_name",
-      "phone" => "some phone",
-      "garage_categories" => []}
+
+    assert json_response(conn, 200)["data"]["id"] == id
+    assert json_response(conn, 200)["data"]["garage_categories"] == []
+    assert is_map(json_response(conn, 200)["data"]["address"])
+    assert is_map(json_response(conn, 200)["data"]["bank_account"])
   end
 
   test "does not create garage and renders errors when data is invalid", %{conn: conn} do

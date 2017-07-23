@@ -14,9 +14,10 @@ defmodule EasyFixApi.Accounts do
     from(g in Garage,
       join: u in User,
       on: g.user_id == u.id,
-      where: u.email == ^email,
-      preload: [:user, :garage_categories]
-    ) |> Repo.one
+      where: u.email == ^email
+    )
+    |> Repo.one
+    |> garage_preload_all_nested_assocs()
   end
 
   def list_users do
@@ -51,14 +52,19 @@ defmodule EasyFixApi.Accounts do
 
   def list_garages do
     Repo.all(Garage)
-    |> Repo.preload(:garage_categories)
     |> Repo.preload(:user)
   end
 
   def get_garage!(id) do
     Repo.get!(Garage, id)
+    |> garage_preload_all_nested_assocs()
+  end
+
+  def garage_preload_all_nested_assocs(garage) do
+    garage
     |> Repo.preload(:garage_categories)
-    |> Repo.preload(:user)
+    |> Repo.preload([user: [addresses: [:city]]])
+    |> Repo.preload([bank_account: [:bank]])
   end
 
   def create_garage(attrs \\ %{}) do
@@ -80,6 +86,7 @@ defmodule EasyFixApi.Accounts do
         garage =
           garage_changeset
           |> put_assoc(:user, user)
+          |> put_assoc(:bank_account, bank_account)
           |> put_assoc(:garage_categories, garage_categories)
           |> Repo.insert!()
 
@@ -88,6 +95,7 @@ defmodule EasyFixApi.Accounts do
           |> Addresses.create_address(garage.user.id)
 
         garage
+        |> garage_preload_all_nested_assocs()
       end
     else
       %{valid?: false} = changeset ->
