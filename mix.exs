@@ -34,6 +34,7 @@ defmodule EasyFixApi.Mixfile do
       {:comeonin, "~> 3.0"},
       {:guardian, "~> 0.14"},
       {:ex_machina, "~> 2.0", only: [:dev, :test]},
+      {:corsica, "~> 1.0"},
    ]
   end
 
