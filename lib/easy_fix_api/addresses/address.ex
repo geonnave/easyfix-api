@@ -13,8 +13,8 @@ defmodule EasyFixApi.Addresses.Address do
     timestamps()
   end
 
-  @optional_attrs ~w()
-  @required_attrs ~w(postal_code address_line1 address_line2 neighborhood)a
+  @optional_attrs ~w(address_line2)
+  @required_attrs ~w(postal_code address_line1 neighborhood)a
 
   def create_changeset(attrs) do
     %__MODULE__{}
