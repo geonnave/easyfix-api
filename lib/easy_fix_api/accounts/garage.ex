@@ -1,6 +1,6 @@
 defmodule EasyFixApi.Accounts.Garage do
   use Ecto.Schema
-  import Ecto.Changeset, warn: false
+  import Ecto.Changeset
 
   schema "garages" do
     field :cnpj, :string
