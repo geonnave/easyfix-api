@@ -5,7 +5,7 @@ defmodule EasyFixApi.Factory do
   alias EasyFixApi.Accounts.{User, Garage}
   alias EasyFixApi.Payments.{Bank, BankAccount}
   alias EasyFixApi.Orders.{Diagnostic}
-  alias EasyFixApi.Parts.GarageCategory
+  alias EasyFixApi.Parts.{Part, PartSubGroup, PartGroup, PartSystem, GarageCategory}
 
   def diagnostic_factory do
     %Diagnostic{
@@ -13,7 +13,8 @@ defmodule EasyFixApi.Factory do
       comment: "some comment",
       need_tow_truck: true,
       status: "some status",
-      expiration_date: "2017-08-05 17:44:57.913808"
+      expiration_date: "2017-08-05 17:44:57.913808",
+      parts: build_list(2, :part)
     }
   end
 
@@ -66,6 +67,30 @@ defmodule EasyFixApi.Factory do
   def garage_category_factory do
     %GarageCategory{
       name: sequence("some category")
+    }
+  end
+
+  def part_factory do
+    %Part{
+      name: sequence("some part"),
+      part_sub_group: build(:part_sub_group)
+    }
+  end
+  def part_sub_group_factory do
+    %PartSubGroup{
+      name: sequence("some part_sub_group"),
+      part_group: build(:part_group)
+    }
+  end
+  def part_group_factory do
+    %PartGroup{
+      name: sequence("some part group"),
+      part_system: build(:part_system)
+    }
+  end
+  def part_system_factory do
+    %PartSystem{
+      name: sequence("some part")
     }
   end
 
