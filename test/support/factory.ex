@@ -12,7 +12,8 @@ defmodule EasyFixApi.Factory do
       accepts_used_parts: true,
       comment: "some comment",
       need_tow_truck: true,
-      status: "some status"
+      status: "some status",
+      expiration_date: "2017-08-05 17:44:57.913808"
     }
   end
 
