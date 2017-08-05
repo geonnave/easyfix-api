@@ -21,7 +21,8 @@ defmodule EasyFixApi.Web.DiagnosticControllerTest do
   end
 
   test "creates diagnostic and renders diagnostic when data is valid", %{conn: conn} do
-    conn = post conn, diagnostic_path(conn, :create), diagnostic: @create_attrs
+    diagnostic_attrs = params_for(:diagnostic)
+    conn = post conn, diagnostic_path(conn, :create), diagnostic: diagnostic_attrs
     assert %{"id" => id} = json_response(conn, 201)["data"]
 
     conn = get conn, diagnostic_path(conn, :show, id)
@@ -39,7 +40,7 @@ defmodule EasyFixApi.Web.DiagnosticControllerTest do
   end
 
   test "deletes chosen diagnostic", %{conn: conn} do
-    diagnostic = fixture(:diagnostic)
+    diagnostic = insert(:diagnostic)
     conn = delete conn, diagnostic_path(conn, :delete, diagnostic)
     assert response(conn, 204)
     assert_error_sent 404, fn ->

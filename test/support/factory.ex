@@ -4,7 +4,17 @@ defmodule EasyFixApi.Factory do
   alias EasyFixApi.Addresses.{Address, City, State}
   alias EasyFixApi.Accounts.{User, Garage}
   alias EasyFixApi.Payments.{Bank, BankAccount}
+  alias EasyFixApi.Orders.{Diagnostic}
   alias EasyFixApi.Parts.GarageCategory
+
+  def diagnostic_factory do
+    %Diagnostic{
+      accepts_used_parts: true,
+      comment: "some comment",
+      need_tow_truck: true,
+      status: "some status"
+    }
+  end
 
   def state_factory do
     %State{
