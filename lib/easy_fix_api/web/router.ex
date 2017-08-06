@@ -37,6 +37,7 @@ defmodule EasyFixApi.Web.Router do
     get "/banks", BankController, :index
 
     resources "/diagnostics", DiagnosticController, except: [:new, :edit]
+    resources "/budgets", BudgetController, except: [:new, :edit]
 
     resources "/models", ModelController, except: [:new, :edit]
     resources "/brands", BrandController, except: [:new, :edit]

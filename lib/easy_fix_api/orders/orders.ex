@@ -44,4 +44,28 @@ defmodule EasyFixApi.Orders do
   defp preload_all_nested_associations(order_or_orders) do
     Repo.preload(order_or_orders, [parts: [part_sub_group: [part_group: :part_system]]])
   end
+
+  alias EasyFixApi.Orders.Budget
+
+  def list_budgets do
+    Repo.all(Budget)
+  end
+
+  def get_budget!(id), do: Repo.get!(Budget, id)
+
+  def create_budget(attrs \\ %{}) do
+    %Budget{}
+    |> Budget.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_budget(%Budget{} = budget, attrs) do
+    budget
+    |> Budget.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_budget(%Budget{} = budget) do
+    Repo.delete(budget)
+  end
 end

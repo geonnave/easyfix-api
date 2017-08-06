@@ -4,8 +4,15 @@ defmodule EasyFixApi.Factory do
   alias EasyFixApi.Addresses.{Address, City, State}
   alias EasyFixApi.Accounts.{User, Garage}
   alias EasyFixApi.Payments.{Bank, BankAccount}
-  alias EasyFixApi.Orders.{Diagnostic}
+  alias EasyFixApi.Orders.{Diagnostic, Budget}
   alias EasyFixApi.Parts.{Part, PartSubGroup, PartGroup, PartSystem, GarageCategory}
+
+  def budget_factory do
+    %Budget{
+      due_date: "2017-08-06T17:44:57.913808Z",
+      service_cost: 42
+    }
+  end
 
   def diagnostic_factory do
     %Diagnostic{
@@ -13,7 +20,7 @@ defmodule EasyFixApi.Factory do
       comment: "some comment",
       need_tow_truck: true,
       status: "some status",
-      expiration_date: "2017-08-05 17:44:57.913808",
+      expiration_date: "2017-08-05 17:44:57.913808Z",
       parts: build_list(2, :part)
     }
   end
