@@ -6,6 +6,6 @@ defmodule EasyFixApi.Parts.PartSubGroup do
     belongs_to :part_group, EasyFixApi.Parts.PartGroup
     has_many :parts, EasyFixApi.Parts.Part
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 end

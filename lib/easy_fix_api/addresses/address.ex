@@ -10,7 +10,7 @@ defmodule EasyFixApi.Addresses.Address do
     belongs_to :city, EasyFixApi.Addresses.City
     belongs_to :user, EasyFixApi.Accounts.User
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @optional_attrs ~w(address_line2)

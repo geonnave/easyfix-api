@@ -5,6 +5,6 @@ defmodule EasyFixApi.Cars.Brand do
     field :name, :string
     has_many :models, EasyFixApi.Cars.Model
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 end

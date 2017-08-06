@@ -5,14 +5,14 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Cars do
     create table(:brands) do
       add :name, :string
 
-      timestamps()
+      timestamps(type: :timestamptz)
     end
 
     create table(:models) do
       add :name, :string
       add :brand_id, references(:brands)
 
-      timestamps()
+      timestamps(type: :timestamptz)
     end
 
   end

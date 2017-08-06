@@ -4,6 +4,6 @@ defmodule EasyFixApi.Business.RepairByFixerPart do
   schema "repair_by_fixer_parts" do
     belongs_to :part, EasyFixApi.Parts.Part
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 end

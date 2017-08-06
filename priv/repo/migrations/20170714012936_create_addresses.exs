@@ -5,14 +5,14 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Addresses do
     create table(:states) do
       add :name, :string
 
-      timestamps()
+      timestamps(type: :timestamptz)
     end
 
     create table(:cities) do
       add :name, :string
       add :state_id, references(:states)
 
-      timestamps()
+      timestamps(type: :timestamptz)
     end
 
     create table(:addresses) do
@@ -23,7 +23,7 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Addresses do
       add :city_id, references(:cities)
       add :user_id, references(:users)
 
-      timestamps()
+      timestamps(type: :timestamptz)
     end
   end
 end

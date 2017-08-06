@@ -11,7 +11,7 @@ defmodule EasyFixApi.Accounts.Garage do
     belongs_to :user, EasyFixApi.Accounts.User
     belongs_to :bank_account, EasyFixApi.Payments.BankAccount
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @optional_attrs ~w()

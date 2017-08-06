@@ -5,7 +5,7 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Business do
     create table(:repair_by_fixer_parts) do
       add :part_id, references(:parts)
 
-      timestamps()
+      timestamps(type: :timestamptz)
     end
 
   end

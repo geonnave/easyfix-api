@@ -6,7 +6,7 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Accounts do
       add :email, :string
       add :password_hash, :string
 
-      timestamps()
+      timestamps(type: :timestamptz)
     end
 
     create table(:garages) do
@@ -16,7 +16,7 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Accounts do
       add :cnpj, :string
       add :user_id, references(:users)
 
-      timestamps()
+      timestamps(type: :timestamptz)
     end
 
     create table(:garages_garage_categories, primary_key: false) do

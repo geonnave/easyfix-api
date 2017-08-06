@@ -8,6 +8,6 @@ defmodule EasyFixApi.Parts.Part do
     has_one :repair_by_fixer_part, EasyFixApi.Business.RepairByFixerPart
     many_to_many :diagnostics, EasyFixApi.Orders.Diagnostic, join_through: "diagnostics_parts"
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 end

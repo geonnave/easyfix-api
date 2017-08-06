@@ -8,7 +8,7 @@ defmodule EasyFixApi.Payments.BankAccount do
     belongs_to :bank, EasyFixApi.Payments.Bank
     has_one :garage, EasyFixApi.Accounts.Garage
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   def create_changeset(attrs) do

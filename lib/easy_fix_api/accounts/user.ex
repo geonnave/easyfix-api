@@ -8,7 +8,7 @@ defmodule EasyFixApi.Accounts.User do
     field :password, :string, virtual: true
     has_many :addresses, EasyFixApi.Addresses.Address
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   def changeset(struct, attrs) do

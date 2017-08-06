@@ -7,9 +7,9 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
       add :need_tow_truck, :boolean, default: false, null: false
       add :status, :string
       add :comment, :string
-      add :expiration_date, :naive_datetime
+      add :expiration_date, :utc_datetime
 
-      timestamps()
+      timestamps(type: :timestamptz)
     end
 
     create table(:diagnostics_parts) do

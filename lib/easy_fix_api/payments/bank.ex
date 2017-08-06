@@ -7,7 +7,7 @@ defmodule EasyFixApi.Payments.Bank do
     field :name, :string
     has_many :bank_accounts, EasyFixApi.Payments.BankAccount
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   def changeset(bank, attrs) do

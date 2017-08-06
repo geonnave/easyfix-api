@@ -7,7 +7,7 @@ defmodule EasyFixApi.Parts.GarageCategory do
     has_many :parts, EasyFixApi.Parts.Part
     many_to_many :garages, EasyFixApi.Parts.GarageCategory, join_through: "garages_garage_categories"
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   def changeset(struct, attrs) do

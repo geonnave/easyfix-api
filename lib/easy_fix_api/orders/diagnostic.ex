@@ -7,10 +7,10 @@ defmodule EasyFixApi.Orders.Diagnostic do
     field :comment, :string
     field :need_tow_truck, :boolean, default: false
     field :status, :string
-    field :expiration_date, :naive_datetime
+    field :expiration_date, :utc_datetime
     many_to_many :parts, EasyFixApi.Parts.Part, join_through: "diagnostics_parts", on_delete: :delete_all
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @optional_attrs ~w(comment)

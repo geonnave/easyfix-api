@@ -6,7 +6,7 @@ defmodule EasyFixApi.Addresses.State do
     field :name, :string
     has_many :cities, EasyFixApi.Addresses.City
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   def changeset(state, attrs) do
