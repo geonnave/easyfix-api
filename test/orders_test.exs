@@ -42,4 +42,19 @@ defmodule EasyFixApi.OrdersTest do
     assert 2 == EasyFixApi.Parts.list_parts |> length()
     assert_raise Ecto.NoResultsError, fn -> Orders.get_diagnostic!(diagnostic.id) end
   end
+
+  test "create_budget_part/1 with valid data creates a budget_part" do
+    budget = insert(:budget)
+    part = insert(:part)
+    budget_part_attrs =
+      params_for(:budget_part)
+      |> put_in([:part_id], part.id)
+      |> put_in([:budget_id], budget.id)
+
+    {:ok, budget_part} = Orders.create_budget_part(budget_part_attrs)
+    assert budget_part.budget.id == budget.id
+    assert budget_part.part.id == part.id
+    assert budget_part.price == budget_part_attrs[:price]
+    assert budget_part.quantity == budget_part_attrs[:quantity]
+  end
 end

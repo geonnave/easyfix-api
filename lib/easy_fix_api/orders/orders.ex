@@ -5,6 +5,7 @@ defmodule EasyFixApi.Orders do
 
   import Ecto.{Query, Changeset}, warn: false
   alias EasyFixApi.{Repo, Helpers}
+  alias EasyFixApi.Parts
   alias EasyFixApi.Parts.Part
 
   alias EasyFixApi.Orders.Diagnostic
@@ -67,5 +68,18 @@ defmodule EasyFixApi.Orders do
 
   def delete_budget(%Budget{} = budget) do
     Repo.delete(budget)
+  end
+
+  alias EasyFixApi.Orders.BudgetPart
+
+  def create_budget_part(attrs \\ %{}) do
+    part = Parts.get_part!(attrs[:part_id])
+    budget = get_budget!(attrs[:budget_id])
+
+    %BudgetPart{}
+    |> BudgetPart.changeset(attrs)
+    |> put_assoc(:part, part)
+    |> put_assoc(:budget, budget)
+    |> Repo.insert()
   end
 end

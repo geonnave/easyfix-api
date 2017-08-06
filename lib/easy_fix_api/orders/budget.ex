@@ -5,6 +5,7 @@ defmodule EasyFixApi.Orders.Budget do
   schema "budgets" do
     field :due_date, :utc_datetime
     field :service_cost, :integer
+    has_many :parts, EasyFixApi.Orders.BudgetPart
 
     timestamps(type: :utc_datetime)
   end

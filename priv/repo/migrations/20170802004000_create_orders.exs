@@ -16,7 +16,6 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
       add :diagnostic_id, references(:diagnostics)
       add :part_id, references(:parts)
     end
-
     create unique_index(:diagnostics_parts, [:diagnostic_id, :part_id])
 
     create table(:budgets) do
@@ -25,5 +24,15 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
 
       timestamps(type: :timestamptz)
     end
+
+    create table(:budgets_parts) do
+      add :budget_id, references(:budgets)
+      add :part_id, references(:parts)
+      add :quantity, :integer
+      add :price, :integer
+
+      timestamps(type: :timestamptz)
+    end
+    create unique_index(:budgets_parts, [:budget_id, :part_id])
   end
 end
