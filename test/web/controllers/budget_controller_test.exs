@@ -16,15 +16,25 @@ defmodule EasyFixApi.Web.BudgetControllerTest do
   end
 
   test "creates budget and renders budget when data is valid", %{conn: conn} do
-    budget_attrs = params_for(:budget)
+    part1 = insert(:part)
+    part2 = insert(:part)
+    parts = [
+      %{"part_id" => part1.id, "price" => 4200, "quantity" => 1},
+      %{"part_id" => part2.id, "price" => 200, "quantity" => 4},
+    ]
+
+    budget_attrs =
+      string_params_for(:budget)
+      |> put_in([:parts], parts)
+
     conn = post conn, budget_path(conn, :create), budget: budget_attrs
     assert %{"id" => id} = json_response(conn, 201)["data"]
 
     conn = get conn, budget_path(conn, :show, id)
     assert json_response(conn, 200)["data"] == %{
       "id" => id,
-      "due_date" => budget_attrs[:due_date],
-      "service_cost" => budget_attrs[:service_cost]}
+      "due_date" => budget_attrs["due_date"],
+      "service_cost" => budget_attrs["service_cost"]}
   end
 
   test "does not create budget and renders errors when data is invalid", %{conn: conn} do

@@ -2,7 +2,7 @@ defmodule EasyFixApi.OrdersTest do
   use EasyFixApi.DataCase
 
   alias EasyFixApi.Orders
-  alias EasyFixApi.Orders.Diagnostic
+  alias EasyFixApi.Orders.{Diagnostic, BudgetPart, Budget}
 
   @invalid_attrs %{accepts_used_parts: nil, comment: nil, need_tow_truck: nil, status: nil}
 
@@ -49,12 +49,28 @@ defmodule EasyFixApi.OrdersTest do
     budget_part_attrs =
       params_for(:budget_part)
       |> put_in([:part_id], part.id)
-      |> put_in([:budget_id], budget.id)
 
-    {:ok, budget_part} = Orders.create_budget_part(budget_part_attrs)
+    {:ok, %BudgetPart{} = budget_part} = Orders.create_budget_part(budget_part_attrs, budget.id)
     assert budget_part.budget.id == budget.id
     assert budget_part.part.id == part.id
     assert budget_part.price == budget_part_attrs[:price]
     assert budget_part.quantity == budget_part_attrs[:quantity]
+  end
+
+  test "create_budget/1 with valid data creates a budget" do
+    part1 = insert(:part)
+    part2 = insert(:part)
+    parts = [
+      %{part_id: part1.id, price: 4200, quantity: 1},
+      %{part_id: part2.id, price: 200, quantity: 4},
+    ]
+
+    budget_attrs =
+      params_for(:budget)
+      |> put_in([:parts], parts)
+
+    assert {:ok, %Budget{} = budget} = Orders.create_budget(budget_attrs)
+    assert budget.service_cost == budget_attrs[:service_cost]
+    assert length(budget.parts) == 2
   end
 end

@@ -24,7 +24,7 @@ defmodule EasyFixApi.Orders.Budget do
     |> validate_required(@required_attrs)
   end
 
-  @assoc_types %{}
+  @assoc_types %{parts: {:array, :map}}
   def assoc_changeset(attrs) do
     {attrs, @assoc_types}
     |> cast(attrs, Map.keys(@assoc_types))

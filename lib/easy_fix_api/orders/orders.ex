@@ -50,14 +50,40 @@ defmodule EasyFixApi.Orders do
 
   def list_budgets do
     Repo.all(Budget)
+    |> Repo.preload(:parts)
   end
 
-  def get_budget!(id), do: Repo.get!(Budget, id)
+  def get_budget!(id) do
+    Repo.get!(Budget, id)
+    |> Repo.preload(:parts)
+  end
 
   def create_budget(attrs \\ %{}) do
-    %Budget{}
-    |> Budget.changeset(attrs)
-    |> Repo.insert()
+    with budget_changeset = %{valid?: true} <- Budget.create_changeset(attrs),
+         budget_assoc_changeset = %{valid?: true} <- Budget.assoc_changeset(attrs),
+         budget_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(budget_assoc_changeset) do
+
+      Repo.transaction fn ->
+        budget =
+          budget_changeset
+          |> Repo.insert!()
+
+        for part <- budget_assoc_attrs[:parts] do
+          case create_budget_part(part, budget.id) do
+            {:error, budget_part_error_changeset} ->
+              Repo.rollback(budget_part_error_changeset)
+            _ ->
+              nil
+          end
+        end
+
+        budget
+        |> Repo.preload(:parts)
+      end
+    else
+      %{valid?: false} = changeset ->
+        {:error, changeset}
+    end
   end
 
   def update_budget(%Budget{} = budget, attrs) do
@@ -72,14 +98,21 @@ defmodule EasyFixApi.Orders do
 
   alias EasyFixApi.Orders.BudgetPart
 
-  def create_budget_part(attrs \\ %{}) do
-    part = Parts.get_part!(attrs[:part_id])
-    budget = get_budget!(attrs[:budget_id])
+  def create_budget_part(attrs \\ %{}, budget_id) do
+    with budget_part_changeset = %{valid?: true} <- BudgetPart.create_changeset(attrs),
+         budget_part_assoc_changeset = %{valid?: true} <- BudgetPart.assoc_changeset(attrs),
+         budget_part_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(budget_part_assoc_changeset) do
 
-    %BudgetPart{}
-    |> BudgetPart.changeset(attrs)
-    |> put_assoc(:part, part)
-    |> put_assoc(:budget, budget)
-    |> Repo.insert()
+        part = Parts.get_part!(budget_part_assoc_attrs[:part_id])
+        budget = get_budget!(budget_id)
+
+        budget_part_changeset
+        |> put_assoc(:part, part)
+        |> put_assoc(:budget, budget)
+        |> Repo.insert()
+    else
+      %{valid?: false} = changeset ->
+        {:error, changeset}
+    end
   end
 end
