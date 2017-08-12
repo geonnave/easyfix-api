@@ -65,9 +65,11 @@ defmodule EasyFixApi.Orders do
          budget_assoc_changeset = %{valid?: true} <- Budget.assoc_changeset(attrs),
          budget_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(budget_assoc_changeset) do
 
+      diagnostic = get_diagnostic!(budget_assoc_attrs[:diagnostic_id])
       Repo.transaction fn ->
         budget =
           budget_changeset
+          |> put_assoc(:diagnostic, diagnostic)
           |> Repo.insert!()
 
         for part <- budget_assoc_attrs[:parts] do

@@ -54,8 +54,8 @@ defmodule EasyFixApi.OrdersTest do
   end
 
   test "create_budget/1 with valid data creates a budget" do
-    part1 = insert(:part)
-    part2 = insert(:part)
+    diagnostic = insert(:diagnostic)
+    [part1, part2] = diagnostic.parts
     parts = [
       %{part_id: part1.id, price: 4200, quantity: 1},
       %{part_id: part2.id, price: 200, quantity: 4},
@@ -64,9 +64,11 @@ defmodule EasyFixApi.OrdersTest do
     budget_attrs =
       params_for(:budget)
       |> put_in([:parts], parts)
+      |> put_in([:diagnostic_id], diagnostic.id)
 
     assert {:ok, %Budget{} = budget} = Orders.create_budget(budget_attrs)
     assert budget.service_cost == budget_attrs[:service_cost]
     assert length(budget.parts) == 2
+    assert budget.diagnostic.id == diagnostic.id
   end
 end

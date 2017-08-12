@@ -7,6 +7,10 @@ defmodule EasyFixApi.Factory do
   alias EasyFixApi.Orders.{Diagnostic, Budget, BudgetPart}
   alias EasyFixApi.Parts.{Part, PartSubGroup, PartGroup, PartSystem, GarageCategory}
 
+  # to be called as `budget_with_parts(insert(:budget_part))`
+  def budget_with_parts(parts) do
+    build(:budget, parts: parts)
+  end
   def budget_factory do
     %Budget{
       due_date: "2017-08-06T17:44:57.913808Z",
@@ -17,7 +21,7 @@ defmodule EasyFixApi.Factory do
   def budget_part_factory do
     %BudgetPart{
       part: build(:part),
-      budget: build(:budget),
+      # budget: build(:budget),
       quantity: 1,
       price: 4200
     }

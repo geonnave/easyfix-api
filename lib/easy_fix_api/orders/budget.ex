@@ -6,6 +6,7 @@ defmodule EasyFixApi.Orders.Budget do
     field :due_date, :utc_datetime
     field :service_cost, :integer
     has_many :parts, EasyFixApi.Orders.BudgetPart
+    belongs_to :diagnostic, EasyFixApi.Orders.Diagnostic
 
     timestamps(type: :utc_datetime)
   end
@@ -24,7 +25,7 @@ defmodule EasyFixApi.Orders.Budget do
     |> validate_required(@required_attrs)
   end
 
-  @assoc_types %{parts: {:array, :map}}
+  @assoc_types %{parts: {:array, :map}, diagnostic_id: :integer}
   def assoc_changeset(attrs) do
     {attrs, @assoc_types}
     |> cast(attrs, Map.keys(@assoc_types))
@@ -32,6 +33,6 @@ defmodule EasyFixApi.Orders.Budget do
   end
 
   def all_nested_assocs do
-    [parts: [:part]]
+    [parts: [:part], diagnostic: []]
   end
 end

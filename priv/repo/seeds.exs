@@ -10,13 +10,14 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-alias EasyFixApi.{Cars, Parts, Accounts, Business, Addresses, Orders, GuardianSerializer, Repo}
+alias EasyFixApi.{Cars, Parts, Accounts, Business, Addresses, Orders, Payments, GuardianSerializer, Repo}
 alias EasyFixApi.Cars.{Brand, Model}
 alias EasyFixApi.Parts.{Part, PartSubGroup, PartGroup, PartSystem, GarageCategory}
 alias EasyFixApi.Accounts.{User, Garage}
 alias EasyFixApi.Business.RepairByFixerPart
 alias EasyFixApi.Addresses.{State, City, Address}
 alias EasyFixApi.Orders.{Diagnostic, Budget}
+alias EasyFixApi.Payments.{Bank, BankAccount}
 import Ecto.Changeset
 
 

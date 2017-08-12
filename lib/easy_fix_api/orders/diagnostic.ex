@@ -9,6 +9,7 @@ defmodule EasyFixApi.Orders.Diagnostic do
     field :status, :string
     field :expiration_date, :utc_datetime
     many_to_many :parts, EasyFixApi.Parts.Part, join_through: "diagnostics_parts", on_delete: :delete_all
+    has_many :budgets, EasyFixApi.Orders.Budget
 
     timestamps(type: :utc_datetime)
   end
