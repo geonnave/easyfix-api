@@ -8,12 +8,8 @@ defmodule EasyFixApi.OrdersTest do
 
   test "list_diagnostics/1 returns all diagnostics" do
     diagnostic = insert(:diagnostic)
-    assert Orders.list_diagnostics() == [diagnostic]
-  end
-
-  test "get_diagnostic! returns the diagnostic with given id" do
-    diagnostic = insert(:diagnostic)
-    assert Orders.get_diagnostic!(diagnostic.id) == diagnostic
+    [listed_diag] = Orders.list_diagnostics()
+    assert listed_diag.id == diagnostic.id
   end
 
   test "create_diagnostic/1 with valid data creates a diagnostic" do

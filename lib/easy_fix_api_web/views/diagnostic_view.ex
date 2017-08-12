@@ -15,6 +15,9 @@ defmodule EasyFixApiWeb.DiagnosticView do
       accepts_used_parts: diagnostic.accepts_used_parts,
       need_tow_truck: diagnostic.need_tow_truck,
       status: diagnostic.status,
-      comment: diagnostic.comment}
+      comment: diagnostic.comment,
+      expiration_date: diagnostic.expiration_date,
+      parts: render_many(diagnostic.parts, EasyFixApiWeb.PartView, "part.json")
+    }
   end
 end

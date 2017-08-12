@@ -31,12 +31,9 @@ defmodule EasyFixApiWeb.DiagnosticControllerTest do
     assert %{"id" => id} = json_response(conn, 201)["data"]
 
     conn = get conn, diagnostic_path(conn, :show, id)
-    assert json_response(conn, 200)["data"] == %{
-      "id" => id,
-      "accepts_used_parts" => true,
-      "comment" => "some comment",
-      "need_tow_truck" => true,
-      "status" => "some status"}
+    data_resp = json_response(conn, 200)["data"]
+    assert data_resp["id"] == id
+    assert length(data_resp["parts"]) == 2
   end
 
   test "does not create diagnostic and renders errors when data is invalid", %{conn: conn} do

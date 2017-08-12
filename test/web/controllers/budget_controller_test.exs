@@ -31,10 +31,9 @@ defmodule EasyFixApiWeb.BudgetControllerTest do
     assert %{"id" => id} = json_response(conn, 201)["data"]
 
     conn = get conn, budget_path(conn, :show, id)
-    assert json_response(conn, 200)["data"] == %{
-      "id" => id,
-      "due_date" => budget_attrs["due_date"],
-      "service_cost" => budget_attrs["service_cost"]}
+    data_resp = json_response(conn, 200)["data"]
+    assert data_resp["id"] == id
+    assert length(data_resp["parts"]) == 2
   end
 
   test "does not create budget and renders errors when data is invalid", %{conn: conn} do

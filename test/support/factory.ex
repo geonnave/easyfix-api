@@ -89,7 +89,8 @@ defmodule EasyFixApi.Factory do
   def part_factory do
     %Part{
       name: sequence("some part"),
-      part_sub_group: build(:part_sub_group)
+      part_sub_group: build(:part_sub_group),
+      garage_category: build(:garage_category),
     }
   end
   def part_sub_group_factory do

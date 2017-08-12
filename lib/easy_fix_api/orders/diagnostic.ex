@@ -33,4 +33,8 @@ defmodule EasyFixApi.Orders.Diagnostic do
     |> cast(attrs, Map.keys(@assoc_types))
     |> validate_required(Map.keys(@assoc_types))
   end
+
+  def all_nested_assocs do
+    [parts: [:garage_category, [part_sub_group: [part_group: :part_system]], :repair_by_fixer_part]]
+  end
 end

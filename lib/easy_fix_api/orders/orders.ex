@@ -12,12 +12,12 @@ defmodule EasyFixApi.Orders do
 
   def list_diagnostics do
     Repo.all(Diagnostic)
-    |> preload_all_nested_associations()
+    |> Repo.preload(Diagnostic.all_nested_assocs)
   end
 
   def get_diagnostic!(id) do
     Repo.get!(Diagnostic, id)
-    |> preload_all_nested_associations()
+    |> Repo.preload(Diagnostic.all_nested_assocs)
   end
 
   def create_diagnostic(attrs \\ %{}) do
@@ -32,6 +32,12 @@ defmodule EasyFixApi.Orders do
       diagnostic_changeset
       |> put_assoc(:parts, parts)
       |> Repo.insert()
+      |> case do
+        {:ok, diagnostic} ->
+          {:ok, Repo.preload(diagnostic, Diagnostic.all_nested_assocs)}
+        error ->
+          error
+      end
     else
       %{valid?: false} = changeset ->
         {:error, changeset}
@@ -42,20 +48,16 @@ defmodule EasyFixApi.Orders do
     Repo.delete(diagnostic)
   end
 
-  defp preload_all_nested_associations(order_or_orders) do
-    Repo.preload(order_or_orders, [parts: [part_sub_group: [part_group: :part_system]]])
-  end
-
   alias EasyFixApi.Orders.Budget
 
   def list_budgets do
     Repo.all(Budget)
-    |> Repo.preload(:parts)
+    |> Repo.preload(Budget.all_nested_assocs)
   end
 
   def get_budget!(id) do
     Repo.get!(Budget, id)
-    |> Repo.preload(:parts)
+    |> Repo.preload(Budget.all_nested_assocs)
   end
 
   def create_budget(attrs \\ %{}) do
@@ -78,7 +80,7 @@ defmodule EasyFixApi.Orders do
         end
 
         budget
-        |> Repo.preload(:parts)
+        |> Repo.preload(Budget.all_nested_assocs)
       end
     else
       %{valid?: false} = changeset ->

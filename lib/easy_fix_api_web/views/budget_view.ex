@@ -13,6 +13,8 @@ defmodule EasyFixApiWeb.BudgetView do
   def render("budget.json", %{budget: budget}) do
     %{id: budget.id,
       service_cost: budget.service_cost,
-      due_date: budget.due_date}
+      due_date: budget.due_date,
+      parts: render_many(budget.parts, EasyFixApiWeb.BudgetPartView, "budget_part.json")
+    }
   end
 end

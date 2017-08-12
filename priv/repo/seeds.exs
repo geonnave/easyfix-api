@@ -33,3 +33,12 @@ garage_category = Repo.insert! %GarageCategory{name: "Mecânica"}
 
 part_changeset = %Part{} |> cast(%{name: "disco de freio"}, [:name]) |> put_assoc(:part_sub_group, part_sub_group) |> put_assoc(:garage_category, garage_category)
 part = Repo.insert! part_changeset
+
+# inserting one Bank
+Repo.insert!(%Bank{code: "1", name: "São Paulo"})
+
+# inserting one State
+state = Repo.insert!(%State{name: "São Paulo"})
+
+city = Ecto.build_assoc(state, :cities, name: "São Paulo")
+city = Repo.insert! city

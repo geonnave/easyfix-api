@@ -30,4 +30,8 @@ defmodule EasyFixApi.Orders.Budget do
     |> cast(attrs, Map.keys(@assoc_types))
     |> validate_required(Map.keys(@assoc_types))
   end
+
+  def all_nested_assocs do
+    [parts: [:part]]
+  end
 end
