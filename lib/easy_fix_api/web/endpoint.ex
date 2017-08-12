@@ -1,7 +1,7 @@
-defmodule EasyFixApi.Web.Endpoint do
+defmodule EasyFixApiWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :easy_fix_api
 
-  socket "/socket", EasyFixApi.Web.UserSocket
+  socket "/socket", EasyFixApiWeb.UserSocket
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -39,7 +39,7 @@ defmodule EasyFixApi.Web.Endpoint do
     key: "_easy_fix_api_key",
     signing_salt: "NmfOVqLf"
 
-  plug EasyFixApi.Web.Router
+  plug EasyFixApiWeb.Router
 
   @doc """
   Dynamically loads configuration from the system environment

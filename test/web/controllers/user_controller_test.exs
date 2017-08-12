@@ -1,5 +1,5 @@
-defmodule EasyFixApi.Web.UserControllerTest do
-  use EasyFixApi.Web.ConnCase
+defmodule EasyFixApiWeb.UserControllerTest do
+  use EasyFixApiWeb.ConnCase
 
   alias EasyFixApi.Accounts
 

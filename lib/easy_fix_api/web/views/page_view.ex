@@ -1,3 +1,3 @@
-defmodule EasyFixApi.Web.PageView do
-  use EasyFixApi.Web, :view
+defmodule EasyFixApiWeb.PageView do
+  use EasyFixApiWeb, :view
 end

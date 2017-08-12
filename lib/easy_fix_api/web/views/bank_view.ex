@@ -1,6 +1,6 @@
-defmodule EasyFixApi.Web.BankView do
-  use EasyFixApi.Web, :view
-  alias EasyFixApi.Web.BankView
+defmodule EasyFixApiWeb.BankView do
+  use EasyFixApiWeb, :view
+  alias EasyFixApiWeb.BankView
 
   def render("index.json", %{banks: banks}) do
     %{data: render_many(banks, BankView, "bank.json")}

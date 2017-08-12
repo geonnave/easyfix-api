@@ -1,6 +1,6 @@
-defmodule EasyFixApi.Web.BrandView do
-  use EasyFixApi.Web, :view
-  alias EasyFixApi.Web.BrandView
+defmodule EasyFixApiWeb.BrandView do
+  use EasyFixApiWeb, :view
+  alias EasyFixApiWeb.BrandView
 
   def render("index.json", %{brands: brands}) do
     %{data: render_many(brands, BrandView, "brand.json")}

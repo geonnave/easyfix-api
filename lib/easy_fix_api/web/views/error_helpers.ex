@@ -1,4 +1,4 @@
-defmodule EasyFixApi.Web.ErrorHelpers do
+defmodule EasyFixApiWeb.ErrorHelpers do
   @moduledoc """
   Conveniences for translating and building error messages.
   """
@@ -32,9 +32,9 @@ defmodule EasyFixApi.Web.ErrorHelpers do
     #     dgettext "errors", "is invalid"
     #
     if count = opts[:count] do
-      Gettext.dngettext(EasyFixApi.Web.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(EasyFixApiWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(EasyFixApi.Web.Gettext, "errors", msg, opts)
+      Gettext.dgettext(EasyFixApiWeb.Gettext, "errors", msg, opts)
     end
   end
 end

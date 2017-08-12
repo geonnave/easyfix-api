@@ -10,10 +10,10 @@ config :easy_fix_api,
   ecto_repos: [EasyFixApi.Repo]
 
 # Configures the endpoint
-config :easy_fix_api, EasyFixApi.Web.Endpoint,
+config :easy_fix_api, EasyFixApiWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "GXA/2t6xovuVZHkDqMEie6sTQ0aypucKoOGe5oQtfvGzw2iDsL1v5AkdhvHEdhlV",
-  render_errors: [view: EasyFixApi.Web.ErrorView, accepts: ~w(html json)],
+  render_errors: [view: EasyFixApiWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: EasyFixApi.PubSub,
            adapter: Phoenix.PubSub.PG2]
 

@@ -1,6 +1,6 @@
-defmodule EasyFixApi.Web.RepairByFixerPartView do
-  use EasyFixApi.Web, :view
-  alias EasyFixApi.Web.RepairByFixerPartView
+defmodule EasyFixApiWeb.RepairByFixerPartView do
+  use EasyFixApiWeb, :view
+  alias EasyFixApiWeb.RepairByFixerPartView
 
   def render("index.json", %{repair_by_fixer_parts: repair_by_fixer_parts}) do
     %{data: render_many(repair_by_fixer_parts, RepairByFixerPartView, "repair_by_fixer_part.json")}

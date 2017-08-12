@@ -1,5 +1,5 @@
-defmodule EasyFixApi.Web.BankAccountControllerTest do
-  use EasyFixApi.Web.ConnCase
+defmodule EasyFixApiWeb.BankAccountControllerTest do
+  use EasyFixApiWeb.ConnCase
 
   alias EasyFixApi.Payments
   alias EasyFixApi.Payments.BankAccount

@@ -1,10 +1,10 @@
-defmodule EasyFixApi.Web.DiagnosticController do
-  use EasyFixApi.Web, :controller
+defmodule EasyFixApiWeb.DiagnosticController do
+  use EasyFixApiWeb, :controller
 
   alias EasyFixApi.Orders
   alias EasyFixApi.Orders.Diagnostic
 
-  action_fallback EasyFixApi.Web.FallbackController
+  action_fallback EasyFixApiWeb.FallbackController
 
   def index(conn, _params) do
     diagnostics = Orders.list_diagnostics()

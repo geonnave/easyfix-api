@@ -1,10 +1,10 @@
-defmodule EasyFixApi.Web.SessionController do
-  use EasyFixApi.Web, :controller
+defmodule EasyFixApiWeb.SessionController do
+  use EasyFixApiWeb, :controller
 
   alias EasyFixApi.Accounts
-  alias EasyFixApi.Web.{SessionView, ErrorView}
+  alias EasyFixApiWeb.{SessionView, ErrorView}
 
-  action_fallback EasyFixApi.Web.FallbackController
+  action_fallback EasyFixApiWeb.FallbackController
 
   def create(conn, %{"email" => email, "password" => password, "user_type" => user_type}) do
     with account when not is_nil(account) <- Accounts.get_by_email(user_type, email),

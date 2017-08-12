@@ -1,6 +1,6 @@
-defmodule EasyFixApi.Web.BudgetView do
-  use EasyFixApi.Web, :view
-  alias EasyFixApi.Web.BudgetView
+defmodule EasyFixApiWeb.BudgetView do
+  use EasyFixApiWeb, :view
+  alias EasyFixApiWeb.BudgetView
 
   def render("index.json", %{budgets: budgets}) do
     %{data: render_many(budgets, BudgetView, "budget.json")}

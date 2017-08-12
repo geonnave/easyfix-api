@@ -1,11 +1,11 @@
-defmodule EasyFixApi.Web.ChangesetView do
-  use EasyFixApi.Web, :view
+defmodule EasyFixApiWeb.ChangesetView do
+  use EasyFixApiWeb, :view
 
   @doc """
   Traverses and translates changeset errors.
 
   See `Ecto.Changeset.traverse_errors/2` and
-  `EasyFixApi.Web.ErrorHelpers.translate_error/1` for more details.
+  `EasyFixApiWeb.ErrorHelpers.translate_error/1` for more details.
   """
   def translate_errors(changeset) do
     Ecto.Changeset.traverse_errors(changeset, &translate_error/1)

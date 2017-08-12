@@ -1,11 +1,11 @@
-defmodule EasyFixApi.Web.AddressController do
-  use EasyFixApi.Web, :controller
+defmodule EasyFixApiWeb.AddressController do
+  use EasyFixApiWeb, :controller
 
   alias EasyFixApi.Addresses
   alias EasyFixApi.Addresses.Address
-  alias EasyFixApi.Web.CityView
+  alias EasyFixApiWeb.CityView
 
-  action_fallback EasyFixApi.Web.FallbackController
+  action_fallback EasyFixApiWeb.FallbackController
 
   def index(conn, _params) do
     addresses = Addresses.list_addresses()

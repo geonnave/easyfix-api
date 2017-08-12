@@ -1,9 +1,9 @@
-defmodule EasyFixApi.Web.RepairByFixerPartController do
-  use EasyFixApi.Web, :controller
+defmodule EasyFixApiWeb.RepairByFixerPartController do
+  use EasyFixApiWeb, :controller
 
   alias EasyFixApi.Business
 
-  action_fallback EasyFixApi.Web.FallbackController
+  action_fallback EasyFixApiWeb.FallbackController
 
   def index(conn, _params) do
     repair_by_fixer_parts = Business.list_repair_by_fixer_parts()

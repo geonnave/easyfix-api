@@ -1,5 +1,5 @@
-defmodule EasyFixApi.Web.PageController do
-  use EasyFixApi.Web, :controller
+defmodule EasyFixApiWeb.PageController do
+  use EasyFixApiWeb, :controller
 
   def index(conn, _params) do
     render conn, "index.html"

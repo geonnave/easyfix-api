@@ -1,9 +1,9 @@
-defmodule EasyFixApi.Web.PartSystemController do
-  use EasyFixApi.Web, :controller
+defmodule EasyFixApiWeb.PartSystemController do
+  use EasyFixApiWeb, :controller
 
   alias EasyFixApi.Parts
 
-  action_fallback EasyFixApi.Web.FallbackController
+  action_fallback EasyFixApiWeb.FallbackController
 
   def index(conn, _params) do
     part_systems = Parts.list_part_systems()

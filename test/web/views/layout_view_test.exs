@@ -1,3 +1,3 @@
-defmodule EasyFixApi.Web.LayoutViewTest do
-  use EasyFixApi.Web.ConnCase, async: true
+defmodule EasyFixApiWeb.LayoutViewTest do
+  use EasyFixApiWeb.ConnCase, async: true
 end

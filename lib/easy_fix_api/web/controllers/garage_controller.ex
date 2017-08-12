@@ -1,12 +1,12 @@
-defmodule EasyFixApi.Web.GarageController do
-  use EasyFixApi.Web, :controller
+defmodule EasyFixApiWeb.GarageController do
+  use EasyFixApiWeb, :controller
 
   alias EasyFixApi.Accounts
   alias EasyFixApi.Accounts.Garage
 
-  action_fallback EasyFixApi.Web.FallbackController
+  action_fallback EasyFixApiWeb.FallbackController
   plug Guardian.Plug.EnsureAuthenticated,
-    [handler: EasyFixApi.Web.SessionController] when not action in [:create]
+    [handler: EasyFixApiWeb.SessionController] when not action in [:create]
 
   def index(conn, _params) do
     garages = Accounts.list_garages()

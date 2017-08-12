@@ -1,9 +1,9 @@
-defmodule EasyFixApi.Web.BankController do
-  use EasyFixApi.Web, :controller
+defmodule EasyFixApiWeb.BankController do
+  use EasyFixApiWeb, :controller
 
   alias EasyFixApi.Payments
 
-  action_fallback EasyFixApi.Web.FallbackController
+  action_fallback EasyFixApiWeb.FallbackController
 
   def index(conn, _params) do
     banks = Payments.list_banks()

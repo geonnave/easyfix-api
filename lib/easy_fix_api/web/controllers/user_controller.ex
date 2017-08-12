@@ -1,12 +1,12 @@
-defmodule EasyFixApi.Web.UserController do
-  use EasyFixApi.Web, :controller
+defmodule EasyFixApiWeb.UserController do
+  use EasyFixApiWeb, :controller
 
   alias EasyFixApi.Accounts
   alias EasyFixApi.Accounts.User
 
-  action_fallback EasyFixApi.Web.FallbackController
+  action_fallback EasyFixApiWeb.FallbackController
   plug Guardian.Plug.EnsureAuthenticated,
-    [handler: EasyFixApi.Web.SessionController] when not action in [:create]
+    [handler: EasyFixApiWeb.SessionController] when not action in [:create]
 
   def index(conn, _params) do
     users = Accounts.list_users()

@@ -1,5 +1,5 @@
-defmodule EasyFixApi.Web.GarageControllerTest do
-  use EasyFixApi.Web.ConnCase
+defmodule EasyFixApiWeb.GarageControllerTest do
+  use EasyFixApiWeb.ConnCase
 
   alias EasyFixApi.Accounts
   alias EasyFixApi.Accounts.Garage

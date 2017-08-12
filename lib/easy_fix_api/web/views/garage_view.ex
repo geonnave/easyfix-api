@@ -1,6 +1,6 @@
-defmodule EasyFixApi.Web.GarageView do
-  use EasyFixApi.Web, :view
-  alias EasyFixApi.Web.GarageView
+defmodule EasyFixApiWeb.GarageView do
+  use EasyFixApiWeb, :view
+  alias EasyFixApiWeb.GarageView
 
   def render("index.json", %{garages: garages}) do
     %{data: render_many(garages, GarageView, "garage_summary.json")}
@@ -20,7 +20,7 @@ defmodule EasyFixApi.Web.GarageView do
       owner_name: garage.owner_name,
       email: garage.user.email,
       phone: garage.phone,
-      garage_categories: render_many(garage.garage_categories, EasyFixApi.Web.GarageCategoryView, "garage_category.json"),
+      garage_categories: render_many(garage.garage_categories, EasyFixApiWeb.GarageCategoryView, "garage_category.json"),
       cnpj: garage.cnpj}
   end
 
@@ -31,9 +31,9 @@ defmodule EasyFixApi.Web.GarageView do
       owner_name: garage.owner_name,
       email: garage.user.email,
       phone: garage.phone,
-      garage_categories: render_many(garage.garage_categories, EasyFixApi.Web.GarageCategoryView, "garage_category.json"),
-      address: render_one(address, EasyFixApi.Web.AddressView, "address.json"),
-      bank_account: render_one(garage.bank_account, EasyFixApi.Web.BankAccountView, "bank_account.json"),
+      garage_categories: render_many(garage.garage_categories, EasyFixApiWeb.GarageCategoryView, "garage_category.json"),
+      address: render_one(address, EasyFixApiWeb.AddressView, "address.json"),
+      bank_account: render_one(garage.bank_account, EasyFixApiWeb.BankAccountView, "bank_account.json"),
       cnpj: garage.cnpj}
   end
 end

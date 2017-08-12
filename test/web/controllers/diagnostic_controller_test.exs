@@ -1,5 +1,5 @@
-defmodule EasyFixApi.Web.DiagnosticControllerTest do
-  use EasyFixApi.Web.ConnCase
+defmodule EasyFixApiWeb.DiagnosticControllerTest do
+  use EasyFixApiWeb.ConnCase
 
   alias EasyFixApi.Orders
 

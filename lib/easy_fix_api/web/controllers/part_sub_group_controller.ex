@@ -1,9 +1,9 @@
-defmodule EasyFixApi.Web.PartSubGroupController do
-  use EasyFixApi.Web, :controller
+defmodule EasyFixApiWeb.PartSubGroupController do
+  use EasyFixApiWeb, :controller
 
   alias EasyFixApi.Parts
 
-  action_fallback EasyFixApi.Web.FallbackController
+  action_fallback EasyFixApiWeb.FallbackController
 
   def index(conn, _params) do
     part_sub_groups = Parts.list_part_sub_groups()

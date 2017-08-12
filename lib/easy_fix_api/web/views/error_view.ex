@@ -1,5 +1,5 @@
-defmodule EasyFixApi.Web.ErrorView do
-  use EasyFixApi.Web, :view
+defmodule EasyFixApiWeb.ErrorView do
+  use EasyFixApiWeb, :view
 
   def render("404.html", _assigns) do
     "Page not found"

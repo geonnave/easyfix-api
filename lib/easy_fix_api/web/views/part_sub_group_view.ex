@@ -1,6 +1,6 @@
-defmodule EasyFixApi.Web.PartSubGroupView do
-  use EasyFixApi.Web, :view
-  alias EasyFixApi.Web.PartSubGroupView
+defmodule EasyFixApiWeb.PartSubGroupView do
+  use EasyFixApiWeb, :view
+  alias EasyFixApiWeb.PartSubGroupView
 
   def render("index.json", %{part_sub_groups: part_sub_groups}) do
     %{data: render_many(part_sub_groups, PartSubGroupView, "part_sub_group.json")}

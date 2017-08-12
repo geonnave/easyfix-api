@@ -1,6 +1,6 @@
-defmodule EasyFixApi.Web.PartView do
-  use EasyFixApi.Web, :view
-  alias EasyFixApi.Web.PartView
+defmodule EasyFixApiWeb.PartView do
+  use EasyFixApiWeb, :view
+  alias EasyFixApiWeb.PartView
 
   def render("index.json", %{parts: parts}) do
     %{data: render_many(parts, PartView, "part.json")}

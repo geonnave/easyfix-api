@@ -1,5 +1,5 @@
-defmodule EasyFixApi.Web.SessionControllerTest do
-  use EasyFixApi.Web.ConnCase
+defmodule EasyFixApiWeb.SessionControllerTest do
+  use EasyFixApiWeb.ConnCase
 
   alias EasyFixApi.Accounts
 

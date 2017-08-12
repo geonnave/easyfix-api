@@ -1,6 +1,6 @@
-defmodule EasyFixApi.Web.DiagnosticView do
-  use EasyFixApi.Web, :view
-  alias EasyFixApi.Web.DiagnosticView
+defmodule EasyFixApiWeb.DiagnosticView do
+  use EasyFixApiWeb, :view
+  alias EasyFixApiWeb.DiagnosticView
 
   def render("index.json", %{diagnostics: diagnostics}) do
     %{data: render_many(diagnostics, DiagnosticView, "diagnostic.json")}

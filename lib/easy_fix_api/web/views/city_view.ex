@@ -1,6 +1,6 @@
-defmodule EasyFixApi.Web.CityView do
-  use EasyFixApi.Web, :view
-  alias EasyFixApi.Web.CityView
+defmodule EasyFixApiWeb.CityView do
+  use EasyFixApiWeb, :view
+  alias EasyFixApiWeb.CityView
 
   def render("cities.json", %{cities: cities}) do
     IO.inspect cities

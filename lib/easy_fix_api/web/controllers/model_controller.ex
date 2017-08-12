@@ -1,9 +1,9 @@
-defmodule EasyFixApi.Web.ModelController do
-  use EasyFixApi.Web, :controller
+defmodule EasyFixApiWeb.ModelController do
+  use EasyFixApiWeb, :controller
 
   alias EasyFixApi.Cars
 
-  action_fallback EasyFixApi.Web.FallbackController
+  action_fallback EasyFixApiWeb.FallbackController
 
   def index(conn, _params) do
     models = Cars.list_models()

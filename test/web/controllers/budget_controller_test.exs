@@ -1,5 +1,5 @@
-defmodule EasyFixApi.Web.BudgetControllerTest do
-  use EasyFixApi.Web.ConnCase
+defmodule EasyFixApiWeb.BudgetControllerTest do
+  use EasyFixApiWeb.ConnCase
 
   alias EasyFixApi.Orders.Budget
 

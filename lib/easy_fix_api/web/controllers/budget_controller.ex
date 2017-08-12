@@ -1,10 +1,10 @@
-defmodule EasyFixApi.Web.BudgetController do
-  use EasyFixApi.Web, :controller
+defmodule EasyFixApiWeb.BudgetController do
+  use EasyFixApiWeb, :controller
 
   alias EasyFixApi.Orders
   alias EasyFixApi.Orders.Budget
 
-  action_fallback EasyFixApi.Web.FallbackController
+  action_fallback EasyFixApiWeb.FallbackController
 
   def index(conn, _params) do
     budgets = Orders.list_budgets()

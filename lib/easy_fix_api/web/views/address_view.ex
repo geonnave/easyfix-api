@@ -1,6 +1,6 @@
-defmodule EasyFixApi.Web.AddressView do
-  use EasyFixApi.Web, :view
-  alias EasyFixApi.Web.AddressView
+defmodule EasyFixApiWeb.AddressView do
+  use EasyFixApiWeb, :view
+  alias EasyFixApiWeb.AddressView
 
   def render("index.json", %{addresses: addresses}) do
     %{data: render_many(addresses, AddressView, "address.json")}

@@ -11,7 +11,7 @@ defmodule EasyFixApi.Application do
       # Start the Ecto repository
       supervisor(EasyFixApi.Repo, []),
       # Start the endpoint when the application starts
-      supervisor(EasyFixApi.Web.Endpoint, []),
+      supervisor(EasyFixApiWeb.Endpoint, []),
       # Start your own worker by calling: EasyFixApi.Worker.start_link(arg1, arg2, arg3)
       # worker(EasyFixApi.Worker, [arg1, arg2, arg3]),
     ]

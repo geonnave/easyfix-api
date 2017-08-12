@@ -1,6 +1,6 @@
-defmodule EasyFixApi.Web.GarageCategoryView do
-  use EasyFixApi.Web, :view
-  alias EasyFixApi.Web.GarageCategoryView
+defmodule EasyFixApiWeb.GarageCategoryView do
+  use EasyFixApiWeb, :view
+  alias EasyFixApiWeb.GarageCategoryView
 
   def render("index.json", %{garage_categories: garage_categories}) do
     %{data: render_many(garage_categories, GarageCategoryView, "garage_category.json")}

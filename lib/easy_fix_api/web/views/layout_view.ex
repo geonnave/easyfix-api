@@ -1,3 +1,3 @@
-defmodule EasyFixApi.Web.LayoutView do
-  use EasyFixApi.Web, :view
+defmodule EasyFixApiWeb.LayoutView do
+  use EasyFixApiWeb, :view
 end

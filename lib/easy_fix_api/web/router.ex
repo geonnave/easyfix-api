@@ -1,5 +1,5 @@
-defmodule EasyFixApi.Web.Router do
-  use EasyFixApi.Web, :router
+defmodule EasyFixApiWeb.Router do
+  use EasyFixApiWeb, :router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -15,13 +15,13 @@ defmodule EasyFixApi.Web.Router do
     plug Guardian.Plug.LoadResource
   end
 
-  scope "/", EasyFixApi.Web do
+  scope "/", EasyFixApiWeb do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
   end
 
-  scope "/api", EasyFixApi.Web do
+  scope "/api", EasyFixApiWeb do
     pipe_through :api
 
     post "/sessions", SessionController, :create
