@@ -17,11 +17,7 @@ defmodule EasyFixApiWeb.BudgetView do
       parts: render_many(budget.parts, EasyFixApiWeb.BudgetPartView, "budget_part.json"),
       diagnostic_id: budget.diagnostic.id,
       issuer_type: budget.issuer_type,
-      issuer_id: render_issuer_id(budget.issuer_type, budget.issuer),
+      issuer_id: Map.get(budget.issuer, budget.issuer_type).id,
     }
-  end
-
-  def render_issuer_id("garage", issuer) do
-    issuer.garage.id
   end
 end

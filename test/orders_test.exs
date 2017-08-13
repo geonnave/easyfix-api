@@ -60,6 +60,7 @@ defmodule EasyFixApi.OrdersTest do
     assert length(budget.parts) == 2
     assert budget.diagnostic.id == diagnostic.id
     assert budget.issuer.id == garage.user.id
+    assert budget.issuer_type == :garage
   end
 
   test "create_budget_part/1 with valid data creates a budget_part" do

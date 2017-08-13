@@ -18,10 +18,11 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
     end
     create unique_index(:diagnostics_parts, [:diagnostic_id, :part_id])
 
+    EasyFixApi.Accounts.UserTypeEnum.create_type
     create table(:budgets) do
       add :service_cost, :integer
       add :due_date, :utc_datetime
-      add :issuer_type, :string
+      add :issuer_type, :user_type
       add :issuer_id, references(:users)
       add :diagnostic_id, references(:diagnostics)
 

@@ -5,7 +5,7 @@ defmodule EasyFixApi.Orders.Budget do
   schema "budgets" do
     field :due_date, :utc_datetime
     field :service_cost, :integer
-    field :issuer_type, :string
+    field :issuer_type, EasyFixApi.Accounts.UserTypeEnum
     has_many :parts, EasyFixApi.Orders.BudgetPart
     belongs_to :diagnostic, EasyFixApi.Orders.Diagnostic
     belongs_to :issuer, EasyFixApi.Accounts.User
