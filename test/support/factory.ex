@@ -13,8 +13,12 @@ defmodule EasyFixApi.Factory do
   end
   def budget_factory do
     %Budget{
-      due_date: "2017-08-06T17:44:57.913808Z",
-      service_cost: 42
+      service_cost: 42,
+      status: "new",
+      sub_status: "new",
+
+      opening_date: "2017-08-06T17:44:57.913808Z",
+      due_date: "2017-08-07T17:44:57.913808Z",
     }
   end
 

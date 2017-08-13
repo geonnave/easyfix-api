@@ -3,18 +3,25 @@ defmodule EasyFixApi.Orders.Budget do
   import Ecto.Changeset, warn: false
 
   schema "budgets" do
-    field :due_date, :utc_datetime
     field :service_cost, :integer
+    field :status, :string
+    field :sub_status, :string
+
+    field :opening_date, :utc_datetime
+    field :due_date, :utc_datetime
+    field :conclusion_date, :utc_datetime
+
     field :issuer_type, EasyFixApi.Accounts.UserTypeEnum
+    belongs_to :issuer, EasyFixApi.Accounts.User
+
     has_many :parts, EasyFixApi.Orders.BudgetPart
     belongs_to :diagnostic, EasyFixApi.Orders.Diagnostic
-    belongs_to :issuer, EasyFixApi.Accounts.User
 
     timestamps(type: :utc_datetime)
   end
 
   @optional_attrs ~w()
-  @required_attrs ~w(due_date service_cost issuer_type)a
+  @required_attrs ~w(service_cost status sub_status opening_date due_date issuer_type)a
 
   def create_changeset(attrs) do
     %__MODULE__{}

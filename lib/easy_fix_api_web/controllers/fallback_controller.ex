@@ -17,4 +17,10 @@ defmodule EasyFixApiWeb.FallbackController do
     |> put_status(:not_found)
     |> render(EasyFixApiWeb.ErrorView, :"404")
   end
+
+  def call(conn, {:error, error}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> render(EasyFixApiWeb.ErrorView, "error.json", error: error)
+  end
 end

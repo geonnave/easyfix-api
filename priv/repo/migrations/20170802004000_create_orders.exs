@@ -21,9 +21,16 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
     EasyFixApi.Accounts.UserTypeEnum.create_type
     create table(:budgets) do
       add :service_cost, :integer
+      add :status, :string
+      add :sub_status, :string
+
+      add :opening_date, :utc_datetime
       add :due_date, :utc_datetime
+      add :conclusion_date, :utc_datetime
+
       add :issuer_type, :user_type
       add :issuer_id, references(:users)
+
       add :diagnostic_id, references(:diagnostics)
 
       timestamps(type: :timestamptz)

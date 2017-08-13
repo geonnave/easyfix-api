@@ -62,10 +62,10 @@ defmodule EasyFixApi.Orders do
   def create_budget(attrs \\ %{}) do
     with budget_changeset = %{valid?: true} <- Budget.create_changeset(attrs),
          budget_assoc_changeset = %{valid?: true} <- Budget.assoc_changeset(attrs),
-         budget_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(budget_assoc_changeset) do
+         budget_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(budget_assoc_changeset),
+         diagnostic when not is_nil(diagnostic) <- Repo.get(Diagnostic, budget_assoc_attrs[:diagnostic_id]),
+         issuer when not is_nil(issuer) <- Accounts.get_user_by_type_id(budget_assoc_attrs[:issuer_type], budget_assoc_attrs[:issuer_id]) do
 
-      diagnostic = get_diagnostic!(budget_assoc_attrs[:diagnostic_id])
-      issuer = Accounts.get_user_by_type_id!(budget_assoc_attrs[:issuer_type], budget_assoc_attrs[:issuer_id])
       Repo.transaction fn ->
         budget =
           budget_changeset
@@ -88,6 +88,8 @@ defmodule EasyFixApi.Orders do
     else
       %{valid?: false} = changeset ->
         {:error, changeset}
+      nil ->
+        {:error, "diagnostic or issuer does not exist"}
     end
   end
 
