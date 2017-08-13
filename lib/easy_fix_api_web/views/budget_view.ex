@@ -16,6 +16,8 @@ defmodule EasyFixApiWeb.BudgetView do
       due_date: budget.due_date,
       parts: render_many(budget.parts, EasyFixApiWeb.BudgetPartView, "budget_part.json"),
       diagnostic_id: budget.diagnostic.id,
+      issuer_type: budget.issuer_type,
+      issuer_id: budget.issuer.id,
     }
   end
 end

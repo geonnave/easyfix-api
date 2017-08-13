@@ -5,14 +5,16 @@ defmodule EasyFixApi.Orders.Budget do
   schema "budgets" do
     field :due_date, :utc_datetime
     field :service_cost, :integer
+    field :issuer_type, :string
     has_many :parts, EasyFixApi.Orders.BudgetPart
     belongs_to :diagnostic, EasyFixApi.Orders.Diagnostic
+    belongs_to :issuer, EasyFixApi.Accounts.User
 
     timestamps(type: :utc_datetime)
   end
 
   @optional_attrs ~w()
-  @required_attrs ~w(due_date service_cost)a
+  @required_attrs ~w(due_date service_cost issuer_type)a
 
   def create_changeset(attrs) do
     %__MODULE__{}
@@ -25,7 +27,7 @@ defmodule EasyFixApi.Orders.Budget do
     |> validate_required(@required_attrs)
   end
 
-  @assoc_types %{parts: {:array, :map}, diagnostic_id: :integer}
+  @assoc_types %{parts: {:array, :map}, diagnostic_id: :integer, issuer_id: :integer}
   def assoc_changeset(attrs) do
     {attrs, @assoc_types}
     |> cast(attrs, Map.keys(@assoc_types))
@@ -33,6 +35,6 @@ defmodule EasyFixApi.Orders.Budget do
   end
 
   def all_nested_assocs do
-    [parts: [:part], diagnostic: []]
+    [parts: [:part], diagnostic: [], issuer: []]
   end
 end

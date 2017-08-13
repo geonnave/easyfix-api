@@ -4,8 +4,7 @@ defmodule EasyFixApi.Orders do
   """
 
   import Ecto.{Query, Changeset}, warn: false
-  alias EasyFixApi.{Repo, Helpers}
-  alias EasyFixApi.Parts
+  alias EasyFixApi.{Parts, Accounts, Repo, Helpers}
   alias EasyFixApi.Parts.Part
 
   alias EasyFixApi.Orders.Diagnostic
@@ -66,10 +65,12 @@ defmodule EasyFixApi.Orders do
          budget_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(budget_assoc_changeset) do
 
       diagnostic = get_diagnostic!(budget_assoc_attrs[:diagnostic_id])
+      issuer = Accounts.get_user!(budget_assoc_attrs[:issuer_id])
       Repo.transaction fn ->
         budget =
           budget_changeset
           |> put_assoc(:diagnostic, diagnostic)
+          |> put_assoc(:issuer, issuer)
           |> Repo.insert!()
 
         for part <- budget_assoc_attrs[:parts] do
