@@ -27,7 +27,7 @@ defmodule EasyFixApi.Orders.Budget do
     |> validate_required(@required_attrs)
   end
 
-  @assoc_types %{parts: {:array, :map}, diagnostic_id: :integer, issuer_id: :integer}
+  @assoc_types %{parts: {:array, :map}, diagnostic_id: :integer, issuer_id: :integer, issuer_type: :string}
   def assoc_changeset(attrs) do
     {attrs, @assoc_types}
     |> cast(attrs, Map.keys(@assoc_types))
@@ -35,6 +35,6 @@ defmodule EasyFixApi.Orders.Budget do
   end
 
   def all_nested_assocs do
-    [parts: [:part], diagnostic: [], issuer: []]
+    [parts: [:part], diagnostic: [], issuer: [:garage]]
   end
 end

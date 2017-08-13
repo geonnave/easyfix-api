@@ -65,7 +65,7 @@ defmodule EasyFixApi.Orders do
          budget_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(budget_assoc_changeset) do
 
       diagnostic = get_diagnostic!(budget_assoc_attrs[:diagnostic_id])
-      issuer = Accounts.get_user!(budget_assoc_attrs[:issuer_id])
+      issuer = Accounts.get_user_by_type_id!(budget_assoc_attrs[:issuer_type], budget_assoc_attrs[:issuer_id])
       Repo.transaction fn ->
         budget =
           budget_changeset

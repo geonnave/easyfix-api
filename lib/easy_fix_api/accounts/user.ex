@@ -7,6 +7,8 @@ defmodule EasyFixApi.Accounts.User do
     field :password_hash, :string
     field :password, :string, virtual: true
     has_many :addresses, EasyFixApi.Addresses.Address
+    has_one :garage, EasyFixApi.Accounts.Garage
+    # has_one :customer, EasyFixApi.Accounts.Customer
 
     timestamps(type: :utc_datetime)
   end

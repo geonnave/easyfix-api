@@ -52,7 +52,7 @@ defmodule EasyFixApi.OrdersTest do
       params_for(:budget)
       |> put_in([:parts], parts)
       |> put_in([:diagnostic_id], diagnostic.id)
-      |> put_in([:issuer_id], garage.user.id)
+      |> put_in([:issuer_id], garage.id)
       |> put_in([:issuer_type], "garage")
 
     assert {:ok, %Budget{} = budget} = Orders.create_budget(budget_attrs)

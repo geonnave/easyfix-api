@@ -34,4 +34,8 @@ defmodule EasyFixApi.Accounts.Garage do
     |> cast(attrs, Map.keys(@assoc_types))
     |> validate_required(Map.keys(@assoc_types))
   end
+
+  def all_nested_assocs do
+    [user: [addresses: [:city]], bank_account: [:bank], garage_categories: []]
+  end
 end

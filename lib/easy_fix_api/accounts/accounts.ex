@@ -72,10 +72,7 @@ defmodule EasyFixApi.Accounts do
   end
 
   def garage_preload_all_nested_assocs(garage) do
-    garage
-    |> Repo.preload(:garage_categories)
-    |> Repo.preload([user: [addresses: [:city]]])
-    |> Repo.preload([bank_account: [:bank]])
+    Repo.preload(garage, Garage.all_nested_assocs)
   end
 
   def create_garage(attrs \\ %{}) do

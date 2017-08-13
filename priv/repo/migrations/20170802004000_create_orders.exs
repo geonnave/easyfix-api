@@ -27,6 +27,7 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
 
       timestamps(type: :timestamptz)
     end
+    # create unique_index(:budgets, [:issuer_id, :issuer_type])
 
     create table(:budgets_parts) do
       add :budget_id, references(:budgets)
