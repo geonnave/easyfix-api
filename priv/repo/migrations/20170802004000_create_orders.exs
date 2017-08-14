@@ -46,5 +46,14 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
       timestamps(type: :timestamptz)
     end
     create unique_index(:budgets_parts, [:budget_id, :part_id])
+
+    create table(:orders) do
+      add :status, :string
+      add :sub_status, :string
+      add :opening_date, :utc_datetime
+      add :conclusion_date, :utc_datetime
+
+      timestamps(type: :timestamptz)
+    end
   end
 end
