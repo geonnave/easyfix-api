@@ -16,9 +16,14 @@ defmodule EasyFixApi.OrdersTest do
     test "create_diagnostic/1 with valid data creates a diagnostic" do
       part1 = insert(:part)
       part2 = insert(:part)
+      parts = [
+        %{part_id: part1.id, quantity: 1},
+        %{part_id: part2.id, quantity: 4},
+      ]
+
       diagnostic_attrs =
         params_for(:diagnostic)
-        |> put_in([:parts_ids], [part1.id, part2.id])
+        |> put_in([:parts], parts)
 
       assert {:ok, %Diagnostic{} = diagnostic} = Orders.create_diagnostic(diagnostic_attrs)
       assert diagnostic.accepts_used_parts == true
@@ -31,20 +36,29 @@ defmodule EasyFixApi.OrdersTest do
     test "create_diagnostic/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Orders.create_diagnostic(@invalid_diagnostic_attrs)
     end
+  end
 
-    test "delete_diagnostic/1 deletes the diagnostic" do
+  describe "diagnostics_parts" do
+    alias EasyFixApi.Orders.{DiagnosticPart}
+
+    test "create_diagnostic_part/2 with valid data creates a diagnostic_part" do
       diagnostic = insert(:diagnostic)
-      assert 2 == EasyFixApi.Parts.list_parts |> length()
-      assert {:ok, %Diagnostic{}} = Orders.delete_diagnostic(diagnostic)
-      assert 2 == EasyFixApi.Parts.list_parts |> length()
-      assert_raise Ecto.NoResultsError, fn -> Orders.get_diagnostic!(diagnostic.id) end
+      part = insert(:part)
+      diagnostic_part_attrs =
+        params_for(:diagnostic_part)
+        |> put_in([:part_id], part.id)
+
+      {:ok, %DiagnosticPart{} = diagnostic_part} = Orders.create_diagnostic_part(diagnostic_part_attrs, diagnostic.id)
+      assert diagnostic_part.diagnostic.id == diagnostic.id
+      assert diagnostic_part.part.id == part.id
+      assert diagnostic_part.quantity == diagnostic_part_attrs[:quantity]
     end
   end
 
   describe "budgets_parts" do
     alias EasyFixApi.Orders.{BudgetPart}
 
-    test "create_budget_part/1 with valid data creates a budget_part" do
+    test "create_budget_part/2 with valid data creates a budget_part" do
       budget = insert(:budget)
       part = insert(:part)
       budget_part_attrs =
@@ -65,7 +79,8 @@ defmodule EasyFixApi.OrdersTest do
     test "create_budget/1 with valid data creates a budget" do
       garage = insert(:garage)
       diagnostic = insert(:diagnostic)
-      [part1, part2] = diagnostic.parts
+      %{part: part1} = diagnostic_parts_with_diagnostic(diagnostic) |> insert()
+      %{part: part2} = diagnostic_parts_with_diagnostic(diagnostic) |> insert()
       parts = [
         %{part_id: part1.id, price: 4200, quantity: 1},
         %{part_id: part2.id, price: 200, quantity: 4},

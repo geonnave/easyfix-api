@@ -14,7 +14,8 @@ defmodule EasyFixApi.Orders.Budget do
     field :issuer_type, EasyFixApi.Accounts.UserTypeEnum
     belongs_to :issuer, EasyFixApi.Accounts.User
 
-    has_many :parts, EasyFixApi.Orders.BudgetPart
+    has_many :budgets_parts, EasyFixApi.Orders.BudgetPart
+    has_many :parts, through: [:budgets_parts, :part]
     belongs_to :diagnostic, EasyFixApi.Orders.Diagnostic
 
     timestamps(type: :utc_datetime)
@@ -42,6 +43,10 @@ defmodule EasyFixApi.Orders.Budget do
   end
 
   def all_nested_assocs do
-    [parts: [:part], diagnostic: [], issuer: [:garage]]
+    [
+      parts: [:garage_category, [part_sub_group: [part_group: :part_system]], :repair_by_fixer_part],
+      diagnostic: [],
+      issuer: [:garage]
+    ]
   end
 end

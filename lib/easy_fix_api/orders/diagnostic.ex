@@ -8,7 +8,8 @@ defmodule EasyFixApi.Orders.Diagnostic do
     field :need_tow_truck, :boolean, default: false
     field :status, :string
     field :expiration_date, :utc_datetime
-    many_to_many :parts, EasyFixApi.Parts.Part, join_through: "diagnostics_parts", on_delete: :delete_all
+    has_many :diagnostics_parts, EasyFixApi.Orders.DiagnosticPart
+    has_many :parts, through: [:diagnostics_parts, :part]
     has_many :budgets, EasyFixApi.Orders.Budget
 
     timestamps(type: :utc_datetime)
@@ -28,7 +29,7 @@ defmodule EasyFixApi.Orders.Diagnostic do
     |> validate_required(@required_attrs)
   end
 
-  @assoc_types %{parts_ids: {:array, :integer}}
+  @assoc_types %{parts: {:array, :map}}
   def assoc_changeset(attrs) do
     {attrs, @assoc_types}
     |> cast(attrs, Map.keys(@assoc_types))

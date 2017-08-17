@@ -18,7 +18,8 @@ defmodule EasyFixApiWeb.BudgetControllerTest do
   test "creates budget and renders budget when data is valid", %{conn: conn} do
     garage = insert(:garage)
     diagnostic = insert(:diagnostic)
-    [part1, part2] = diagnostic.parts
+    %{part: part1} = diagnostic_parts_with_diagnostic(diagnostic) |> insert()
+    %{part: part2} = diagnostic_parts_with_diagnostic(diagnostic) |> insert()
     parts = [
       %{"part_id" => part1.id, "price" => 4200, "quantity" => 1},
       %{"part_id" => part2.id, "price" => 200, "quantity" => 4},

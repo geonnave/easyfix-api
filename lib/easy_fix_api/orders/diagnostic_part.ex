@@ -1,17 +1,16 @@
-defmodule EasyFixApi.Orders.BudgetPart do
+defmodule EasyFixApi.Orders.DiagnosticPart do
   use Ecto.Schema
   import Ecto.Changeset, warn: false
 
-  schema "budgets_parts" do
-    belongs_to :budget, EasyFixApi.Orders.Budget
+  schema "diagnostics_parts" do
+    belongs_to :diagnostic, EasyFixApi.Orders.Diagnostic
     belongs_to :part, EasyFixApi.Parts.Part
     field :quantity, :integer
-    field :price, :integer
 
     timestamps(type: :utc_datetime)
   end
 
-  @required_attrs ~w(quantity price)a
+  @required_attrs ~w(quantity)a
 
   def create_changeset(attrs) do
     %__MODULE__{}

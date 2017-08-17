@@ -5,7 +5,26 @@ defmodule EasyFixApi.Orders do
 
   import Ecto.{Query, Changeset}, warn: false
   alias EasyFixApi.{Parts, Accounts, Repo, Helpers}
-  alias EasyFixApi.Parts.Part
+
+  alias EasyFixApi.Orders.DiagnosticPart
+
+  def create_diagnostic_part(attrs \\ %{}, diagnostic_id) do
+    with diagnostic_part_changeset = %{valid?: true} <- DiagnosticPart.create_changeset(attrs),
+         diagnostic_part_assoc_changeset = %{valid?: true} <- DiagnosticPart.assoc_changeset(attrs),
+         diagnostic_part_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(diagnostic_part_assoc_changeset) do
+
+        part = Parts.get_part!(diagnostic_part_assoc_attrs[:part_id])
+        diagnostic = get_diagnostic!(diagnostic_id)
+
+        diagnostic_part_changeset
+        |> put_assoc(:part, part)
+        |> put_assoc(:diagnostic, diagnostic)
+        |> Repo.insert()
+    else
+      %{valid?: false} = changeset ->
+        {:error, changeset}
+    end
+  end
 
   alias EasyFixApi.Orders.Diagnostic
 
@@ -24,18 +43,23 @@ defmodule EasyFixApi.Orders do
          diagnostic_assoc_changeset = %{valid?: true} <- Diagnostic.assoc_changeset(attrs),
          diagnostic_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(diagnostic_assoc_changeset) do
 
-      parts =
-        (diagnostic_assoc_attrs[:parts_ids] || [])
-        |> Enum.map(&Repo.get(Part, &1))
-
-      diagnostic_changeset
-      |> put_assoc(:parts, parts)
-      |> Repo.insert()
-      |> case do
-        {:ok, diagnostic} ->
-          {:ok, Repo.preload(diagnostic, Diagnostic.all_nested_assocs)}
-        error ->
-          error
+      Repo.transaction fn ->
+        diagnostic_changeset
+        |> Repo.insert()
+        |> case do
+          {:ok, diagnostic} ->
+            for part_attrs <- diagnostic_assoc_attrs[:parts] do
+              case create_diagnostic_part(part_attrs, diagnostic.id) do
+                {:error, diagnostic_part_error_changeset} ->
+                  Repo.rollback(diagnostic_part_error_changeset)
+                _ ->
+                  nil
+              end
+            end
+            Repo.preload(diagnostic, Diagnostic.all_nested_assocs)
+          error ->
+            error
+        end
       end
     else
       %{valid?: false} = changeset ->
@@ -73,8 +97,8 @@ defmodule EasyFixApi.Orders do
           |> put_assoc(:issuer, issuer)
           |> Repo.insert!()
 
-        for part <- budget_assoc_attrs[:parts] do
-          case create_budget_part(part, budget.id) do
+        for part_attrs <- budget_assoc_attrs[:parts] do
+          case create_budget_part(part_attrs, budget.id) do
             {:error, budget_part_error_changeset} ->
               Repo.rollback(budget_part_error_changeset)
             _ ->

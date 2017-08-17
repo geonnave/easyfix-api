@@ -15,6 +15,9 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
     create table(:diagnostics_parts) do
       add :diagnostic_id, references(:diagnostics)
       add :part_id, references(:parts)
+      add :quantity, :integer
+
+      timestamps(type: :timestamptz)
     end
     create unique_index(:diagnostics_parts, [:diagnostic_id, :part_id])
 

@@ -4,7 +4,7 @@ defmodule EasyFixApi.Factory do
   alias EasyFixApi.Addresses.{Address, City, State}
   alias EasyFixApi.Accounts.{User, Garage}
   alias EasyFixApi.Payments.{Bank, BankAccount}
-  alias EasyFixApi.Orders.{Diagnostic, Budget, BudgetPart}
+  alias EasyFixApi.Orders.{Diagnostic, DiagnosticPart, Budget, BudgetPart}
   alias EasyFixApi.Parts.{Part, PartSubGroup, PartGroup, PartSystem, GarageCategory}
 
   # to be called as `budget_with_parts(insert(:budget_part))`
@@ -16,7 +16,6 @@ defmodule EasyFixApi.Factory do
       service_cost: 42,
       status: "new",
       sub_status: "new",
-
       opening_date: "2017-08-06T17:44:57.913808Z",
       due_date: "2017-08-07T17:44:57.913808Z",
     }
@@ -31,6 +30,16 @@ defmodule EasyFixApi.Factory do
     }
   end
 
+  def diagnostic_part_factory do
+    %DiagnosticPart{
+      part: build(:part),
+      quantity: 1,
+    }
+  end
+
+  def diagnostic_parts_with_diagnostic(diagnostic) do
+    build(:diagnostic_part, diagnostic: diagnostic)
+  end
   def diagnostic_factory do
     %Diagnostic{
       accepts_used_parts: true,
@@ -38,8 +47,7 @@ defmodule EasyFixApi.Factory do
       need_tow_truck: true,
       status: "some status",
       expiration_date: "2017-08-05 17:44:57.913808Z",
-      parts: build_list(2, :part)
-    }
+      }
   end
 
   def state_factory do

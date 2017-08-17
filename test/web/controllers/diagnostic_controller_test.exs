@@ -23,9 +23,13 @@ defmodule EasyFixApiWeb.DiagnosticControllerTest do
   test "creates diagnostic and renders diagnostic when data is valid", %{conn: conn} do
     part1 = insert(:part)
     part2 = insert(:part)
+    parts = [
+      %{part_id: part1.id, quantity: 1},
+      %{part_id: part2.id, quantity: 4},
+    ]
     diagnostic_attrs =
-      params_for(:diagnostic)
-      |> put_in([:parts_ids], [part1.id, part2.id])
+      string_params_for(:diagnostic)
+      |> put_in([:parts], parts)
 
     conn = post conn, diagnostic_path(conn, :create), diagnostic: diagnostic_attrs
     assert %{"id" => id} = json_response(conn, 201)["data"]
