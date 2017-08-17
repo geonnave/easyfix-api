@@ -105,66 +105,33 @@ defmodule EasyFixApi.OrdersTest do
   describe "orders" do
     alias EasyFixApi.Orders.Order
 
-    @valid_attrs %{conclusion_date: "2010-04-17 14:00:00.000000Z", opening_date: "2010-04-17 14:00:00.000000Z", status: "some status", sub_status: "some sub_status"}
-    @update_attrs %{conclusion_date: "2011-05-18 15:01:01.000000Z", opening_date: "2011-05-18 15:01:01.000000Z", status: "some updated status", sub_status: "some updated sub_status"}
     @invalid_attrs %{conclusion_date: nil, opening_date: nil, status: nil, sub_status: nil}
 
-    def order_fixture(attrs \\ %{}) do
-      {:ok, order} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Orders.create_order()
-
-      order
-    end
-
     test "list_orders/0 returns all orders" do
-      order = order_fixture()
+      order = insert(:order)
       assert Orders.list_orders() == [order]
     end
 
-    test "get_order!/1 returns the order with given id" do
-      order = order_fixture()
-      assert Orders.get_order!(order.id) == order
-    end
-
     test "create_order/1 with valid data creates a order" do
-      assert {:ok, %Order{} = order} = Orders.create_order(@valid_attrs)
-      assert order.conclusion_date == DateTime.from_naive!(~N[2010-04-17 14:00:00.000000Z], "Etc/UTC")
-      assert order.opening_date == DateTime.from_naive!(~N[2010-04-17 14:00:00.000000Z], "Etc/UTC")
-      assert order.status == "some status"
-      assert order.sub_status == "some sub_status"
+      order_attrs = params_for(:order)
+      assert {:ok, %Order{} = order} = Orders.create_order(order_attrs)
+
+      {:ok, opening_date, _} = DateTime.from_iso8601 order_attrs[:opening_date]
+      assert order.opening_date == opening_date
+      {:ok, conclusion_date, _} = DateTime.from_iso8601 order_attrs[:conclusion_date]
+      assert order.conclusion_date == conclusion_date
+      assert order.status == order_attrs[:status]
+      assert order.sub_status == order_attrs[:sub_status]
     end
 
     test "create_order/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Orders.create_order(@invalid_attrs)
     end
 
-    test "update_order/2 with valid data updates the order" do
-      order = order_fixture()
-      assert {:ok, order} = Orders.update_order(order, @update_attrs)
-      assert %Order{} = order
-      assert order.conclusion_date == DateTime.from_naive!(~N[2011-05-18 15:01:01.000000Z], "Etc/UTC")
-      assert order.opening_date == DateTime.from_naive!(~N[2011-05-18 15:01:01.000000Z], "Etc/UTC")
-      assert order.status == "some updated status"
-      assert order.sub_status == "some updated sub_status"
-    end
-
-    test "update_order/2 with invalid data returns error changeset" do
-      order = order_fixture()
-      assert {:error, %Ecto.Changeset{}} = Orders.update_order(order, @invalid_attrs)
-      assert order == Orders.get_order!(order.id)
-    end
-
     test "delete_order/1 deletes the order" do
-      order = order_fixture()
+      order = insert(:order)
       assert {:ok, %Order{}} = Orders.delete_order(order)
       assert_raise Ecto.NoResultsError, fn -> Orders.get_order!(order.id) end
-    end
-
-    test "change_order/1 returns a order changeset" do
-      order = order_fixture()
-      assert %Ecto.Changeset{} = Orders.change_order(order)
     end
   end
 end

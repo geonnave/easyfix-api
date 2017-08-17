@@ -5,18 +5,37 @@ defmodule EasyFixApi.Orders.Order do
 
 
   schema "orders" do
-    field :conclusion_date, :utc_datetime
-    field :opening_date, :utc_datetime
     field :status, :string
     field :sub_status, :string
+    field :opening_date, :utc_datetime
+    field :conclusion_date, :utc_datetime
 
     timestamps()
   end
 
-  @doc false
-  def changeset(%Order{} = order, attrs) do
-    order
-    |> cast(attrs, [:status, :sub_status, :opening_date, :conclusion_date])
-    |> validate_required([:status, :sub_status, :opening_date, :conclusion_date])
+  @required_attrs ~w(status sub_status opening_date conclusion_date)a
+
+  def create_changeset(attrs) do
+    %__MODULE__{}
+    |> changeset(attrs)
+  end
+
+  def changeset(struct, attrs) do
+    struct
+    |> cast(attrs, @required_attrs)
+    |> validate_required(@required_attrs)
+  end
+
+  @assoc_types %{diagnostic_id: :integer}
+  def assoc_changeset(attrs) do
+    {attrs, @assoc_types}
+    |> cast(attrs, Map.keys(@assoc_types))
+    |> validate_required(Map.keys(@assoc_types))
+  end
+
+  def all_nested_assocs do
+    [
+      diagnostic: []
+    ]
   end
 end

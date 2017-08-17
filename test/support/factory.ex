@@ -4,13 +4,18 @@ defmodule EasyFixApi.Factory do
   alias EasyFixApi.Addresses.{Address, City, State}
   alias EasyFixApi.Accounts.{User, Garage}
   alias EasyFixApi.Payments.{Bank, BankAccount}
-  alias EasyFixApi.Orders.{Diagnostic, DiagnosticPart, Budget, BudgetPart}
+  alias EasyFixApi.Orders.{Diagnostic, DiagnosticPart, Budget, BudgetPart, Order}
   alias EasyFixApi.Parts.{Part, PartSubGroup, PartGroup, PartSystem, GarageCategory}
 
-  # to be called as `budget_with_parts(insert(:budget_part))`
-  def budget_with_parts(parts) do
-    build(:budget, parts: parts)
+  def order_factory do
+    %Order{
+      status: "new",
+      sub_status: "new",
+      opening_date: "2017-08-06T17:44:57.913808Z",
+      conclusion_date: "2017-08-07T17:44:57.913808Z",
+    }
   end
+
   def budget_factory do
     %Budget{
       service_cost: 42,
