@@ -151,16 +151,36 @@ defmodule EasyFixApi.Orders do
 
   def list_orders do
     Repo.all(Order)
+    |> Repo.preload(Order.all_nested_assocs)
   end
 
   def get_order!(id) do
     Repo.get!(Order, id)
+    |> Repo.preload(Order.all_nested_assocs)
   end
 
   def create_order(attrs \\ %{}) do
-    %Order{}
-    |> Order.changeset(attrs)
-    |> Repo.insert()
+    with order_changeset = %{valid?: true} <- Order.create_changeset(attrs),
+         order_assoc_changeset = %{valid?: true} <- Order.assoc_changeset(attrs),
+         order_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(order_assoc_changeset) do
+
+      Repo.transaction fn ->
+        {:ok, diagnostic} = create_diagnostic(order_assoc_attrs[:diagnostic])
+
+        order_changeset
+        |> put_assoc(:diagnostic, diagnostic)
+        |> Repo.insert()
+        |> case do
+          {:ok, order} ->
+            Repo.preload(order, Order.all_nested_assocs)
+          error ->
+            error
+        end
+      end
+    else
+      %{valid?: false} = changeset ->
+        {:error, changeset}
+    end
   end
 
   def update_order(%Order{} = order, attrs) do

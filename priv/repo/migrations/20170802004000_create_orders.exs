@@ -56,6 +56,8 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
       add :opening_date, :utc_datetime
       add :conclusion_date, :utc_datetime
 
+      add :diagnostic_id, references(:diagnostics)
+
       timestamps(type: :timestamptz)
     end
   end

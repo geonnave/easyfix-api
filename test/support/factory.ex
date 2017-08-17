@@ -42,6 +42,11 @@ defmodule EasyFixApi.Factory do
     }
   end
 
+  def diagnostic_parts_params(n_parts) do
+    1..n_parts
+    |> Enum.map(fn _ -> insert(:part) end)
+    |> Enum.map(fn part -> %{part_id: part.id, quantity: 1} end)
+  end
   def diagnostic_parts_with_diagnostic(diagnostic) do
     build(:diagnostic_part, diagnostic: diagnostic)
   end

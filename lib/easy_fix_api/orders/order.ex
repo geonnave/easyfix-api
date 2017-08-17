@@ -10,10 +10,12 @@ defmodule EasyFixApi.Orders.Order do
     field :opening_date, :utc_datetime
     field :conclusion_date, :utc_datetime
 
-    timestamps()
+    belongs_to :diagnostic, EasyFixApi.Orders.Diagnostic
+
+    timestamps(type: :utc_datetime)
   end
 
-  @required_attrs ~w(status sub_status opening_date conclusion_date)a
+  @required_attrs ~w(status sub_status opening_date)a
 
   def create_changeset(attrs) do
     %__MODULE__{}
@@ -26,7 +28,7 @@ defmodule EasyFixApi.Orders.Order do
     |> validate_required(@required_attrs)
   end
 
-  @assoc_types %{diagnostic_id: :integer}
+  @assoc_types %{diagnostic: :map}
   def assoc_changeset(attrs) do
     {attrs, @assoc_types}
     |> cast(attrs, Map.keys(@assoc_types))
@@ -35,7 +37,7 @@ defmodule EasyFixApi.Orders.Order do
 
   def all_nested_assocs do
     [
-      diagnostic: []
+      diagnostic: [EasyFixApi.Orders.Diagnostic.all_nested_assocs]
     ]
   end
 end

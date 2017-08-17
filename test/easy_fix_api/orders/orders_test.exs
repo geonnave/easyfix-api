@@ -109,17 +109,23 @@ defmodule EasyFixApi.OrdersTest do
 
     test "list_orders/0 returns all orders" do
       order = insert(:order)
-      assert Orders.list_orders() == [order]
+      [listed_order] = Orders.list_orders()
+      assert listed_order.id == order.id
     end
 
     test "create_order/1 with valid data creates a order" do
-      order_attrs = params_for(:order)
+      diagnostic_attrs =
+        params_for(:diagnostic)
+        |> put_in([:parts], diagnostic_parts_params(2))
+
+      order_attrs =
+        params_for(:order)
+        |> put_in([:diagnostic], diagnostic_attrs)
+
       assert {:ok, %Order{} = order} = Orders.create_order(order_attrs)
 
       {:ok, opening_date, _} = DateTime.from_iso8601 order_attrs[:opening_date]
       assert order.opening_date == opening_date
-      {:ok, conclusion_date, _} = DateTime.from_iso8601 order_attrs[:conclusion_date]
-      assert order.conclusion_date == conclusion_date
       assert order.status == order_attrs[:status]
       assert order.sub_status == order_attrs[:sub_status]
     end
