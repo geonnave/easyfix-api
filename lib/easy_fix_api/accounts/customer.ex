@@ -3,7 +3,6 @@ defmodule EasyFixApi.Accounts.Customer do
   import Ecto.Changeset
   alias EasyFixApi.Accounts.Customer
 
-
   schema "customers" do
     field :name, :string
     field :phone, :string
@@ -33,5 +32,9 @@ defmodule EasyFixApi.Accounts.Customer do
     {attrs, @assoc_types}
     |> cast(attrs, Map.keys(@assoc_types))
     |> validate_required(Map.keys(@assoc_types))
+  end
+
+  def all_nested_assocs do
+    [user: [addresses: [:city]], bank_account: [:bank]]
   end
 end

@@ -2,7 +2,7 @@ defmodule EasyFixApi.Factory do
   use ExMachina.Ecto, repo: EasyFixApi.Repo
 
   alias EasyFixApi.Addresses.{Address, City, State}
-  alias EasyFixApi.Accounts.{User, Garage}
+  alias EasyFixApi.Accounts.{User, Garage, Customer}
   alias EasyFixApi.Payments.{Bank, BankAccount}
   alias EasyFixApi.Orders.{Diagnostic, DiagnosticPart, Budget, BudgetPart, Order}
   alias EasyFixApi.Parts.{Part, PartSubGroup, PartGroup, PartSystem, GarageCategory}
@@ -91,6 +91,28 @@ defmodule EasyFixApi.Factory do
     }
   end
 
+  def customer_factory do
+    %Customer{
+      name: "some name",
+      phone: "some phone",
+      cpf: "some cpf",
+      accept_easyfix_policy: "2017-08-05 17:44:57.913808Z",
+      user: build(:user),
+      bank_account: build(:bank_account)
+    }
+  end
+  def customer_with_all_params do
+    address_attrs = params_with_assocs(:address)
+    bank_account_attrs = params_with_assocs(:bank_account)
+    user_attrs = params_for(:user_with_password)
+
+    params_with_assocs(:customer)
+    |> put_in([:email], user_attrs[:email])
+    |> put_in([:password], user_attrs[:password])
+    |> put_in([:address], address_attrs)
+    |> put_in([:bank_account], bank_account_attrs)
+  end
+
   def address_with_user(user) do
     build(:address, user: user)
   end
@@ -105,12 +127,31 @@ defmodule EasyFixApi.Factory do
       garage_categories: build_list(2, :garage_category)
     }
   end
+  def garage_with_all_params do
+    address_attrs = params_with_assocs(:address)
+    bank_account_attrs = params_with_assocs(:bank_account)
+    user_attrs = params_for(:user_with_password)
+    [gc1, gc2] = insert_list(2, :garage_category)
+
+    params_with_assocs(:garage)
+    |> put_in([:email], user_attrs[:email])
+    |> put_in([:password], user_attrs[:password])
+    |> put_in([:address], address_attrs)
+    |> put_in([:bank_account], bank_account_attrs)
+    |> put_in([:garage_categories_ids], [gc1.id, gc2.id])
+  end
 
   def user_factory do
     %User{
       email: "some@email.com",
       # password: "some password",
       password_hash: "$2b$12$jOt0r0C8tEVmmLsW6rd/pOGjgJn1pWmqob0KpIPYwfWMkgFlcto/K",
+    }
+  end
+  def user_with_password_factory do
+    %User{
+      email: "some@email.com",
+      password: "some password",
     }
   end
 

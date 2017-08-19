@@ -7,7 +7,10 @@ defmodule EasyFixApi.Accounts.Garage do
     field :name, :string
     field :owner_name, :string
     field :phone, :string
-    many_to_many :garage_categories, EasyFixApi.Parts.GarageCategory, join_through: "garages_garage_categories"
+    many_to_many :garage_categories,
+      EasyFixApi.Parts.GarageCategory,
+      join_through: "garages_garage_categories",
+      on_delete: :delete_all
     belongs_to :user, EasyFixApi.Accounts.User
     belongs_to :bank_account, EasyFixApi.Payments.BankAccount
 

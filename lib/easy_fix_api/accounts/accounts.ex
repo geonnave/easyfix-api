@@ -141,9 +141,34 @@ defmodule EasyFixApi.Accounts do
   end
 
   def create_customer(attrs \\ %{}) do
-    %Customer{}
-    |> Customer.changeset(attrs)
-    |> Repo.insert()
+    with customer_changeset = %{valid?: true} <- Customer.create_changeset(attrs),
+         customer_assoc_changeset = %{valid?: true} <- Customer.assoc_changeset(attrs),
+         customer_assoc_attrs <- apply_changes_ensure_atom_keys(customer_assoc_changeset) do
+
+      Repo.transaction fn ->
+        {:ok, user} = create_user(attrs)
+
+        {:ok, bank_account} =
+          customer_assoc_attrs[:bank_account]
+          |> Payments.create_bank_account()
+
+        customer =
+          customer_changeset
+          |> put_assoc(:user, user)
+          |> put_assoc(:bank_account, bank_account)
+          |> Repo.insert!()
+
+        # {:ok, _address} =
+        #   customer_assoc_attrs[:address]
+        #   |> Addresses.create_address(customer.user.id)
+
+        customer
+        |> Repo.preload(Customer.all_nested_assocs)
+      end
+    else
+      %{valid?: false} = changeset ->
+        {:error, changeset}
+    end
   end
 
   def update_customer(%Customer{} = customer, attrs) do

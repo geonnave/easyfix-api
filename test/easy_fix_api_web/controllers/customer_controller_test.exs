@@ -1,17 +1,10 @@
 defmodule EasyFixApiWeb.CustomerControllerTest do
   use EasyFixApiWeb.ConnCase
 
-  alias EasyFixApi.Accounts
   alias EasyFixApi.Accounts.Customer
 
-  @create_attrs %{accept_easyfix_policy: "2010-04-17 14:00:00.000000Z", cpf: "some cpf", name: "some name", phone: "some phone"}
   @update_attrs %{accept_easyfix_policy: "2011-05-18 15:01:01.000000Z", cpf: "some updated cpf", name: "some updated name", phone: "some updated phone"}
   @invalid_attrs %{accept_easyfix_policy: nil, cpf: nil, name: nil, phone: nil}
-
-  def fixture(:customer) do
-    {:ok, customer} = Accounts.create_customer(@create_attrs)
-    customer
-  end
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -26,7 +19,8 @@ defmodule EasyFixApiWeb.CustomerControllerTest do
 
   describe "create customer" do
     test "renders customer when data is valid", %{conn: conn} do
-      conn = post conn, customer_path(conn, :create), customer: @create_attrs
+      customer_attrs = customer_with_all_params()
+      conn = post conn, customer_path(conn, :create), customer: customer_attrs
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get conn, customer_path(conn, :show, id)
@@ -71,7 +65,7 @@ defmodule EasyFixApiWeb.CustomerControllerTest do
   end
 
   defp create_customer(_) do
-    customer = fixture(:customer)
+    customer = insert(:customer)
     {:ok, customer: customer}
   end
 end
