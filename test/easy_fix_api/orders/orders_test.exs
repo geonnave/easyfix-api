@@ -116,7 +116,7 @@ defmodule EasyFixApi.OrdersTest do
     test "create_order/1 with valid data creates a order" do
       order_attrs = order_with_diagnostic_params()
 
-      assert {:ok, %Order{} = order} = Orders.create_order(order_attrs) |> IO.inspect
+      assert {:ok, %Order{} = order} = Orders.create_order(order_attrs)
 
       {:ok, opening_date, _} = DateTime.from_iso8601 order_attrs[:opening_date]
       assert order.opening_date == opening_date

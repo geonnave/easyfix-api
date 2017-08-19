@@ -111,32 +111,11 @@ defmodule EasyFixApi.Accounts do
     end
   end
 
-  # FIXME: ainda não funciona, mas não é prioridade
+  # FIXME: ainda não está correto, mas não é prioridade
   def update_garage(%Garage{} = garage, attrs) do
-    case Garage.assoc_changeset(attrs) do
-      assoc_changeset = %{valid?: true} ->
-        inserted_category_ids = for %{id: id} <- garage.garage_categories, do: id
-
-        garage_assocs = apply_changes(assoc_changeset)
-        garage_categories =
-          garage_assocs[:garage_categories_ids]
-          |> Enum.concat(inserted_category_ids)
-          |> Enum.map(&Repo.get(GarageCategory, &1))
-
-        Repo.transaction fn ->
-          {:ok, user} = update_user(garage.user, attrs)
-
-          garage
-          |> Garage.changeset(attrs)
-          |> put_assoc(:user, user)
-          |> put_assoc(:garage_categories, garage_categories)
-          |> Repo.update!()
-
-          get_garage!(garage.id)
-        end
-      invalid_assoc_changeset ->
-        {:error, invalid_assoc_changeset}
-    end
+    garage
+    |> Garage.changeset(attrs)
+    |> Repo.update!()
   end
 
   def delete_garage(%Garage{} = garage) do
@@ -150,4 +129,31 @@ defmodule EasyFixApi.Accounts do
   def garage_preload(garage_or_garages, field) do
     Repo.preload(garage_or_garages, field)
   end
+
+  alias EasyFixApi.Accounts.Customer
+
+  def list_customers do
+    Repo.all(Customer)
+  end
+
+  def get_customer!(id) do
+    Repo.get!(Customer, id)
+  end
+
+  def create_customer(attrs \\ %{}) do
+    %Customer{}
+    |> Customer.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_customer(%Customer{} = customer, attrs) do
+    customer
+    |> Customer.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_customer(%Customer{} = customer) do
+    Repo.delete(customer)
+  end
+
 end

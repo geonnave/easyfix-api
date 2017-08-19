@@ -27,6 +27,7 @@ defmodule EasyFixApiWeb.Router do
     post "/sessions", SessionController, :create
     delete "/sessions", SessionController, :delete
 
+    resources "/customers", CustomerController, except: [:new, :edit]
     resources "/garages", GarageController, except: [:new, :edit]
     resources "/users", UserController, except: [:new, :edit]
 

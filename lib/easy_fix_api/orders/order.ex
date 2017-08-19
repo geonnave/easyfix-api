@@ -3,7 +3,6 @@ defmodule EasyFixApi.Orders.Order do
   import Ecto.Changeset
   alias EasyFixApi.Orders.Order
 
-
   schema "orders" do
     field :status, :string
     field :sub_status, :string
