@@ -1,7 +1,6 @@
 defmodule EasyFixApi.Accounts.Customer do
   use Ecto.Schema
   import Ecto.Changeset
-  alias EasyFixApi.Accounts.Customer
 
   schema "customers" do
     field :name, :string
@@ -10,6 +9,7 @@ defmodule EasyFixApi.Accounts.Customer do
     field :accept_easyfix_policy, :utc_datetime
     belongs_to :user, EasyFixApi.Accounts.User
     belongs_to :bank_account, EasyFixApi.Payments.BankAccount
+    belongs_to :address, EasyFixApi.Addresses.Address
 
     timestamps()
   end
@@ -35,6 +35,6 @@ defmodule EasyFixApi.Accounts.Customer do
   end
 
   def all_nested_assocs do
-    [user: [addresses: [:city]], bank_account: [:bank]]
+    [user: [addresses: [:city]], bank_account: [:bank], address: []]
   end
 end

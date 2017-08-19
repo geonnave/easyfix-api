@@ -15,6 +15,9 @@ defmodule EasyFixApiWeb.CustomerView do
       name: customer.name,
       cpf: customer.cpf,
       phone: customer.phone,
-      accept_easyfix_policy: customer.accept_easyfix_policy}
+      accept_easyfix_policy: customer.accept_easyfix_policy,
+      bank_account: render_one(customer.bank_account, EasyFixApiWeb.BankAccountView, "bank_account.json"),
+      address: render_one(customer.address, EasyFixApiWeb.AddressView, "address.json"),
+    }
   end
 end

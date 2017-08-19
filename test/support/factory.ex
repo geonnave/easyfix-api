@@ -98,7 +98,8 @@ defmodule EasyFixApi.Factory do
       cpf: "some cpf",
       accept_easyfix_policy: "2017-08-05 17:44:57.913808Z",
       user: build(:user),
-      bank_account: build(:bank_account)
+      bank_account: build(:bank_account),
+      address: build(:address),
     }
   end
   def customer_with_all_params do

@@ -25,5 +25,9 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Addresses do
 
       timestamps(type: :timestamptz)
     end
+
+    alter table(:customers) do
+      add :address_id, references(:addresses)
+    end
   end
 end

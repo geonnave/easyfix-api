@@ -100,6 +100,22 @@ defmodule EasyFixApi.Addresses do
     end
   end
 
+  def create_address1(attrs \\ %{}) do
+    with address_changeset = %{valid?: true} <- Address.create_changeset(attrs),
+         address_assoc_changeset = %{valid?: true} <- Address.assoc_changeset(attrs),
+         address_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(address_assoc_changeset) do
+
+      city = get_city!(address_assoc_attrs[:city_id])
+
+      address_changeset
+      |> put_assoc(:city, city)
+      |> Repo.insert()
+    else
+      %{valid?: false} = changeset ->
+        {:error, changeset}
+    end
+  end
+
   # FIXME: ainda não funciona
   #  dúvida: aprender como fazer update de assocs
   def update_address(%Address{} = address, attrs) do

@@ -134,10 +134,12 @@ defmodule EasyFixApi.Accounts do
 
   def list_customers do
     Repo.all(Customer)
+    |> Repo.preload(Customer.all_nested_assocs)
   end
 
   def get_customer!(id) do
     Repo.get!(Customer, id)
+    |> Repo.preload(Customer.all_nested_assocs)
   end
 
   def create_customer(attrs \\ %{}) do
@@ -152,15 +154,16 @@ defmodule EasyFixApi.Accounts do
           customer_assoc_attrs[:bank_account]
           |> Payments.create_bank_account()
 
+        {:ok, address} =
+          customer_assoc_attrs[:address]
+          |> Addresses.create_address1()
+
         customer =
           customer_changeset
           |> put_assoc(:user, user)
           |> put_assoc(:bank_account, bank_account)
+          |> put_assoc(:address, address)
           |> Repo.insert!()
-
-        # {:ok, _address} =
-        #   customer_assoc_attrs[:address]
-        #   |> Addresses.create_address(customer.user.id)
 
         customer
         |> Repo.preload(Customer.all_nested_assocs)
