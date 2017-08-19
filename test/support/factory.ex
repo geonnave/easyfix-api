@@ -15,6 +15,10 @@ defmodule EasyFixApi.Factory do
       conclusion_date: "2017-08-07T17:44:57.913808Z",
     }
   end
+  def order_with_diagnostic_params do
+    params_for(:order)
+    |> put_in([:diagnostic], diagnostic_with_diagnostic_parts_params())
+  end
 
   def budget_factory do
     %Budget{
@@ -41,15 +45,15 @@ defmodule EasyFixApi.Factory do
       quantity: 1,
     }
   end
-
+  def diagnostic_parts_with_diagnostic(diagnostic) do
+    build(:diagnostic_part, diagnostic: diagnostic)
+  end
   def diagnostic_parts_params(n_parts) do
     1..n_parts
     |> Enum.map(fn _ -> insert(:part) end)
     |> Enum.map(fn part -> %{part_id: part.id, quantity: 1} end)
   end
-  def diagnostic_parts_with_diagnostic(diagnostic) do
-    build(:diagnostic_part, diagnostic: diagnostic)
-  end
+
   def diagnostic_factory do
     %Diagnostic{
       accepts_used_parts: true,
@@ -58,6 +62,10 @@ defmodule EasyFixApi.Factory do
       status: "some status",
       expiration_date: "2017-08-05 17:44:57.913808Z",
       }
+  end
+  def diagnostic_with_diagnostic_parts_params do
+    params_for(:diagnostic)
+    |> put_in([:parts], diagnostic_parts_params(2))
   end
 
   def state_factory do
