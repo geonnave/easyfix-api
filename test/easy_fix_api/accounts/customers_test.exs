@@ -27,6 +27,7 @@ defmodule EasyFixApi.CustomersTest do
     assert customer.cpf == customer_attrs[:cpf]
     assert customer.user.email == customer_attrs[:email]
     assert customer.bank_account.number == customer_attrs[:bank_account][:number]
+    assert is_map(customer.address)
   end
 
   test "create_customer/1 with invalid data returns error changeset" do

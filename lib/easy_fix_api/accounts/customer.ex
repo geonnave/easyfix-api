@@ -35,6 +35,6 @@ defmodule EasyFixApi.Accounts.Customer do
   end
 
   def all_nested_assocs do
-    [user: [addresses: [:city]], bank_account: [:bank], address: []]
+    [user: [], bank_account: [:bank], address: [:city]]
   end
 end

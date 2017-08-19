@@ -8,7 +8,6 @@ defmodule EasyFixApi.Addresses.Address do
     field :neighborhood, :string
     field :postal_code, :string
     belongs_to :city, EasyFixApi.Addresses.City
-    belongs_to :user, EasyFixApi.Accounts.User
 
     timestamps(type: :utc_datetime)
   end

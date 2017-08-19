@@ -91,16 +91,17 @@ defmodule EasyFixApi.Accounts do
           garage_assoc_attrs[:bank_account]
           |> Payments.create_bank_account()
 
+        {:ok, address} =
+          garage_assoc_attrs[:address]
+          |> Addresses.create_address()
+
         garage =
           garage_changeset
           |> put_assoc(:user, user)
+          |> put_assoc(:address, address)
           |> put_assoc(:bank_account, bank_account)
           |> put_assoc(:garage_categories, garage_categories)
           |> Repo.insert!()
-
-        {:ok, _address} =
-          garage_assoc_attrs[:address]
-          |> Addresses.create_address(garage.user.id)
 
         garage
         |> garage_preload_all_nested_assocs()
@@ -156,7 +157,7 @@ defmodule EasyFixApi.Accounts do
 
         {:ok, address} =
           customer_assoc_attrs[:address]
-          |> Addresses.create_address1()
+          |> Addresses.create_address()
 
         customer =
           customer_changeset

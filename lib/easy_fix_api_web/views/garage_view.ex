@@ -25,14 +25,13 @@ defmodule EasyFixApiWeb.GarageView do
   end
 
   def render("garage.json", %{garage: garage}) do
-    [address] = garage.user.addresses
     %{id: garage.id,
       name: garage.name,
       owner_name: garage.owner_name,
       email: garage.user.email,
       phone: garage.phone,
       garage_categories: render_many(garage.garage_categories, EasyFixApiWeb.GarageCategoryView, "garage_category.json"),
-      address: render_one(address, EasyFixApiWeb.AddressView, "address.json"),
+      address: render_one(garage.address, EasyFixApiWeb.AddressView, "address.json"),
       bank_account: render_one(garage.bank_account, EasyFixApiWeb.BankAccountView, "bank_account.json"),
       cnpj: garage.cnpj}
   end

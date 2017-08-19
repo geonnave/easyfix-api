@@ -64,7 +64,7 @@ defmodule EasyFixApi.GaragesTest do
 
   test "get_garage! returns the garage with given id" do
     garage = fixture(:garage)
-    assert Accounts.get_garage!(garage.id) == garage
+    assert Accounts.get_garage!(garage.id).id == garage.id
   end
 
   test "get_garage! returns the correct associations" do

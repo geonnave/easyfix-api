@@ -13,6 +13,7 @@ defmodule EasyFixApi.Accounts.Garage do
       on_delete: :delete_all
     belongs_to :user, EasyFixApi.Accounts.User
     belongs_to :bank_account, EasyFixApi.Payments.BankAccount
+    belongs_to :address, EasyFixApi.Addresses.Address
 
     timestamps(type: :utc_datetime)
   end
@@ -39,6 +40,6 @@ defmodule EasyFixApi.Accounts.Garage do
   end
 
   def all_nested_assocs do
-    [user: [addresses: [:city]], bank_account: [:bank], garage_categories: []]
+    [user: [], bank_account: [:bank], garage_categories: [], address: []]
   end
 end

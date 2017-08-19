@@ -82,25 +82,7 @@ defmodule EasyFixApi.Addresses do
     |> preload_all_nested_associations()
   end
 
-  def create_address(attrs \\ %{}, user_id) do
-    with address_changeset = %{valid?: true} <- Address.create_changeset(attrs),
-         address_assoc_changeset = %{valid?: true} <- Address.assoc_changeset(attrs),
-         address_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(address_assoc_changeset) do
-
-      city = get_city!(address_assoc_attrs[:city_id])
-      user = Accounts.get_user!(user_id)
-
-      address_changeset
-      |> put_assoc(:city, city)
-      |> put_assoc(:user, user)
-      |> Repo.insert()
-    else
-      %{valid?: false} = changeset ->
-        {:error, changeset}
-    end
-  end
-
-  def create_address1(attrs \\ %{}) do
+  def create_address(attrs \\ %{}) do
     with address_changeset = %{valid?: true} <- Address.create_changeset(attrs),
          address_assoc_changeset = %{valid?: true} <- Address.assoc_changeset(attrs),
          address_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(address_assoc_changeset) do

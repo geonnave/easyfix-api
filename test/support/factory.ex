@@ -124,8 +124,9 @@ defmodule EasyFixApi.Factory do
       name: "some name",
       owner_name: "some owner_name",
       phone: "some phone",
+      garage_categories: build_list(2, :garage_category),
       user: build(:user),
-      garage_categories: build_list(2, :garage_category)
+      address: build(:address),
     }
   end
   def garage_with_all_params do
