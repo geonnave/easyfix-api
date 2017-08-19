@@ -6,6 +6,7 @@ defmodule EasyFixApi.Factory do
   alias EasyFixApi.Payments.{Bank, BankAccount}
   alias EasyFixApi.Orders.{Diagnostic, DiagnosticPart, Budget, BudgetPart, Order}
   alias EasyFixApi.Parts.{Part, PartSubGroup, PartGroup, PartSystem, GarageCategory}
+  alias EasyFixApi.Cars.{Vehicle}
 
   def order_factory do
     %Order{
@@ -185,6 +186,14 @@ defmodule EasyFixApi.Factory do
   def part_system_factory do
     %PartSystem{
       name: sequence("some part")
+    }
+  end
+
+  def vehicle_factory do
+    %Vehicle{
+      model_year: "2010",
+      production_year: "2010",
+      plate: "cfd-2211",
     }
   end
 

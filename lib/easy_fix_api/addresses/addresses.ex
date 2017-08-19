@@ -4,7 +4,7 @@ defmodule EasyFixApi.Addresses do
   """
 
   import Ecto.{Query, Changeset}, warn: false
-  alias EasyFixApi.{Repo, Accounts, Helpers}
+  alias EasyFixApi.{Repo, Helpers}
 
   alias EasyFixApi.Addresses.State
 

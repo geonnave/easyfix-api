@@ -11,7 +11,7 @@ defmodule EasyFixApi.Accounts.Customer do
     belongs_to :bank_account, EasyFixApi.Payments.BankAccount
     belongs_to :address, EasyFixApi.Addresses.Address
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @required_fields ~w(name cpf phone accept_easyfix_policy)a

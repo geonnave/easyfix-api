@@ -36,7 +36,7 @@ part_changeset = %Part{} |> cast(%{name: "disco de freio"}, [:name]) |> put_asso
 part = Repo.insert! part_changeset
 
 # inserting one Bank
-Repo.insert!(%Bank{code: "1", name: "São Paulo"})
+Repo.insert!(%Bank{code: "1", name: "RockBank"})
 
 # inserting one State
 state = Repo.insert!(%State{name: "São Paulo"})

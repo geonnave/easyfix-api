@@ -42,4 +42,32 @@ defmodule EasyFixApi.Cars do
     |> cast(attrs, [:name])
     |> validate_required([:name])
   end
+
+  alias EasyFixApi.Cars.Vehicle
+
+  def list_vehicle do
+    Repo.all(Vehicle)
+  end
+
+  def get_vehicle!(id) do
+    Repo.get!(Vehicle, id)
+    |> Repo.preload(Vehicle.all_nested_assocs)
+  end
+
+  def create_vehicle(attrs \\ %{}) do
+    %Vehicle{}
+    |> Vehicle.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_vehicle(%Vehicle{} = vehicle, attrs) do
+    vehicle
+    |> Vehicle.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_vehicle(%Vehicle{} = vehicle) do
+    Repo.delete(vehicle)
+  end
+
 end
