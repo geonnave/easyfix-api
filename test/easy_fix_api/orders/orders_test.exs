@@ -14,16 +14,8 @@ defmodule EasyFixApi.OrdersTest do
     end
 
     test "create_diagnostic/1 with valid data creates a diagnostic" do
-      part1 = insert(:part)
-      part2 = insert(:part)
-      parts = [
-        %{part_id: part1.id, quantity: 1},
-        %{part_id: part2.id, quantity: 4},
-      ]
-
-      diagnostic_attrs =
-        params_for(:diagnostic)
-        |> put_in([:parts], parts)
+      vehicle = insert(:vehicle_with_model)
+      diagnostic_attrs = diagnostic_with_diagnostic_parts_params(vehicle.id)
 
       assert {:ok, %Diagnostic{} = diagnostic} = Orders.create_diagnostic(diagnostic_attrs)
       assert diagnostic.accepts_used_parts == true
@@ -31,6 +23,7 @@ defmodule EasyFixApi.OrdersTest do
       assert diagnostic.need_tow_truck == true
       assert diagnostic.status == "some status"
       assert length(diagnostic.parts) == 2
+      assert diagnostic.vehicle.id == diagnostic_attrs[:vehicle_id]
     end
 
     test "create_diagnostic/1 with invalid data returns error changeset" do
@@ -115,7 +108,8 @@ defmodule EasyFixApi.OrdersTest do
 
     test "create_order/1 with valid data creates a order" do
       customer = insert(:customer)
-      order_attrs = order_with_all_params(customer.id)
+      [vehicle] = customer.vehicles
+      order_attrs = order_with_all_params(customer.id, vehicle.id)
 
       assert {:ok, %Order{} = order} = Orders.create_order(order_attrs)
 

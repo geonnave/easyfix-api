@@ -9,6 +9,8 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
       add :comment, :string
       add :expiration_date, :utc_datetime
 
+      add :vehicle_id, references(:vehicles)
+
       timestamps(type: :timestamptz)
     end
 

@@ -11,6 +11,7 @@ defmodule EasyFixApi.Orders.Diagnostic do
     has_many :diagnostics_parts, EasyFixApi.Orders.DiagnosticPart
     has_many :parts, through: [:diagnostics_parts, :part]
     has_many :budgets, EasyFixApi.Orders.Budget
+    belongs_to :vehicle, EasyFixApi.Cars.Vehicle
 
     timestamps(type: :utc_datetime)
   end
@@ -29,7 +30,7 @@ defmodule EasyFixApi.Orders.Diagnostic do
     |> validate_required(@required_attrs)
   end
 
-  @assoc_types %{parts: {:array, :map}}
+  @assoc_types %{parts: {:array, :map}, vehicle_id: :integer}
   def assoc_changeset(attrs) do
     {attrs, @assoc_types}
     |> cast(attrs, Map.keys(@assoc_types))
@@ -37,6 +38,9 @@ defmodule EasyFixApi.Orders.Diagnostic do
   end
 
   def all_nested_assocs do
-    [parts: [:garage_category, [part_sub_group: [part_group: :part_system]], :repair_by_fixer_part]]
+    [
+      parts: [:garage_category, [part_sub_group: [part_group: :part_system]], :repair_by_fixer_part],
+      vehicle: [EasyFixApi.Cars.Vehicle.all_nested_assocs]
+    ]
   end
 end

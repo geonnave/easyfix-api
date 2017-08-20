@@ -16,9 +16,9 @@ defmodule EasyFixApi.Factory do
       conclusion_date: "2017-08-07T17:44:57.913808Z",
     }
   end
-  def order_with_all_params(customer_id) do
+  def order_with_all_params(customer_id, vehicle_id) do
     params_for(:order)
-    |> put_in([:diagnostic], diagnostic_with_diagnostic_parts_params())
+    |> put_in([:diagnostic], diagnostic_with_diagnostic_parts_params(vehicle_id))
     |> put_in([:customer_id], customer_id)
   end
 
@@ -65,9 +65,10 @@ defmodule EasyFixApi.Factory do
       expiration_date: "2017-08-05 17:44:57.913808Z",
       }
   end
-  def diagnostic_with_diagnostic_parts_params do
+  def diagnostic_with_diagnostic_parts_params(vehicle_id) do
     params_for(:diagnostic)
     |> put_in([:parts], diagnostic_parts_params(2))
+    |> put_in([:vehicle_id], vehicle_id)
   end
 
   def state_factory do

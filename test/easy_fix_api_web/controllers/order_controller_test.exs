@@ -17,10 +17,12 @@ defmodule EasyFixApiWeb.OrderControllerTest do
   describe "create order" do
     test "renders order when data is valid", %{conn: conn} do
       customer = insert(:customer)
+      [vehicle] = customer.vehicles
 
       diagnostic_attrs =
         params_for(:diagnostic)
         |> put_in([:parts], diagnostic_parts_params(2))
+        |> put_in([:vehicle_id], vehicle.id)
 
       order_attrs =
         params_for(:order)

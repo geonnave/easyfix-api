@@ -43,8 +43,10 @@ defmodule EasyFixApi.Orders do
          diagnostic_assoc_changeset = %{valid?: true} <- Diagnostic.assoc_changeset(attrs),
          diagnostic_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(diagnostic_assoc_changeset) do
 
+      vehicle = EasyFixApi.Cars.get_vehicle!(diagnostic_assoc_attrs[:vehicle_id])
       Repo.transaction fn ->
         diagnostic_changeset
+        |> put_assoc(:vehicle, vehicle)
         |> Repo.insert()
         |> case do
           {:ok, diagnostic} ->
