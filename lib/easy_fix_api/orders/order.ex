@@ -1,7 +1,6 @@
 defmodule EasyFixApi.Orders.Order do
   use Ecto.Schema
   import Ecto.Changeset
-  alias EasyFixApi.Orders.Order
 
   schema "orders" do
     field :status, :string
@@ -10,6 +9,7 @@ defmodule EasyFixApi.Orders.Order do
     field :conclusion_date, :utc_datetime
 
     belongs_to :diagnostic, EasyFixApi.Orders.Diagnostic
+    belongs_to :customer, EasyFixApi.Accounts.Customer
 
     timestamps(type: :utc_datetime)
   end
@@ -27,7 +27,7 @@ defmodule EasyFixApi.Orders.Order do
     |> validate_required(@required_attrs)
   end
 
-  @assoc_types %{diagnostic: :map}
+  @assoc_types %{diagnostic: :map, customer_id: :integer}
   def assoc_changeset(attrs) do
     {attrs, @assoc_types}
     |> cast(attrs, Map.keys(@assoc_types))
@@ -36,7 +36,8 @@ defmodule EasyFixApi.Orders.Order do
 
   def all_nested_assocs do
     [
-      diagnostic: [EasyFixApi.Orders.Diagnostic.all_nested_assocs]
+      diagnostic: [EasyFixApi.Orders.Diagnostic.all_nested_assocs],
+      customer: [EasyFixApi.Accounts.Customer.all_nested_assocs]
     ]
   end
 end

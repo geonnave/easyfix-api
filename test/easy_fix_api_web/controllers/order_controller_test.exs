@@ -16,6 +16,8 @@ defmodule EasyFixApiWeb.OrderControllerTest do
 
   describe "create order" do
     test "renders order when data is valid", %{conn: conn} do
+      customer = insert(:customer)
+
       diagnostic_attrs =
         params_for(:diagnostic)
         |> put_in([:parts], diagnostic_parts_params(2))
@@ -23,6 +25,7 @@ defmodule EasyFixApiWeb.OrderControllerTest do
       order_attrs =
         params_for(:order)
         |> put_in([:diagnostic], diagnostic_attrs)
+        |> put_in([:customer_id], customer.id)
 
       conn = post conn, order_path(conn, :create), order: order_attrs
       assert %{"id" => id} = json_response(conn, 201)["data"]
@@ -32,6 +35,7 @@ defmodule EasyFixApiWeb.OrderControllerTest do
       assert json_response(conn, 200)["data"]["opening_date"] == order_attrs[:opening_date]
       assert json_response(conn, 200)["data"]["status"] == order_attrs[:status]
       assert json_response(conn, 200)["data"]["sub_status"] == order_attrs[:sub_status]
+      assert json_response(conn, 200)["data"]["customer_id"] == order_attrs[:customer_id]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do

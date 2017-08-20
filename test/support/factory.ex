@@ -16,9 +16,10 @@ defmodule EasyFixApi.Factory do
       conclusion_date: "2017-08-07T17:44:57.913808Z",
     }
   end
-  def order_with_diagnostic_params do
+  def order_with_all_params(customer_id) do
     params_for(:order)
     |> put_in([:diagnostic], diagnostic_with_diagnostic_parts_params())
+    |> put_in([:customer_id], customer_id)
   end
 
   def budget_factory do
@@ -101,6 +102,7 @@ defmodule EasyFixApi.Factory do
       user: build(:user),
       bank_account: build(:bank_account),
       address: build(:address),
+      vehicles: build_list(1, :vehicle_with_model),
     }
   end
   def customer_with_all_params do

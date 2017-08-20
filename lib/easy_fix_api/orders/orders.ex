@@ -164,11 +164,13 @@ defmodule EasyFixApi.Orders do
          order_assoc_changeset = %{valid?: true} <- Order.assoc_changeset(attrs),
          order_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(order_assoc_changeset) do
 
+      customer = Accounts.get_customer!(order_assoc_attrs[:customer_id])
       Repo.transaction fn ->
         {:ok, diagnostic} = create_diagnostic(order_assoc_attrs[:diagnostic])
 
         order_changeset
         |> put_assoc(:diagnostic, diagnostic)
+        |> put_assoc(:customer, customer)
         |> Repo.insert()
         |> case do
           {:ok, order} ->

@@ -10,7 +10,9 @@ defmodule EasyFixApi.Accounts.Customer do
     belongs_to :user, EasyFixApi.Accounts.User
     belongs_to :bank_account, EasyFixApi.Payments.BankAccount
     belongs_to :address, EasyFixApi.Addresses.Address
-    many_to_many :vehicles, EasyFixApi.Cars.Vehicle, join_through: "vehicles_customers"
+    many_to_many :vehicles, EasyFixApi.Cars.Vehicle,
+      join_through: "vehicles_customers",
+      on_delete: :delete_all
 
     timestamps(type: :utc_datetime)
   end

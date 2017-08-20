@@ -114,7 +114,8 @@ defmodule EasyFixApi.OrdersTest do
     end
 
     test "create_order/1 with valid data creates a order" do
-      order_attrs = order_with_diagnostic_params()
+      customer = insert(:customer)
+      order_attrs = order_with_all_params(customer.id)
 
       assert {:ok, %Order{} = order} = Orders.create_order(order_attrs)
 
@@ -122,6 +123,7 @@ defmodule EasyFixApi.OrdersTest do
       assert order.opening_date == opening_date
       assert order.status == order_attrs[:status]
       assert order.sub_status == order_attrs[:sub_status]
+      assert order.customer.id == order_attrs[:customer_id]
     end
 
     test "create_order/1 with invalid data returns error changeset" do
