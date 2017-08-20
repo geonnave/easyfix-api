@@ -6,7 +6,7 @@ defmodule EasyFixApi.Factory do
   alias EasyFixApi.Payments.{Bank, BankAccount}
   alias EasyFixApi.Orders.{Diagnostic, DiagnosticPart, Budget, BudgetPart, Order}
   alias EasyFixApi.Parts.{Part, PartSubGroup, PartGroup, PartSystem, GarageCategory}
-  alias EasyFixApi.Cars.{Vehicle}
+  alias EasyFixApi.Cars.{Model, Brand, Vehicle}
 
   def order_factory do
     %Order{
@@ -189,11 +189,34 @@ defmodule EasyFixApi.Factory do
     }
   end
 
+  def vehicle_with_all_params do
+    params_for(:vehicle)
+    |> put_in([:model_id], insert(:model).id)
+  end
+  def vehicle_with_model_factory do
+    %Vehicle{
+      model_year: "2010",
+      production_year: "2010",
+      plate: "cfd-2211",
+      model: build(:model)
+    }
+  end
   def vehicle_factory do
     %Vehicle{
       model_year: "2010",
       production_year: "2010",
       plate: "cfd-2211",
+    }
+  end
+  def model_factory do
+    %Model{
+      name: "Model S",
+      brand: build(:brand),
+    }
+  end
+  def brand_factory do
+    %Brand{
+      name: "Tesla"
     }
   end
 

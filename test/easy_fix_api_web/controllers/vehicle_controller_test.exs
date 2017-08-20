@@ -1,17 +1,10 @@
 defmodule EasyFixApiWeb.VehicleControllerTest do
   use EasyFixApiWeb.ConnCase
 
-  alias EasyFixApi.Cars
   alias EasyFixApi.Cars.Vehicle
 
-  @create_attrs %{model_year: "some model_year", plate: "some plate", production_year: "some production_year"}
   @update_attrs %{model_year: "some updated model_year", plate: "some updated plate", production_year: "some updated production_year"}
   @invalid_attrs %{model_year: nil, plate: nil, production_year: nil}
-
-  def fixture(:vehicle) do
-    {:ok, vehicle} = Cars.create_vehicle(@create_attrs)
-    vehicle
-  end
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -26,15 +19,13 @@ defmodule EasyFixApiWeb.VehicleControllerTest do
 
   describe "create vehicle" do
     test "renders vehicle when data is valid", %{conn: conn} do
-      conn = post conn, vehicle_path(conn, :create), vehicle: @create_attrs
+      vehicle_attrs = vehicle_with_all_params()
+      conn = post conn, vehicle_path(conn, :create), vehicle: vehicle_attrs
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get conn, vehicle_path(conn, :show, id)
-      assert json_response(conn, 200)["data"] == %{
-        "id" => id,
-        "model_year" => "some model_year",
-        "plate" => "some plate",
-        "production_year" => "some production_year"}
+      assert json_response(conn, 200)["data"]["id"] == id
+      assert json_response(conn, 200)["data"]["plate"] == String.upcase(vehicle_attrs[:plate])
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -43,6 +34,7 @@ defmodule EasyFixApiWeb.VehicleControllerTest do
     end
   end
 
+  @tag :skip
   describe "update vehicle" do
     setup [:create_vehicle]
 
@@ -51,11 +43,8 @@ defmodule EasyFixApiWeb.VehicleControllerTest do
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get conn, vehicle_path(conn, :show, id)
-      assert json_response(conn, 200)["data"] == %{
-        "id" => id,
-        "model_year" => "some updated model_year",
-        "plate" => "some updated plate",
-        "production_year" => "some updated production_year"}
+      assert json_response(conn, 200)["data"]["id"] == id
+      assert json_response(conn, 200)["data"]["plate"] == String.upcase(@update_attrs[:plate])
     end
 
     test "renders errors when data is invalid", %{conn: conn, vehicle: vehicle} do
@@ -77,7 +66,7 @@ defmodule EasyFixApiWeb.VehicleControllerTest do
   end
 
   defp create_vehicle(_) do
-    vehicle = fixture(:vehicle)
+    vehicle = insert(:vehicle_with_model)
     {:ok, vehicle: vehicle}
   end
 end

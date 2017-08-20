@@ -2,10 +2,12 @@ defmodule EasyFixApi.Cars.Vehicle do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "vehicle" do
+  schema "vehicles" do
     field :model_year, :string
     field :production_year, :string
     field :plate, :string
+    belongs_to :model, EasyFixApi.Cars.Model
+    has_one :brand, through: [:model, :brand]
 
     timestamps(type: :utc_datetime)
   end
@@ -23,7 +25,7 @@ defmodule EasyFixApi.Cars.Vehicle do
     |> validate_required(@required_fields)
   end
 
-  @assoc_types %{}
+  @assoc_types %{model_id: :integer}
   def assoc_changeset(attrs) do
     {attrs, @assoc_types}
     |> cast(attrs, Map.keys(@assoc_types))

@@ -4,7 +4,7 @@ defmodule EasyFixApi.Cars do
   """
 
   import Ecto.{Query, Changeset}, warn: false
-  alias EasyFixApi.Repo
+  alias EasyFixApi.{Repo, Helpers}
 
   alias EasyFixApi.Cars.Brand
 
@@ -55,9 +55,20 @@ defmodule EasyFixApi.Cars do
   end
 
   def create_vehicle(attrs \\ %{}) do
-    %Vehicle{}
-    |> Vehicle.changeset(attrs)
-    |> Repo.insert()
+    with vehicle_changeset = %{valid?: true} <- Vehicle.create_changeset(attrs),
+         vehicle_assoc_changeset = %{valid?: true} <- Vehicle.assoc_changeset(attrs),
+         vehicle_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(vehicle_assoc_changeset) do
+
+      model = get_model!(vehicle_assoc_attrs[:model_id])
+
+      vehicle_changeset
+      |> put_change(:plate, String.upcase(vehicle_changeset.changes[:plate]))
+      |> put_assoc(:model, model)
+      |> Repo.insert()
+    else
+      %{valid?: false} = changeset ->
+        {:error, changeset}
+    end
   end
 
   def update_vehicle(%Vehicle{} = vehicle, attrs) do

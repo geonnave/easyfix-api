@@ -18,10 +18,11 @@ defmodule EasyFixApi.CarsTest do
   end
 
   test "create_vehicle/1 with valid data creates a vehicle" do
-    vehicle_attrs = params_for(:vehicle)
+    vehicle_attrs = vehicle_with_all_params()
+
     assert {:ok, %Vehicle{} = vehicle} = Cars.create_vehicle(vehicle_attrs)
     assert vehicle.model_year == vehicle_attrs[:model_year]
-    assert vehicle.plate == vehicle_attrs[:plate]
+    assert vehicle.plate == String.upcase(vehicle_attrs[:plate])
     assert vehicle.production_year == vehicle_attrs[:production_year]
   end
 
