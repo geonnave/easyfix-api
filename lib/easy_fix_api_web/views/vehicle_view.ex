@@ -14,6 +14,9 @@ defmodule EasyFixApiWeb.VehicleView do
     %{id: vehicle.id,
       production_year: vehicle.production_year,
       model_year: vehicle.model_year,
-      plate: vehicle.plate}
+      plate: vehicle.plate,
+      model: vehicle.model.name,
+      brand: vehicle.brand.name,
+    }
   end
 end

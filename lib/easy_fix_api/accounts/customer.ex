@@ -10,6 +10,7 @@ defmodule EasyFixApi.Accounts.Customer do
     belongs_to :user, EasyFixApi.Accounts.User
     belongs_to :bank_account, EasyFixApi.Payments.BankAccount
     belongs_to :address, EasyFixApi.Addresses.Address
+    many_to_many :vehicles, EasyFixApi.Cars.Vehicle, join_through: "vehicles_customers"
 
     timestamps(type: :utc_datetime)
   end
@@ -27,7 +28,7 @@ defmodule EasyFixApi.Accounts.Customer do
     |> validate_required(@required_fields)
   end
 
-  @assoc_types %{address: :map, bank_account: :map}
+  @assoc_types %{address: :map, bank_account: :map, vehicles: {:array, :map}}
   def assoc_changeset(attrs) do
     {attrs, @assoc_types}
     |> cast(attrs, Map.keys(@assoc_types))
@@ -35,6 +36,6 @@ defmodule EasyFixApi.Accounts.Customer do
   end
 
   def all_nested_assocs do
-    [user: [], bank_account: [:bank], address: [:city]]
+    [user: [], bank_account: [:bank], address: [:city], vehicles: [:model, :brand]]
   end
 end

@@ -47,6 +47,7 @@ defmodule EasyFixApi.Cars do
 
   def list_vehicle do
     Repo.all(Vehicle)
+    |> Repo.preload(Vehicle.all_nested_assocs)
   end
 
   def get_vehicle!(id) do
@@ -61,10 +62,13 @@ defmodule EasyFixApi.Cars do
 
       model = get_model!(vehicle_assoc_attrs[:model_id])
 
-      vehicle_changeset
-      |> put_change(:plate, String.upcase(vehicle_changeset.changes[:plate]))
-      |> put_assoc(:model, model)
-      |> Repo.insert()
+      {:ok, vehicle} =
+        vehicle_changeset
+        |> put_change(:plate, String.upcase(vehicle_changeset.changes[:plate]))
+        |> put_assoc(:model, model)
+        |> Repo.insert()
+
+      {:ok, Repo.preload(vehicle, Vehicle.all_nested_assocs)}
     else
       %{valid?: false} = changeset ->
         {:error, changeset}

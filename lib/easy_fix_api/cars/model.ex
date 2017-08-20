@@ -4,6 +4,7 @@ defmodule EasyFixApi.Cars.Model do
   schema "models" do
     field :name, :string
     belongs_to :brand, EasyFixApi.Cars.Brand
+    has_many :vehicles, EasyFixApi.Cars.Vehicle
 
     timestamps(type: :utc_datetime)
   end

@@ -43,3 +43,9 @@ state = Repo.insert!(%State{name: "São Paulo"})
 
 city = Ecto.build_assoc(state, :cities, name: "São Paulo")
 city = Repo.insert! city
+
+# inserting one Vehicle
+brand = Repo.insert!(%Brand{name: "RockBrand"})
+
+model = Ecto.build_assoc(brand, :models, name: "Rockcar")
+model = Repo.insert! model

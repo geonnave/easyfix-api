@@ -8,6 +8,7 @@ defmodule EasyFixApi.Accounts do
 
   alias EasyFixApi.{Repo, Addresses, Payments}
   alias EasyFixApi.Accounts.{User, Garage}
+  alias EasyFixApi.Cars
   alias EasyFixApi.Parts.GarageCategory
 
   def get_by_email("garage", email) do
@@ -159,11 +160,17 @@ defmodule EasyFixApi.Accounts do
           customer_assoc_attrs[:address]
           |> Addresses.create_address()
 
+        vehicles = for vehicle_attrs <- customer_assoc_attrs[:vehicles] do
+          {:ok, vehicle} = Cars.create_vehicle(vehicle_attrs)
+          vehicle
+        end
+
         customer =
           customer_changeset
           |> put_assoc(:user, user)
           |> put_assoc(:bank_account, bank_account)
           |> put_assoc(:address, address)
+          |> put_assoc(:vehicles, vehicles)
           |> Repo.insert!()
 
         customer

@@ -41,7 +41,7 @@ defmodule EasyFixApiWeb.Router do
     resources "/budgets", BudgetController, except: [:new, :edit]
     resources "/orders", OrderController, except: [:new, :edit]
 
-    resources "/vehicle", VehicleController, except: [:new, :edit]
+    resources "/vehicles", VehicleController, except: [:new, :edit]
 
     resources "/models", ModelController, except: [:new, :edit]
     resources "/brands", BrandController, except: [:new, :edit]

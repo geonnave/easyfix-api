@@ -106,11 +106,13 @@ defmodule EasyFixApi.Factory do
   def customer_with_all_params do
     address_attrs = params_with_assocs(:address)
     bank_account_attrs = params_with_assocs(:bank_account)
+    vehicle_attrs = params_with_assocs(:vehicle_with_model)
     user_attrs = params_for(:user_with_password)
 
     params_with_assocs(:customer)
     |> put_in([:email], user_attrs[:email])
     |> put_in([:password], user_attrs[:password])
+    |> put_in([:vehicles], [vehicle_attrs])
     |> put_in([:address], address_attrs)
     |> put_in([:bank_account], bank_account_attrs)
   end

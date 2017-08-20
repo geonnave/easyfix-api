@@ -33,6 +33,6 @@ defmodule EasyFixApi.Cars.Vehicle do
   end
 
   def all_nested_assocs do
-    []
+    [:model, :brand]
   end
 end
