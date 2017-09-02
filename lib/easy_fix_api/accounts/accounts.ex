@@ -64,7 +64,7 @@ defmodule EasyFixApi.Accounts do
 
   def list_garages do
     Repo.all(Garage)
-    |> Repo.preload(:user)
+    |> Repo.preload(user: [], garage_categories: [])
   end
 
   def get_garage!(id) do

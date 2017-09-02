@@ -10,4 +10,8 @@ defmodule EasyFixApi.Parts.Part do
 
     timestamps(type: :utc_datetime)
   end
+
+  def all_nested_assocs do
+    [:garage_category, [part_sub_group: [part_group: :part_system]], :repair_by_fixer_part]
+  end
 end

@@ -6,6 +6,7 @@ defmodule EasyFixApi.Orders do
   import Ecto.{Query, Changeset}, warn: false
   alias EasyFixApi.{Parts, Accounts, Repo, Helpers}
 
+  alias EasyFixApi.Parts.Part
   alias EasyFixApi.Orders.DiagnosticPart
 
   def create_diagnostic_part(attrs \\ %{}, diagnostic_id) do
@@ -85,6 +86,14 @@ defmodule EasyFixApi.Orders do
     |> Repo.preload(Budget.all_nested_assocs)
   end
 
+  def get_budget_by_user(user_id) do
+    from(
+      b in Budget,
+      preload: [parts: ^Part.all_nested_assocs, issuer: [:garage]],
+      where: ^user_id == b.issuer_id
+    ) |> Repo.one
+  end
+
   def create_budget(attrs \\ %{}) do
     with budget_changeset = %{valid?: true} <- Budget.create_changeset(attrs),
          budget_assoc_changeset = %{valid?: true} <- Budget.assoc_changeset(attrs),
@@ -154,6 +163,31 @@ defmodule EasyFixApi.Orders do
   def list_orders do
     Repo.all(Order)
     |> Repo.preload(Order.all_nested_assocs)
+  end
+
+  def list_garage_order(garage_id) do
+    # must find intersection(garage_id_categories, diagnostic_categories)
+    garage = Accounts.get_garage!(garage_id)
+
+    garage_categories_ids =
+      garage
+      |> Map.get(:garage_categories)
+      |> Enum.map(& &1.id)
+
+    garage_categories_ids
+    |> orders_matching_garage_categories()
+    |> Enum.map(fn order ->
+      budget = get_budget_by_user(garage.user.id)
+      %{order: order, budget: budget}
+    end) |> IO.inspect
+  end
+
+  def orders_matching_garage_categories(garage_categories_ids) do
+    list_orders()
+    |> Enum.filter(fn %{diagnostic: diagnostic} ->
+      diganostic_gc_ids = Enum.map(diagnostic.parts, & &1.garage_category_id)
+      Enum.all?(garage_categories_ids, & Enum.member?(diganostic_gc_ids, &1))
+    end)
   end
 
   def get_order!(id) do

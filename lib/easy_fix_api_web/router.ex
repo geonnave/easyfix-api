@@ -29,6 +29,7 @@ defmodule EasyFixApiWeb.Router do
 
     resources "/customers", CustomerController, except: [:new, :edit]
     resources "/garages", GarageController, except: [:new, :edit]
+    get "/garages/:garage_id/orders", GarageOrderController, :list_orders
     resources "/users", UserController, except: [:new, :edit]
 
     resources "/addresses", AddressController, except: [:new, :edit]
