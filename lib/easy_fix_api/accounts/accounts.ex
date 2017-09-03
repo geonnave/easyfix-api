@@ -72,6 +72,15 @@ defmodule EasyFixApi.Accounts do
     |> garage_preload_all_nested_assocs()
   end
 
+  def get_garage_categories_ids!(id) do
+    from(
+      g in Garage,
+      join: gcs in assoc(g, :garage_categories),
+      where: ^id == g.id,
+      select: gcs.id
+    ) |> Repo.all
+  end
+
   def garage_preload_all_nested_assocs(garage) do
     Repo.preload(garage, Garage.all_nested_assocs)
   end

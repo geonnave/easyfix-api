@@ -165,24 +165,20 @@ defmodule EasyFixApi.Orders do
     |> Repo.preload(Order.all_nested_assocs)
   end
 
+  # must find intersection(garage_id_categories, diagnostic_categories)
   def list_garage_order(garage_id) do
-    # must find intersection(garage_id_categories, diagnostic_categories)
     garage = Accounts.get_garage!(garage_id)
 
-    garage_categories_ids =
-      garage
-      |> Map.get(:garage_categories)
-      |> Enum.map(& &1.id)
-
-    garage_categories_ids
-    |> orders_matching_garage_categories()
+    garage_id
+    |> Accounts.get_garage_categories_ids!
+    |> list_orders_matching_garage_categories()
     |> Enum.map(fn order ->
       budget = get_budget_by_user(garage.user.id)
       %{order: order, budget: budget}
-    end) |> IO.inspect
+    end)
   end
 
-  def orders_matching_garage_categories(garage_categories_ids) do
+  def list_orders_matching_garage_categories(garage_categories_ids) do
     list_orders()
     |> Enum.filter(fn %{diagnostic: diagnostic} ->
       diganostic_gc_ids = Enum.map(diagnostic.parts, & &1.garage_category_id)
