@@ -81,6 +81,10 @@ defmodule EasyFixApi.Orders do
     |> Repo.preload(Budget.all_nested_assocs)
   end
 
+  def list_budgets_by_order(order_id) do
+    []
+  end
+
   def get_budget!(id) do
     Repo.get!(Budget, id)
     |> Repo.preload(Budget.all_nested_assocs)

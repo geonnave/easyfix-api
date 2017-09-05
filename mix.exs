@@ -36,6 +36,7 @@ defmodule EasyFixApi.Mixfile do
       {:guardian, "~> 0.14"},
       {:corsica, "~> 1.0"},
       {:ecto_enum, "~> 1.0"},
+      {:gen_state_machine, "~> 2.0"},
 
       {:ex_machina, "~> 2.0", only: [:dev, :test]},
    ]
