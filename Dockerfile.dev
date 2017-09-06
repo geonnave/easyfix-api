@@ -1,0 +1,9 @@
+FROM elixir:1.5
+
+MAINTAINER Geovane Fedrecheski <geonnave@gmail.com>
+
+RUN mix local.hex --force
+
+RUN mix archive.install --force https://github.com/phoenixframework/archives/raw/master/phx_new.ez
+
+WORKDIR /app

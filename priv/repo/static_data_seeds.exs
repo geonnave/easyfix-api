@@ -100,7 +100,7 @@ defmodule EasyFixApi.StaticDataSeeds do
   end
 end
 
-# EasyFixApi.StaticDataSeeds.run_parts
-# EasyFixApi.StaticDataSeeds.run_vehicles_models
-# EasyFixApi.StaticDataSeeds.run_banks
-# EasyFixApi.StaticDataSeeds.run_cities
+EasyFixApi.StaticDataSeeds.run_parts
+EasyFixApi.StaticDataSeeds.run_vehicles_models
+EasyFixApi.StaticDataSeeds.run_banks
+EasyFixApi.StaticDataSeeds.run_cities
