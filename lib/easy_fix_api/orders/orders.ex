@@ -98,6 +98,13 @@ defmodule EasyFixApi.Orders do
     ) |> Repo.one
   end
 
+  def create_budget_for_garage(attrs, garage, order) do
+    attrs
+    |> put_in(["diagnosis_id"], order.diagnosis_id)
+    |> put_in(["issuer_id"], garage.user_id)
+    |> put_in(["issuer_type"], "garage")
+    |> create_budget()
+  end
   def create_budget(attrs \\ %{}) do
     with budget_changeset = %{valid?: true} <- Budget.create_changeset(attrs),
          budget_assoc_changeset = %{valid?: true} <- Budget.assoc_changeset(attrs),
