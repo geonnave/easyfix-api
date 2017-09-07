@@ -7,19 +7,19 @@ defmodule EasyFixApi.Orders do
   alias EasyFixApi.{Parts, Accounts, Repo, Helpers}
 
   alias EasyFixApi.Parts.Part
-  alias EasyFixApi.Orders.DiagnosticPart
+  alias EasyFixApi.Orders.DiagnosisPart
 
-  def create_diagnostic_part(attrs \\ %{}, diagnostic_id) do
-    with diagnostic_part_changeset = %{valid?: true} <- DiagnosticPart.create_changeset(attrs),
-         diagnostic_part_assoc_changeset = %{valid?: true} <- DiagnosticPart.assoc_changeset(attrs),
-         diagnostic_part_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(diagnostic_part_assoc_changeset) do
+  def create_diagnosis_part(attrs \\ %{}, diagnosis_id) do
+    with diagnosis_part_changeset = %{valid?: true} <- DiagnosisPart.create_changeset(attrs),
+         diagnosis_part_assoc_changeset = %{valid?: true} <- DiagnosisPart.assoc_changeset(attrs),
+         diagnosis_part_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(diagnosis_part_assoc_changeset) do
 
-        part = Parts.get_part!(diagnostic_part_assoc_attrs[:part_id])
-        diagnostic = get_diagnostic!(diagnostic_id)
+        part = Parts.get_part!(diagnosis_part_assoc_attrs[:part_id])
+        diagnosis = get_diagnosis!(diagnosis_id)
 
-        diagnostic_part_changeset
+        diagnosis_part_changeset
         |> put_assoc(:part, part)
-        |> put_assoc(:diagnostic, diagnostic)
+        |> put_assoc(:diagnosis, diagnosis)
         |> Repo.insert()
     else
       %{valid?: false} = changeset ->
@@ -27,39 +27,39 @@ defmodule EasyFixApi.Orders do
     end
   end
 
-  alias EasyFixApi.Orders.Diagnostic
+  alias EasyFixApi.Orders.Diagnosis
 
-  def list_diagnostics do
-    Repo.all(Diagnostic)
-    |> Repo.preload(Diagnostic.all_nested_assocs)
+  def list_diagnosis do
+    Repo.all(Diagnosis)
+    |> Repo.preload(Diagnosis.all_nested_assocs)
   end
 
-  def get_diagnostic!(id) do
-    Repo.get!(Diagnostic, id)
-    |> Repo.preload(Diagnostic.all_nested_assocs)
+  def get_diagnosis!(id) do
+    Repo.get!(Diagnosis, id)
+    |> Repo.preload(Diagnosis.all_nested_assocs)
   end
 
-  def create_diagnostic(attrs \\ %{}) do
-    with diagnostic_changeset = %{valid?: true} <- Diagnostic.create_changeset(attrs),
-         diagnostic_assoc_changeset = %{valid?: true} <- Diagnostic.assoc_changeset(attrs),
-         diagnostic_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(diagnostic_assoc_changeset) do
+  def create_diagnosis(attrs \\ %{}) do
+    with diagnosis_changeset = %{valid?: true} <- Diagnosis.create_changeset(attrs),
+         diagnosis_assoc_changeset = %{valid?: true} <- Diagnosis.assoc_changeset(attrs),
+         diagnosis_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(diagnosis_assoc_changeset) do
 
-      vehicle = EasyFixApi.Cars.get_vehicle!(diagnostic_assoc_attrs[:vehicle_id])
+      vehicle = EasyFixApi.Cars.get_vehicle!(diagnosis_assoc_attrs[:vehicle_id])
       Repo.transaction fn ->
-        diagnostic_changeset
+        diagnosis_changeset
         |> put_assoc(:vehicle, vehicle)
         |> Repo.insert()
         |> case do
-          {:ok, diagnostic} ->
-            for part_attrs <- diagnostic_assoc_attrs[:parts] do
-              case create_diagnostic_part(part_attrs, diagnostic.id) do
-                {:error, diagnostic_part_error_changeset} ->
-                  Repo.rollback(diagnostic_part_error_changeset)
+          {:ok, diagnosis} ->
+            for part_attrs <- diagnosis_assoc_attrs[:parts] do
+              case create_diagnosis_part(part_attrs, diagnosis.id) do
+                {:error, diagnosis_part_error_changeset} ->
+                  Repo.rollback(diagnosis_part_error_changeset)
                 _ ->
                   nil
               end
             end
-            Repo.preload(diagnostic, Diagnostic.all_nested_assocs)
+            Repo.preload(diagnosis, Diagnosis.all_nested_assocs)
           error ->
             error
         end
@@ -70,8 +70,8 @@ defmodule EasyFixApi.Orders do
     end
   end
 
-  def delete_diagnostic(%Diagnostic{} = diagnostic) do
-    Repo.delete(diagnostic)
+  def delete_diagnosis(%Diagnosis{} = diagnosis) do
+    Repo.delete(diagnosis)
   end
 
   alias EasyFixApi.Orders.Budget
@@ -102,13 +102,13 @@ defmodule EasyFixApi.Orders do
     with budget_changeset = %{valid?: true} <- Budget.create_changeset(attrs),
          budget_assoc_changeset = %{valid?: true} <- Budget.assoc_changeset(attrs),
          budget_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(budget_assoc_changeset),
-         diagnostic when not is_nil(diagnostic) <- Repo.get(Diagnostic, budget_assoc_attrs[:diagnostic_id]),
+         diagnosis when not is_nil(diagnosis) <- Repo.get(Diagnosis, budget_assoc_attrs[:diagnosis_id]),
          issuer when not is_nil(issuer) <- Accounts.get_user_by_type_id(budget_assoc_attrs[:issuer_type], budget_assoc_attrs[:issuer_id]) do
 
       Repo.transaction fn ->
         budget =
           budget_changeset
-          |> put_assoc(:diagnostic, diagnostic)
+          |> put_assoc(:diagnosis, diagnosis)
           |> put_assoc(:issuer, issuer)
           |> Repo.insert!()
 
@@ -128,7 +128,7 @@ defmodule EasyFixApi.Orders do
       %{valid?: false} = changeset ->
         {:error, changeset}
       nil ->
-        {:error, "diagnostic or issuer does not exist"}
+        {:error, "diagnosis or issuer does not exist"}
     end
   end
 
@@ -169,7 +169,7 @@ defmodule EasyFixApi.Orders do
     |> Repo.preload(Order.all_nested_assocs)
   end
 
-  # must find intersection(garage_id_categories, diagnostic_categories)
+  # must find intersection(garage_id_categories, diagnosis_categories)
   def list_garage_order(garage_id) do
     garage = Accounts.get_garage!(garage_id)
 
@@ -184,8 +184,8 @@ defmodule EasyFixApi.Orders do
 
   def list_orders_matching_garage_categories(garage_categories_ids) do
     list_orders()
-    |> Enum.filter(fn %{diagnostic: diagnostic} ->
-      diganostic_gc_ids = Enum.map(diagnostic.parts, & &1.garage_category_id)
+    |> Enum.filter(fn %{diagnosis: diagnosis} ->
+      diganostic_gc_ids = Enum.map(diagnosis.parts, & &1.garage_category_id)
       Enum.all?(garage_categories_ids, & Enum.member?(diganostic_gc_ids, &1))
     end)
   end
@@ -195,17 +195,17 @@ defmodule EasyFixApi.Orders do
     |> Repo.preload(Order.all_nested_assocs)
   end
 
-  def create_order(attrs \\ %{}) do
+  def create_order_with_diagnosis(attrs \\ %{}) do
     with order_changeset = %{valid?: true} <- Order.create_changeset(attrs),
          order_assoc_changeset = %{valid?: true} <- Order.assoc_changeset(attrs),
          order_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(order_assoc_changeset) do
 
       customer = Accounts.get_customer!(order_assoc_attrs[:customer_id])
       Repo.transaction fn ->
-        {:ok, diagnostic} = create_diagnostic(order_assoc_attrs[:diagnostic])
+        {:ok, diagnosis} = create_diagnosis(order_assoc_attrs[:diagnosis])
 
         order_changeset
-        |> put_assoc(:diagnostic, diagnostic)
+        |> put_assoc(:diagnosis, diagnosis)
         |> put_assoc(:customer, customer)
         |> Repo.insert()
         |> case do

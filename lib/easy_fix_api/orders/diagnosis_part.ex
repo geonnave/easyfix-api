@@ -1,9 +1,9 @@
-defmodule EasyFixApi.Orders.DiagnosticPart do
+defmodule EasyFixApi.Orders.DiagnosisPart do
   use Ecto.Schema
   import Ecto.Changeset, warn: false
 
-  schema "diagnostics_parts" do
-    belongs_to :diagnostic, EasyFixApi.Orders.Diagnostic
+  schema "diagnosis_parts" do
+    belongs_to :diagnosis, EasyFixApi.Orders.Diagnosis
     belongs_to :part, EasyFixApi.Parts.Part
     field :quantity, :integer
 

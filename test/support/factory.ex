@@ -4,7 +4,7 @@ defmodule EasyFixApi.Factory do
   alias EasyFixApi.Addresses.{Address, City, State}
   alias EasyFixApi.Accounts.{User, Garage, Customer}
   alias EasyFixApi.Payments.{Bank, BankAccount}
-  alias EasyFixApi.Orders.{Diagnostic, DiagnosticPart, Budget, BudgetPart, Order}
+  alias EasyFixApi.Orders.{Diagnosis, DiagnosisPart, Budget, BudgetPart, Order}
   alias EasyFixApi.Parts.{Part, PartSubGroup, PartGroup, PartSystem, GarageCategory}
   alias EasyFixApi.Cars.{Model, Brand, Vehicle}
 
@@ -18,7 +18,7 @@ defmodule EasyFixApi.Factory do
   end
   def order_with_all_params(customer_id, vehicle_id) do
     params_for(:order)
-    |> put_in([:diagnostic], diagnostic_with_diagnostic_parts_params(vehicle_id))
+    |> put_in([:diagnosis], diagnosis_with_diagnosis_parts_params(vehicle_id))
     |> put_in([:customer_id], customer_id)
   end
 
@@ -41,23 +41,23 @@ defmodule EasyFixApi.Factory do
     }
   end
 
-  def diagnostic_part_factory do
-    %DiagnosticPart{
+  def diagnosis_part_factory do
+    %DiagnosisPart{
       part: build(:part),
       quantity: 1,
     }
   end
-  def diagnostic_parts_with_diagnostic(diagnostic) do
-    build(:diagnostic_part, diagnostic: diagnostic)
+  def diagnosis_parts_with_diagnosis(diagnosis) do
+    build(:diagnosis_part, diagnosis: diagnosis)
   end
-  def diagnostic_parts_params(n_parts) do
+  def diagnosis_parts_params(n_parts) do
     1..n_parts
     |> Enum.map(fn _ -> insert(:part) end)
     |> Enum.map(fn part -> %{part_id: part.id, quantity: 1} end)
   end
 
-  def diagnostic_factory do
-    %Diagnostic{
+  def diagnosis_factory do
+    %Diagnosis{
       accepts_used_parts: true,
       comment: "some comment",
       need_tow_truck: true,
@@ -65,9 +65,9 @@ defmodule EasyFixApi.Factory do
       expiration_date: "2017-08-05 17:44:57.913808Z",
       }
   end
-  def diagnostic_with_diagnostic_parts_params(vehicle_id) do
-    params_for(:diagnostic)
-    |> put_in([:parts], diagnostic_parts_params(2))
+  def diagnosis_with_diagnosis_parts_params(vehicle_id) do
+    params_for(:diagnosis)
+    |> put_in([:parts], diagnosis_parts_params(2))
     |> put_in([:vehicle_id], vehicle_id)
   end
 

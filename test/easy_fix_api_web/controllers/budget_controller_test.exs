@@ -17,9 +17,9 @@ defmodule EasyFixApiWeb.BudgetControllerTest do
 
   test "creates budget and renders budget when data is valid", %{conn: conn} do
     garage = insert(:garage)
-    diagnostic = insert(:diagnostic)
-    %{part: part1} = diagnostic_parts_with_diagnostic(diagnostic) |> insert()
-    %{part: part2} = diagnostic_parts_with_diagnostic(diagnostic) |> insert()
+    diagnosis = insert(:diagnosis)
+    %{part: part1} = diagnosis_parts_with_diagnosis(diagnosis) |> insert()
+    %{part: part2} = diagnosis_parts_with_diagnosis(diagnosis) |> insert()
     parts = [
       %{"part_id" => part1.id, "price" => 4200, "quantity" => 1},
       %{"part_id" => part2.id, "price" => 200, "quantity" => 4},
@@ -28,7 +28,7 @@ defmodule EasyFixApiWeb.BudgetControllerTest do
     budget_attrs =
       string_params_for(:budget)
       |> put_in([:parts], parts)
-      |> put_in([:diagnostic_id], diagnostic.id)
+      |> put_in([:diagnosis_id], diagnosis.id)
       |> put_in([:issuer_id], garage.id)
       |> put_in([:issuer_type], "garage")
 
@@ -39,7 +39,7 @@ defmodule EasyFixApiWeb.BudgetControllerTest do
     data_resp = json_response(conn, 200)["data"]
     assert data_resp["id"] == id
     assert length(data_resp["parts"]) == 2
-    assert data_resp["diagnostic_id"] == diagnostic.id
+    assert data_resp["diagnosis_id"] == diagnosis.id
     assert data_resp["issuer_id"] == garage.id
     assert data_resp["issuer_type"] == "garage"
   end

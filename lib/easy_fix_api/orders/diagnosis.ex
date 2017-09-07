@@ -1,15 +1,15 @@
-defmodule EasyFixApi.Orders.Diagnostic do
+defmodule EasyFixApi.Orders.Diagnosis do
   use Ecto.Schema
   import Ecto.Changeset, warn: false
 
-  schema "diagnostics" do
+  schema "diagnosis" do
     field :accepts_used_parts, :boolean, default: false
     field :comment, :string
     field :need_tow_truck, :boolean, default: false
     field :status, :string
     field :expiration_date, :utc_datetime
-    has_many :diagnostics_parts, EasyFixApi.Orders.DiagnosticPart
-    has_many :parts, through: [:diagnostics_parts, :part]
+    has_many :diagnosis_parts, EasyFixApi.Orders.DiagnosisPart
+    has_many :parts, through: [:diagnosis_parts, :part]
     has_many :budgets, EasyFixApi.Orders.Budget
     belongs_to :vehicle, EasyFixApi.Cars.Vehicle
 

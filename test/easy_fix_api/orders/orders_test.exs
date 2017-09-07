@@ -3,48 +3,48 @@ defmodule EasyFixApi.OrdersTest do
 
   alias EasyFixApi.Orders
 
-  describe "diagnostics" do
-    alias EasyFixApi.Orders.{Diagnostic}
-    @invalid_diagnostic_attrs %{accepts_used_parts: nil, comment: nil, need_tow_truck: nil, status: nil}
+  describe "diagnosis" do
+    alias EasyFixApi.Orders.{Diagnosis}
+    @invalid_diagnosis_attrs %{accepts_used_parts: nil, comment: nil, need_tow_truck: nil, status: nil}
 
-    test "list_diagnostics/1 returns all diagnostics" do
-      diagnostic = insert(:diagnostic)
-      [listed_diag] = Orders.list_diagnostics()
-      assert listed_diag.id == diagnostic.id
+    test "list_diagnosis/1 returns all diagnosis" do
+      diagnosis = insert(:diagnosis)
+      [listed_diag] = Orders.list_diagnosis()
+      assert listed_diag.id == diagnosis.id
     end
 
-    test "create_diagnostic/1 with valid data creates a diagnostic" do
+    test "create_diagnosis/1 with valid data creates a diagnosis" do
       vehicle = insert(:vehicle_with_model)
-      diagnostic_attrs = diagnostic_with_diagnostic_parts_params(vehicle.id)
+      diagnosis_attrs = diagnosis_with_diagnosis_parts_params(vehicle.id)
 
-      assert {:ok, %Diagnostic{} = diagnostic} = Orders.create_diagnostic(diagnostic_attrs)
-      assert diagnostic.accepts_used_parts == true
-      assert diagnostic.comment == "some comment"
-      assert diagnostic.need_tow_truck == true
-      assert diagnostic.status == "some status"
-      assert length(diagnostic.parts) == 2
-      assert diagnostic.vehicle.id == diagnostic_attrs[:vehicle_id]
+      assert {:ok, %Diagnosis{} = diagnosis} = Orders.create_diagnosis(diagnosis_attrs)
+      assert diagnosis.accepts_used_parts == true
+      assert diagnosis.comment == "some comment"
+      assert diagnosis.need_tow_truck == true
+      assert diagnosis.status == "some status"
+      assert length(diagnosis.parts) == 2
+      assert diagnosis.vehicle.id == diagnosis_attrs[:vehicle_id]
     end
 
-    test "create_diagnostic/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Orders.create_diagnostic(@invalid_diagnostic_attrs)
+    test "create_diagnosis/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Orders.create_diagnosis(@invalid_diagnosis_attrs)
     end
   end
 
-  describe "diagnostics_parts" do
-    alias EasyFixApi.Orders.{DiagnosticPart}
+  describe "diagnosis_parts" do
+    alias EasyFixApi.Orders.{DiagnosisPart}
 
-    test "create_diagnostic_part/2 with valid data creates a diagnostic_part" do
-      diagnostic = insert(:diagnostic)
+    test "create_diagnosis_part/2 with valid data creates a diagnosis_part" do
+      diagnosis = insert(:diagnosis)
       part = insert(:part)
-      diagnostic_part_attrs =
-        params_for(:diagnostic_part)
+      diagnosis_part_attrs =
+        params_for(:diagnosis_part)
         |> put_in([:part_id], part.id)
 
-      {:ok, %DiagnosticPart{} = diagnostic_part} = Orders.create_diagnostic_part(diagnostic_part_attrs, diagnostic.id)
-      assert diagnostic_part.diagnostic.id == diagnostic.id
-      assert diagnostic_part.part.id == part.id
-      assert diagnostic_part.quantity == diagnostic_part_attrs[:quantity]
+      {:ok, %DiagnosisPart{} = diagnosis_part} = Orders.create_diagnosis_part(diagnosis_part_attrs, diagnosis.id)
+      assert diagnosis_part.diagnosis.id == diagnosis.id
+      assert diagnosis_part.part.id == part.id
+      assert diagnosis_part.quantity == diagnosis_part_attrs[:quantity]
     end
   end
 
@@ -71,9 +71,9 @@ defmodule EasyFixApi.OrdersTest do
 
     test "create_budget/1 with valid data creates a budget" do
       garage = insert(:garage)
-      diagnostic = insert(:diagnostic)
-      %{part: part1} = diagnostic_parts_with_diagnostic(diagnostic) |> insert()
-      %{part: part2} = diagnostic_parts_with_diagnostic(diagnostic) |> insert()
+      diagnosis = insert(:diagnosis)
+      %{part: part1} = diagnosis_parts_with_diagnosis(diagnosis) |> insert()
+      %{part: part2} = diagnosis_parts_with_diagnosis(diagnosis) |> insert()
       parts = [
         %{part_id: part1.id, price: 4200, quantity: 1},
         %{part_id: part2.id, price: 200, quantity: 4},
@@ -82,14 +82,14 @@ defmodule EasyFixApi.OrdersTest do
       budget_attrs =
         params_for(:budget)
         |> put_in([:parts], parts)
-        |> put_in([:diagnostic_id], diagnostic.id)
+        |> put_in([:diagnosis_id], diagnosis.id)
         |> put_in([:issuer_id], garage.id)
         |> put_in([:issuer_type], "garage")
 
       assert {:ok, %Budget{} = budget} = Orders.create_budget(budget_attrs)
       assert budget.service_cost == budget_attrs[:service_cost]
       assert length(budget.parts) == 2
-      assert budget.diagnostic.id == diagnostic.id
+      assert budget.diagnosis.id == diagnosis.id
       assert budget.issuer.id == garage.user.id
       assert budget.issuer_type == :garage
     end
@@ -106,12 +106,12 @@ defmodule EasyFixApi.OrdersTest do
       assert listed_order.id == order.id
     end
 
-    test "create_order/1 with valid data creates a order" do
+    test "create_order_with_diagnosis/1 with valid data creates a order" do
       customer = insert(:customer)
       [vehicle] = customer.vehicles
       order_attrs = order_with_all_params(customer.id, vehicle.id)
 
-      assert {:ok, %Order{} = order} = Orders.create_order(order_attrs)
+      assert {:ok, %Order{} = order} = Orders.create_order_with_diagnosis(order_attrs)
 
       {:ok, opening_date, _} = DateTime.from_iso8601 order_attrs[:opening_date]
       assert order.opening_date == opening_date
@@ -120,8 +120,8 @@ defmodule EasyFixApi.OrdersTest do
       assert order.customer.id == order_attrs[:customer_id]
     end
 
-    test "create_order/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Orders.create_order(@invalid_attrs)
+    test "create_order_with_diagnosis/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Orders.create_order_with_diagnosis(@invalid_attrs)
     end
 
     test "delete_order/1 deletes the order" do

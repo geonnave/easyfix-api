@@ -19,7 +19,7 @@ defmodule EasyFixApiWeb.GarageOrderView do
       opening_date: order.opening_date,
       conclusion_date: order.conclusion_date,
       customer_id: order.customer.id,
-      diagnostic: render_one(order.diagnostic, EasyFixApiWeb.DiagnosticView, "diagnostic.json"),
+      diagnosis: render_one(order.diagnosis, EasyFixApiWeb.DiagnosisView, "diagnosis.json"),
       budget: render_one(budget, EasyFixApiWeb.BudgetView, "budget.json")
     }
   end

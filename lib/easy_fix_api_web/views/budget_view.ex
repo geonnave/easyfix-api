@@ -19,7 +19,7 @@ defmodule EasyFixApiWeb.BudgetView do
       due_date: budget.due_date,
       conclusion_date: budget.conclusion_date,
       parts: render_many(budget.parts, EasyFixApiWeb.PartView, "part.json"),
-      diagnostic_id: budget.diagnostic_id,
+      diagnosis_id: budget.diagnosis_id,
       issuer_type: budget.issuer_type,
       issuer_id: Map.get(budget.issuer, budget.issuer_type).id,
     }

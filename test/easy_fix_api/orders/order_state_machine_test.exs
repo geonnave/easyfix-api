@@ -28,6 +28,7 @@ defmodule EasyFixApi.OrderStateMachineTest do
       assert {:not_budgeted_by_garages, _} = OrderStateMachine.get_state data[:order_id]
     end
 
+    @tag :skip
     test "goes to budgeted_by_garages when timeout and budgets size greater than 0" do
       timeouts = %{created_with_diagnosis: 0.1}
       data = %{order_id: 1, timeouts: timeouts}

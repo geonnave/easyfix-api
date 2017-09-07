@@ -19,14 +19,14 @@ defmodule EasyFixApiWeb.OrderControllerTest do
       customer = insert(:customer)
       [vehicle] = customer.vehicles
 
-      diagnostic_attrs =
-        params_for(:diagnostic)
-        |> put_in([:parts], diagnostic_parts_params(2))
+      diagnosis_attrs =
+        params_for(:diagnosis)
+        |> put_in([:parts], diagnosis_parts_params(2))
         |> put_in([:vehicle_id], vehicle.id)
 
       order_attrs =
         params_for(:order)
-        |> put_in([:diagnostic], diagnostic_attrs)
+        |> put_in([:diagnosis], diagnosis_attrs)
         |> put_in([:customer_id], customer.id)
 
       conn = post conn, order_path(conn, :create), order: order_attrs
