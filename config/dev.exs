@@ -55,3 +55,9 @@ config :easy_fix_api, EasyFixApi.Repo,
   hostname: System.get_env("DB_ENV_POSTGRES_HOST"),
   database: "easy_fix_api_dev",
   pool_size: 10
+
+minutes = fn m -> 1000 * 60 * m end
+config :easy_fix_api, :timeouts,
+  to_budgeted_by_garages: minutes.(2),
+  to_budget_accepted_by_customer: minutes.(2),
+  to_finish_by_garage: minutes.(2)

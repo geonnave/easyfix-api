@@ -22,22 +22,22 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     next_state = :created_with_diagnosis
     timeout = timeout(data, next_state)
     {:next_state, next_state, data,
-      [{:event_timeout, timeout, :end_time_to_budget}]}
+      [{:event_timeout, timeout, :to_budgeted_by_garages}]}
   end
 
   def handle_event(:cast, :budgeted, :created_with_diagnosis, data) do
-    {:next_state, :budgeted_by_garage, data}
+    {:next_state, :budgeted_by_garages, data}
   end
 
-  def handle_event(:event_timeout, :end_time_to_budget, :created_with_diagnosis, data) do
+  def handle_event(:event_timeout, :to_budgeted_by_garages, :created_with_diagnosis, data) do
     case Orders.list_budgets_by_order(data[:order_id]) do
       [] ->
-        {:next_state, :not_budgeted_by_garage, data}
+        {:next_state, :not_budgeted_by_garages, data}
       _budgets ->
-        {:next_state, :budgeted_by_garage, data}
+        {:next_state, :budgeted_by_garages, data}
     end
   end
-  def handle_event(:event_timeout, :end_time_to_budget, _state, _data) do
+  def handle_event(:event_timeout, :to_budgeted_by_garages, _state, _data) do
     :keep_state_and_data
   end
 

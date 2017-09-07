@@ -21,3 +21,8 @@ config :easy_fix_api, EasyFixApi.Repo,
 # Make comeonin run faster when testing
 config :comeonin, :bcrypt_log_rounds, 4
 config :comeonin, :pbkdf2_rounds, 1
+
+config :easy_fix_api, :timeouts,
+  to_budgeted_by_garages: 100,
+  to_budget_accepted_by_customer: 100,
+  to_finish_by_garage: 100

@@ -25,7 +25,7 @@ defmodule EasyFixApi.OrderStateMachineTest do
       Process.sleep 50
       assert {:created_with_diagnosis, _} = OrderStateMachine.get_state data[:order_id]
       Process.sleep 60
-      assert {:not_budgeted_by_garage, _} = OrderStateMachine.get_state data[:order_id]
+      assert {:not_budgeted_by_garages, _} = OrderStateMachine.get_state data[:order_id]
     end
 
     test "goes to budgeted_by_garages when timeout and budgets size greater than 0" do
@@ -38,7 +38,7 @@ defmodule EasyFixApi.OrderStateMachineTest do
       assert {:created_with_diagnosis, _} = OrderStateMachine.get_state data[:order_id]
       # create budget
       Process.sleep 60
-      assert {:budgeted_by_garage, _} = OrderStateMachine.get_state data[:order_id]
+      assert {:budgeted_by_garages, _} = OrderStateMachine.get_state data[:order_id]
     end
   end
 end
