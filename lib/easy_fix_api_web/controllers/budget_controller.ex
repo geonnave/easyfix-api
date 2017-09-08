@@ -33,7 +33,7 @@ defmodule EasyFixApiWeb.BudgetController do
   end
 
   def show(conn, %{"garage_id" => garage_id, "order_id" => order_id}) do
-    budget = Orders.get_budget_for_order_garage(garage_id, order_id)
+    {:ok, budget} = Orders.get_budget_for_garage_order(garage_id, order_id)
     render(conn, "show.json", budget: budget)
   end
   def show(conn, %{"id" => id}) do

@@ -94,18 +94,32 @@ defmodule EasyFixApi.OrdersTest do
       assert budget.issuer_type == :garage
     end
 
-    # test "create_budget_for_garage links budget to order" do
-    #   garage = insert(:garage)
-    #   customer = insert(:customer)
-    #   [vehicle] = customer.vehicles
-    #   order_attrs = order_with_all_params(customer.id, vehicle.id)
-    #   {:ok, order} = Orders.create_order_with_diagnosis(order_attrs)
+    test "get_budget_for_garage_order" do
+      {budget_attrs, garage, order} = create_budget_with_all_params()
+      assert {:ok, budget} = Orders.create_budget(budget_attrs)
 
-    #   budget_attrs =
-    #     params_for(:budget)
-    #     |> put_in([:parts], parts_for_budget())
-    #   assert {:ok, budget} = Orders.create_budget_for_garage(budget_attrs, garage, order)
-    # end
+      {:ok, the_budget} = Orders.get_budget_for_garage_order(garage.id, order.id)
+      assert the_budget.id == budget.id
+      assert {:error, _} = Orders.get_budget_for_garage_order(0, order.id)
+      assert {:error, _} = Orders.get_budget_for_garage_order(garage.id, 0)
+    end
+
+    def create_budget_with_all_params do
+      garage = insert(:garage)
+      customer = insert(:customer)
+      [vehicle] = customer.vehicles
+      order_attrs = order_with_all_params(customer.id, vehicle.id)
+      {:ok, order} = Orders.create_order_with_diagnosis(order_attrs)
+
+      budget_attrs =
+        params_for(:budget)
+        |> put_in([:parts], parts_for_budget())
+        |> put_in([:diagnosis_id], order.diagnosis.id)
+        |> put_in([:issuer_id], garage.id)
+        |> put_in([:issuer_type], "garage")
+
+      {budget_attrs, garage, order}
+    end
   end
 
   describe "orders" do

@@ -7,7 +7,7 @@ defmodule EasyFixApi.Orders do
   alias EasyFixApi.{Parts, Accounts, Repo, Helpers}
 
   alias EasyFixApi.Parts.Part
-  alias EasyFixApi.Orders.DiagnosisPart
+  alias EasyFixApi.Orders.{DiagnosisPart, Order, Diagnosis}
 
   def create_diagnosis_part(attrs \\ %{}, diagnosis_id) do
     with diagnosis_part_changeset = %{valid?: true} <- DiagnosisPart.create_changeset(attrs),
@@ -27,7 +27,7 @@ defmodule EasyFixApi.Orders do
     end
   end
 
-  alias EasyFixApi.Orders.Diagnosis
+  # Diagnosis
 
   def list_diagnosis do
     Repo.all(Diagnosis)
@@ -96,6 +96,35 @@ defmodule EasyFixApi.Orders do
       preload: [parts: ^Part.all_nested_assocs, issuer: [:garage]],
       where: ^user_id == b.issuer_id
     ) |> Repo.one
+  end
+
+  def get_budget_for_garage_order(garage_id, order_id) do
+    case Accounts.get_user_by_type_id("garage", garage_id) do
+      nil ->
+        {:error, "garage not found"}
+      user ->
+        from(b in Budget,
+          join: d in Diagnosis, on: d.id == b.diagnosis_id,
+          join: o in Order, on: d.id == o.diagnosis_id,
+          where: o.id == ^order_id and b.issuer_id == ^user.id and b.issuer_type == "garage",
+          select: b,
+          preload: ^Budget.all_nested_assocs)
+        |> Repo.one
+        |> case do
+          nil ->
+            {:error, "params did not match query"}
+          budget ->
+            {:ok, budget}
+        end
+    end
+    # query =
+    # with user when not is_nil(user) <- Accounts.get_user_by_type_id("garage", garage_id),
+    #      budget when not is_nil(budget) Repo.one query do
+    #   budget
+    # else
+    #   nil ->
+    #     nil
+    # end
   end
 
   def create_budget(attrs \\ %{}) do
