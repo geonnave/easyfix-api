@@ -140,4 +140,11 @@ defmodule EasyFixApi.GaragesTest do
     garage = fixture(:garage)
     assert %Ecto.Changeset{} = Accounts.change_garage(garage)
   end
+
+  test "get user by type garage" do
+    garage = insert(:garage)
+    user = Accounts.get_user_by_type_id("garage", garage.id)
+
+    assert garage.user_id == user.id
+  end
 end

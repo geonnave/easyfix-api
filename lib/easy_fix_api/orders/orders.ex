@@ -98,13 +98,6 @@ defmodule EasyFixApi.Orders do
     ) |> Repo.one
   end
 
-  def create_budget_for_garage(attrs, garage, order) do
-    attrs
-    |> put_in(["diagnosis_id"], order.diagnosis_id)
-    |> put_in(["issuer_id"], garage.user_id)
-    |> put_in(["issuer_type"], "garage")
-    |> create_budget()
-  end
   def create_budget(attrs \\ %{}) do
     with budget_changeset = %{valid?: true} <- Budget.create_changeset(attrs),
          budget_assoc_changeset = %{valid?: true} <- Budget.assoc_changeset(attrs),
@@ -180,21 +173,33 @@ defmodule EasyFixApi.Orders do
   def list_garage_order(garage_id) do
     garage = Accounts.get_garage!(garage_id)
 
-    garage_id
-    |> Accounts.get_garage_categories_ids!
-    |> list_orders_matching_garage_categories()
+    garage_categories_ids = 
+      garage_id
+      |> Accounts.get_garage_categories_ids!
+
+    list_orders()
+    |> Enum.filter(&order_matches_garage_categories?(&1, garage_categories_ids))
     |> Enum.map(fn order ->
       budget = get_budget_by_user(garage.user.id)
       %{order: order, budget: budget}
     end)
   end
 
-  def list_orders_matching_garage_categories(garage_categories_ids) do
-    list_orders()
-    |> Enum.filter(fn %{diagnosis: diagnosis} ->
-      diganostic_gc_ids = Enum.map(diagnosis.parts, & &1.garage_category_id)
-      Enum.all?(garage_categories_ids, & Enum.member?(diganostic_gc_ids, &1))
-    end)
+  def get_garage_order(garage_id, order_id) do
+    garage = Accounts.get_garage!(garage_id)
+    order = get_order!(order_id)
+
+    garage_categories_ids = 
+      garage_id
+      |> Accounts.get_garage_categories_ids!
+
+    budget = get_budget_by_user(garage.user.id)
+    %{order: order, budget: budget}
+  end
+
+  def order_matches_garage_categories?(_order = %{diagnosis: diagnosis}, garage_categories_ids) do
+    diganostic_gc_ids = Enum.map(diagnosis.parts, & &1.garage_category_id)
+    Enum.all?(garage_categories_ids, & Enum.member?(diganostic_gc_ids, &1))
   end
 
   def get_order!(id) do

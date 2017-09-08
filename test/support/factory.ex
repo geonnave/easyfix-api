@@ -41,6 +41,13 @@ defmodule EasyFixApi.Factory do
     }
   end
 
+  def parts_for_budget do
+    [
+      %{part_id: insert(:part).id, price: 4200, quantity: 1},
+      %{part_id: insert(:part).id, price: 200, quantity: 4},
+    ]
+  end
+
   def diagnosis_part_factory do
     %DiagnosisPart{
       part: build(:part),

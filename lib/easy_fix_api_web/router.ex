@@ -38,6 +38,7 @@ defmodule EasyFixApiWeb.Router do
     get "/banks", BankController, :index
 
     get "/garages/:garage_id/orders", GarageOrderController, :list_orders
+    get "/garages/:garage_id/orders/:order_id", GarageOrderController, :list_orders
     post "/garages/:garage_id/orders/:order_id/budgets", GarageOrderController, :create_budget
 
     resources "/diagnosis", DiagnosisController, except: [:new, :edit]

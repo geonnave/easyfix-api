@@ -93,6 +93,19 @@ defmodule EasyFixApi.OrdersTest do
       assert budget.issuer.id == garage.user.id
       assert budget.issuer_type == :garage
     end
+
+    # test "create_budget_for_garage links budget to order" do
+    #   garage = insert(:garage)
+    #   customer = insert(:customer)
+    #   [vehicle] = customer.vehicles
+    #   order_attrs = order_with_all_params(customer.id, vehicle.id)
+    #   {:ok, order} = Orders.create_order_with_diagnosis(order_attrs)
+
+    #   budget_attrs =
+    #     params_for(:budget)
+    #     |> put_in([:parts], parts_for_budget())
+    #   assert {:ok, budget} = Orders.create_budget_for_garage(budget_attrs, garage, order)
+    # end
   end
 
   describe "orders" do
