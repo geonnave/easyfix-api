@@ -94,6 +94,15 @@ defmodule EasyFixApi.OrdersTest do
       assert budget.issuer_type == :garage
     end
 
+    test "list_budgets_by_order" do
+      {budget_attrs, _garage, order} = create_budget_with_all_params()
+      assert {:ok, budget} = Orders.create_budget(budget_attrs)
+
+      [a_budget] = Orders.list_budgets_by_order(order.id)
+      assert a_budget.id == budget.id
+      assert [] == Orders.list_budgets_by_order(0)
+    end
+
     test "get_budget_for_garage_order" do
       {budget_attrs, garage, order} = create_budget_with_all_params()
       assert {:ok, budget} = Orders.create_budget(budget_attrs)

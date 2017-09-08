@@ -82,7 +82,13 @@ defmodule EasyFixApi.Orders do
   end
 
   def list_budgets_by_order(order_id) do
-    []
+    from(b in Budget,
+      join: d in Diagnosis, on: d.id == b.diagnosis_id,
+      join: o in Order, on: d.id == o.diagnosis_id,
+      where: o.id == ^order_id,
+      select: b,
+      preload: ^Budget.all_nested_assocs)
+    |> Repo.all
   end
 
   def get_budget!(id) do
@@ -112,19 +118,11 @@ defmodule EasyFixApi.Orders do
         |> Repo.one
         |> case do
           nil ->
-            {:error, "params did not match query"}
+            {:error, "budget not found"}
           budget ->
             {:ok, budget}
         end
     end
-    # query =
-    # with user when not is_nil(user) <- Accounts.get_user_by_type_id("garage", garage_id),
-    #      budget when not is_nil(budget) Repo.one query do
-    #   budget
-    # else
-    #   nil ->
-    #     nil
-    # end
   end
 
   def create_budget(attrs \\ %{}) do

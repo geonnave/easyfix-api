@@ -33,8 +33,12 @@ defmodule EasyFixApiWeb.BudgetController do
   end
 
   def show(conn, %{"garage_id" => garage_id, "order_id" => order_id}) do
-    {:ok, budget} = Orders.get_budget_for_garage_order(garage_id, order_id)
-    render(conn, "show.json", budget: budget)
+    with {:ok, budget} <- Orders.get_budget_for_garage_order(garage_id, order_id) do
+      render(conn, "show.json", budget: budget)
+    else
+      {:error, error} ->
+        render(conn, EasyFixApiWeb.ErrorView, "error.json", error: error)
+    end
   end
   def show(conn, %{"id" => id}) do
     budget = Orders.get_budget!(id)
