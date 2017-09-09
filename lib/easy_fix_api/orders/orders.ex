@@ -212,6 +212,13 @@ defmodule EasyFixApi.Orders do
     end)
   end
 
+  def list_customer_orders(customer_id) do
+    from(o in Order,
+      where: o.customer_id == ^customer_id,
+      preload: ^Order.all_nested_assocs)
+    |> Repo.all
+  end
+
   def get_garage_order(garage_id, order_id) do
     garage = Accounts.get_garage!(garage_id)
     order = get_order!(order_id)
@@ -227,6 +234,19 @@ defmodule EasyFixApi.Orders do
   def order_matches_garage_categories?(_order = %{diagnosis: diagnosis}, garage_categories_ids) do
     diganostic_gc_ids = Enum.map(diagnosis.parts, & &1.garage_category_id)
     Enum.all?(garage_categories_ids, & Enum.member?(diganostic_gc_ids, &1))
+  end
+
+  def get_customer_order(customer_id, order_id) do
+    from(o in Order,
+      where: o.customer_id == ^customer_id and o.id == ^order_id,
+      preload: ^Order.all_nested_assocs)
+    |> Repo.one
+    |> case do
+      nil ->
+        {:error, "order #{order_id} not found for customer #{customer_id}"}
+      order ->
+        {:ok, order}
+    end
   end
 
   def get_order!(id) do

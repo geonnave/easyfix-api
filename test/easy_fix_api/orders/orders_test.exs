@@ -95,7 +95,7 @@ defmodule EasyFixApi.OrdersTest do
     end
 
     test "list_budgets_by_order" do
-      {budget_attrs, _garage, order} = create_budget_with_all_params()
+      {budget_attrs, _garage, order} = budget_with_all_params()
       assert {:ok, budget} = Orders.create_budget(budget_attrs)
 
       [a_budget] = Orders.list_budgets_by_order(order.id)
@@ -104,7 +104,7 @@ defmodule EasyFixApi.OrdersTest do
     end
 
     test "get_budget_for_garage_order" do
-      {budget_attrs, garage, order} = create_budget_with_all_params()
+      {budget_attrs, garage, order} = budget_with_all_params()
       assert {:ok, budget} = Orders.create_budget(budget_attrs)
 
       {:ok, the_budget} = Orders.get_budget_for_garage_order(garage.id, order.id)
@@ -113,7 +113,7 @@ defmodule EasyFixApi.OrdersTest do
       assert {:error, _} = Orders.get_budget_for_garage_order(garage.id, 0)
     end
 
-    def create_budget_with_all_params do
+    def budget_with_all_params do
       garage = insert(:garage)
       customer = insert(:customer)
       [vehicle] = customer.vehicles
@@ -164,6 +164,29 @@ defmodule EasyFixApi.OrdersTest do
       order = insert(:order)
       assert {:ok, %Order{}} = Orders.delete_order(order)
       assert_raise Ecto.NoResultsError, fn -> Orders.get_order!(order.id) end
+    end
+
+    test "list_customer_orders/1 returns the corresponding orders" do
+      customer = insert(:customer)
+      [vehicle] = customer.vehicles
+      order_attrs = order_with_all_params(customer.id, vehicle.id)
+      {:ok, order} = Orders.create_order_with_diagnosis(order_attrs)
+
+      assert [a_order] = Orders.list_customer_orders(customer.id)
+      assert a_order.id == order.id
+      assert [] = Orders.list_customer_orders(0)
+    end
+    test "get_customer_order/1 returns the corresponding orders" do
+      customer = insert(:customer)
+      [vehicle] = customer.vehicles
+      order_attrs = order_with_all_params(customer.id, vehicle.id)
+      {:ok, order} = Orders.create_order_with_diagnosis(order_attrs)
+
+      assert {:ok, the_order} = Orders.get_customer_order(customer.id, order.id)
+      assert the_order.id == order.id
+      assert the_order.customer_id == customer.id
+      assert {:error, _} = Orders.get_customer_order(customer.id, 0)
+      assert {:error, _} = Orders.get_customer_order(0, order.id)
     end
   end
 end
