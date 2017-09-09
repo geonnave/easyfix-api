@@ -20,15 +20,15 @@ defmodule EasyFixApiWeb.CustomerOrderController do
     end
   end
 
-  # def create(conn, %{"order" => order_params, "customer_id" => customer_id}) do
-  #   {:ok, order} =
-  #     order_params
-  #     |> put_in([:customer_id], customer_id)
-  #     |> Orders.create_order_with_diagnosis
+  def create(conn, %{"order" => order_params, "customer_id" => customer_id}) do
+    {:ok, customer_order} =
+      order_params
+      |> put_in(["customer_id"], customer_id)
+      |> Orders.create_order_with_diagnosis
 
-  #   conn
-  #   |> put_status(:created)
-  #   |> put_resp_header("location", order_path(conn, :show, order))
-  #   |> render("show.json", order: order)
-  # end
+    conn
+    |> put_status(:created)
+    |> put_resp_header("location", customer_order_path(conn, :show, customer_id, customer_order))
+    |> render("show.json", customer_order: customer_order)
+  end
 end
