@@ -28,10 +28,10 @@ defmodule EasyFixApiWeb.Router do
     delete "/sessions", SessionController, :delete
 
     resources "/customers", CustomerController, except: [:new, :edit]
-    resources "/users", UserController, except: [:new, :edit]
+    resources "/users", UserController, only: [:index, :create, :show]
 
     resources "/addresses", AddressController, except: [:new, :edit]
-    get "/cities", AddressController, :cities
+    get "/cities", CityController, :index
 
     resources "/bank_accounts", BankAccountController, except: [:new, :edit]
     get "/banks", BankController, :index
@@ -42,17 +42,11 @@ defmodule EasyFixApiWeb.Router do
       end
     end
 
-    # resources "/garages", GarageController, except: [:new, :edit]
-    # get "/garages/:garage_id/orders", GarageOrderController, :list_orders
-    # get "/garages/:garage_id/orders/:order_id", GarageOrderController, :list_orders
-    # post "/garages/:garage_id/orders/:order_id/budgets", GarageOrderController, :create_budget
-
     resources "/diagnosis", DiagnosisController, except: [:new, :edit]
     resources "/budgets", BudgetController, except: [:new, :edit]
     resources "/orders", OrderController, except: [:new, :edit]
 
     resources "/vehicles", VehicleController, except: [:new, :edit]
-
     resources "/models", ModelController, except: [:new, :edit]
     resources "/brands", BrandController, except: [:new, :edit]
 

@@ -100,8 +100,8 @@ defmodule EasyFixApi.Orders do
     from(
       b in Budget,
       preload: [parts: ^Part.all_nested_assocs, issuer: [:garage]],
-      where: ^user_id == b.issuer_id
-    ) |> Repo.one
+      where: ^user_id == b.issuer_id)
+    |> Repo.one
   end
 
   def get_budget_for_garage_order(garage_id, order_id) do

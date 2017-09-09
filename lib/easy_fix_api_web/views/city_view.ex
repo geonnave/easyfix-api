@@ -2,8 +2,7 @@ defmodule EasyFixApiWeb.CityView do
   use EasyFixApiWeb, :view
   alias EasyFixApiWeb.CityView
 
-  def render("cities.json", %{cities: cities}) do
-    IO.inspect cities
+  def render("index.json", %{cities: cities}) do
     %{data: render_many(cities, CityView, "city.json")}
   end
 
