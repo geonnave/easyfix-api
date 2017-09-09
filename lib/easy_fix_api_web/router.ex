@@ -21,7 +21,7 @@ defmodule EasyFixApiWeb.Router do
     get "/", PageController, :index
   end
 
-  scope "/api", EasyFixApiWeb do
+  scope "/api/v1", EasyFixApiWeb do
     pipe_through :api
 
     post "/sessions", SessionController, :create
