@@ -6,7 +6,7 @@ defmodule EasyFixApi.OrderStateMachineTest do
   alias EasyFixApi.Orders.OrderStateMachine
 
   test "timeout_value/1" do
-    assert 100 = OrderStateMachine.timeout_value(:created_with_diagnosis)
+    assert 200 = OrderStateMachine.timeout_value(:created_with_diagnosis)
   end
   test "timeout_from_now/1" do
     state_due_date = Orders.calculate_state_due_date(:created_with_diagnosis)
@@ -38,21 +38,30 @@ defmodule EasyFixApi.OrderStateMachineTest do
       assert {:not_budgeted_by_garages, _} = OrderStateMachine.get_state data[:order_id]
     end
 
-    @tag :skip
     test "goes to budgeted_by_garages when timeout and budgets size greater than 0" do
-      timeouts = %{created_with_diagnosis: 0.1}
-      data = %{order_id: 1, timeouts: timeouts}
+      order = create_order_with_diagnosis()
+      data = %{order_id: order.id}
       {:ok, _} = OrderStateMachine.start_link data
-      :ok = OrderStateMachine.call_direct data[:order_id]
 
       Process.sleep half_timeout(:created_with_diagnosis)
       assert {:created_with_diagnosis, _} = OrderStateMachine.get_state data[:order_id]
 
-      # create budget
-      {budget_attrs, _garage, _order} = budget_with_all_params()
-      {:ok, _budget} = Orders.create_budget(budget_attrs)
+      # create budget for that order
+      {_budget, _garage} = create_budget_for_order(order)
 
       Process.sleep gt_half_timeout(:created_with_diagnosis)
+      assert {:budgeted_by_garages, _} = OrderStateMachine.get_state data[:order_id]
+    end
+  end
+
+  describe "budgeted_by_garages" do
+    test "start_link can initialize at budgeted_by_garages" do
+      order =
+        create_order_with_diagnosis()
+        |> update_order_state(:budgeted_by_garages)
+
+      data = %{order_id: order.id}
+      {:ok, _} = OrderStateMachine.start_link data
       assert {:budgeted_by_garages, _} = OrderStateMachine.get_state data[:order_id]
     end
   end
@@ -66,6 +75,28 @@ defmodule EasyFixApi.OrderStateMachineTest do
     [vehicle] = customer.vehicles
     order_attrs = order_with_all_params(customer.id, vehicle.id)
     {:ok, order} = Orders.create_order_with_diagnosis(order_attrs)
+    order
+  end
+
+  def create_budget_for_order(order) do
+    garage = insert(:garage)
+    budget =
+      params_for(:budget)
+      |> put_in([:parts], parts_for_budget())
+      |> put_in([:diagnosis_id], order.diagnosis.id)
+      |> put_in([:issuer_id], garage.id)
+      |> put_in([:issuer_type], "garage")
+      |> Orders.create_budget
+
+    {budget, garage}
+  end
+
+  def update_order_state(order, state) do
+    next_state_attrs = %{
+      state: state,
+      state_due_date: Orders.calculate_state_due_date(state)
+    }
+    {:ok, order} = Orders.update_order_state(order, next_state_attrs)
     order
   end
 end

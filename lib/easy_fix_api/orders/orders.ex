@@ -272,11 +272,10 @@ defmodule EasyFixApi.Orders do
       Repo.transaction fn ->
         {:ok, diagnosis} = create_diagnosis(order_assoc_attrs[:diagnosis])
         state = :created_with_diagnosis
-        state_due_date = calculate_state_due_date(state)
 
         order_changeset
         |> put_change(:state, state)
-        |> put_change(:state_due_date, state_due_date)
+        |> put_change(:state_due_date, calculate_state_due_date(state))
         |> put_assoc(:diagnosis, diagnosis)
         |> put_assoc(:customer, customer)
         |> Repo.insert()
@@ -291,6 +290,12 @@ defmodule EasyFixApi.Orders do
       %{valid?: false} = changeset ->
         {:error, changeset}
     end
+  end
+
+  def update_order_state(%Order{} = order, attrs) do
+    order
+    |> Order.update_state_changeset(attrs)
+    |> Repo.update()
   end
 
   def update_order(%Order{} = order, attrs) do

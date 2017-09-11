@@ -136,6 +136,21 @@ defmodule EasyFixApi.OrdersTest do
       assert order.customer.id == order_attrs[:customer_id]
     end
 
+    test "set_order_budgeted_by_garages/1 changes its state to :budgeted_by_garages" do
+      customer = insert(:customer)
+      [vehicle] = customer.vehicles
+      order_attrs = order_with_all_params(customer.id, vehicle.id)
+      {:ok, order} = Orders.create_order_with_diagnosis(order_attrs)
+
+      next_state_attrs = %{
+        state: :budgeted_by_garages,
+        state_due_date: Orders.calculate_state_due_date(:budgeted_by_garages)
+      }
+      assert {:ok, order} = Orders.update_order_state(order, next_state_attrs)
+      assert order.state == :budgeted_by_garages
+      assert Timex.compare(Timex.now, order.state_due_date) == -1
+    end
+
     test "create_order_with_diagnosis/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Orders.create_order_with_diagnosis(@invalid_attrs)
     end

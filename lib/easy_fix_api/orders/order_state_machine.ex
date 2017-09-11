@@ -38,7 +38,17 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
       [] ->
         {:next_state, :not_budgeted_by_garages, data}
       _budgets ->
-        {:next_state, :budgeted_by_garages, data}
+        order = Orders.get_order!(data[:order_id])
+        next_state_attrs = %{
+          state: :budgeted_by_garages,
+          state_due_date: Orders.calculate_state_due_date(:budgeted_by_garages)
+        }
+        case Orders.update_order_state(order, next_state_attrs) do
+          {:ok, %{state: state, state_due_date: state_due_date}} ->
+            {:next_state, state, data, [state_timeout_action(state, state_due_date)]}
+          {:error, changeset} ->
+            {:next_state, :finished_error, put_in(data[:changeset], changeset)}
+        end
     end
   end
   # def handle_event(:state_timeout, :to_budgeted_by_garages, _state, _data) do
