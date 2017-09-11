@@ -112,29 +112,12 @@ defmodule EasyFixApi.OrdersTest do
       assert {:error, _} = Orders.get_budget_for_garage_order(0, order.id)
       assert {:error, _} = Orders.get_budget_for_garage_order(garage.id, 0)
     end
-
-    def budget_with_all_params do
-      garage = insert(:garage)
-      customer = insert(:customer)
-      [vehicle] = customer.vehicles
-      order_attrs = order_with_all_params(customer.id, vehicle.id)
-      {:ok, order} = Orders.create_order_with_diagnosis(order_attrs)
-
-      budget_attrs =
-        params_for(:budget)
-        |> put_in([:parts], parts_for_budget())
-        |> put_in([:diagnosis_id], order.diagnosis.id)
-        |> put_in([:issuer_id], garage.id)
-        |> put_in([:issuer_type], "garage")
-
-      {budget_attrs, garage, order}
-    end
   end
 
   describe "orders" do
     alias EasyFixApi.Orders.Order
 
-    @invalid_attrs %{conclusion_date: nil, opening_date: nil, status: nil, sub_status: nil}
+    @invalid_attrs %{conclusion_date: nil, opening_date: nil, state: nil, sub_state: nil}
 
     test "list_orders/0 returns all orders" do
       order = insert(:order)
@@ -149,10 +132,7 @@ defmodule EasyFixApi.OrdersTest do
 
       assert {:ok, %Order{} = order} = Orders.create_order_with_diagnosis(order_attrs)
 
-      {:ok, opening_date, _} = DateTime.from_iso8601 order_attrs[:opening_date]
-      assert order.opening_date == opening_date
-      assert order.status == order_attrs[:status]
-      assert order.sub_status == order_attrs[:sub_status]
+      assert order.state == :created_with_diagnosis
       assert order.customer.id == order_attrs[:customer_id]
     end
 

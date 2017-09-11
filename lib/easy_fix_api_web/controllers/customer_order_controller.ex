@@ -5,8 +5,7 @@ defmodule EasyFixApiWeb.CustomerOrderController do
 
   action_fallback EasyFixApiWeb.FallbackController
 
-  def index(conn, params = %{"customer_id" => customer_id}) do
-    IO.inspect params
+  def index(conn, _params = %{"customer_id" => customer_id}) do
     customer_orders = Orders.list_customer_orders(customer_id)
     render(conn, "index.json", customer_orders: customer_orders)
   end
@@ -25,6 +24,8 @@ defmodule EasyFixApiWeb.CustomerOrderController do
       order_params
       |> put_in(["customer_id"], customer_id)
       |> Orders.create_order_with_diagnosis
+
+    # OrderStateMachine.start_link(:created_with_diagnosis, order_id: order.id)
 
     conn
     |> put_status(:created)

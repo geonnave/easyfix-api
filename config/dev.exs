@@ -56,8 +56,20 @@ config :easy_fix_api, EasyFixApi.Repo,
   database: "easy_fix_api_dev",
   pool_size: 10
 
-minutes = fn m -> 1000 * 60 * m end
-config :easy_fix_api, :timeouts,
-  to_budgeted_by_garages: minutes.(2),
-  to_budget_accepted_by_customer: minutes.(2),
-  to_finish_by_garage: minutes.(2)
+# Information about state
+config :easy_fix_api, :order_states,
+  started: [],
+  created_with_diagnosis: [
+    timeout: [value: [minutes: 2], event: :to_budgeted_by_garages],
+    # macro_state: :pending
+  ],
+  not_budgeted_by_garages: [final_state: true, macro_state: :canceled],
+  budgeted_by_garages: [
+    timeout: [value: [minutes: 2], event: :to_budget_accepted_by_customer]
+  ],
+  budget_not_accepted_by_customer: [final_state: true, macro_state: :canceled],
+  budget_accepted_by_customer: [
+    timeout: [value: [minutes: 2], event: :to_finish_by_garage]
+  ],
+  finished_by_garage: [final_state: true],
+  timeout: [final_state: true]

@@ -254,6 +254,15 @@ defmodule EasyFixApi.Orders do
     |> Repo.preload(Order.all_nested_assocs)
   end
 
+  def calculate_state_due_date(state) do
+    case Application.get_env(:easy_fix_api, :order_states)[state][:timeout] do
+      nil ->
+        nil
+      timeout_data ->
+        Timex.now |> Timex.shift(timeout_data[:value])
+    end
+  end
+
   def create_order_with_diagnosis(attrs \\ %{}) do
     with order_changeset = %{valid?: true} <- Order.create_changeset(attrs),
          order_assoc_changeset = %{valid?: true} <- Order.assoc_changeset(attrs),
@@ -262,8 +271,12 @@ defmodule EasyFixApi.Orders do
       customer = Accounts.get_customer!(order_assoc_attrs[:customer_id])
       Repo.transaction fn ->
         {:ok, diagnosis} = create_diagnosis(order_assoc_attrs[:diagnosis])
+        state = :created_with_diagnosis
+        state_due_date = calculate_state_due_date(state)
 
         order_changeset
+        |> put_change(:state, state)
+        |> put_change(:state_due_date, state_due_date)
         |> put_assoc(:diagnosis, diagnosis)
         |> put_assoc(:customer, customer)
         |> Repo.insert()

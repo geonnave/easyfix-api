@@ -52,10 +52,12 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
     end
     create unique_index(:budgets_parts, [:budget_id, :part_id])
 
+    EasyFixApi.Orders.StateEnum.create_type
     create table(:orders) do
-      add :status, :string
-      add :sub_status, :string
-      add :opening_date, :utc_datetime
+      add :state, :order_state
+      add :state_due_date, :utc_datetime
+      # add :sub_state, :string
+      # add :opening_date, :utc_datetime
       add :conclusion_date, :utc_datetime
 
       add :diagnosis_id, references(:diagnosis)

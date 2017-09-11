@@ -22,7 +22,19 @@ config :easy_fix_api, EasyFixApi.Repo,
 config :comeonin, :bcrypt_log_rounds, 4
 config :comeonin, :pbkdf2_rounds, 1
 
-config :easy_fix_api, :timeouts,
-  to_budgeted_by_garages: 100,
-  to_budget_accepted_by_customer: 100,
-  to_finish_by_garage: 100
+config :easy_fix_api, :order_states,
+  started: [],
+  created_with_diagnosis: [
+    timeout: [value: [milliseconds: 100], event: :to_budgeted_by_garages],
+    # macro_state: :pending
+  ],
+  not_budgeted_by_garages: [final_state: true, macro_state: :canceled],
+  budgeted_by_garages: [
+    timeout: [value: [milliseconds: 100], event: :to_budget_accepted_by_customer]
+  ],
+  budget_not_accepted_by_customer: [final_state: true, macro_state: :canceled],
+  budget_accepted_by_customer: [
+    timeout: [value: [milliseconds: 100], event: :to_finish_by_garage]
+  ],
+  finished_by_garage: [final_state: true],
+  timeout: [final_state: true]

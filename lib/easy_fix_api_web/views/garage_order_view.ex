@@ -14,9 +14,8 @@ defmodule EasyFixApiWeb.GarageOrderView do
     order = garage_order.order
     budget = garage_order.budget
     %{id: order.id,
-      status: order.status,
-      sub_status: order.sub_status,
-      opening_date: order.opening_date,
+      state: order.state,
+      state_due_date: order.state_due_date,
       conclusion_date: order.conclusion_date,
       customer_id: order.customer.id,
       diagnosis: render_one(order.diagnosis, EasyFixApiWeb.DiagnosisView, "diagnosis.json"),

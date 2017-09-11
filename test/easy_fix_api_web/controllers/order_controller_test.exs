@@ -1,7 +1,7 @@
 defmodule EasyFixApiWeb.OrderControllerTest do
   use EasyFixApiWeb.ConnCase
 
-  @invalid_attrs %{conclusion_date: nil, opening_date: nil, status: nil, sub_status: nil}
+  @invalid_attrs %{conclusion_date: nil, opening_date: nil, state: nil, sub_state: nil}
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -34,9 +34,7 @@ defmodule EasyFixApiWeb.OrderControllerTest do
 
       conn = get conn, order_path(conn, :show, id)
       assert json_response(conn, 200)["data"]["id"] == id
-      assert json_response(conn, 200)["data"]["opening_date"] == order_attrs[:opening_date]
-      assert json_response(conn, 200)["data"]["status"] == order_attrs[:status]
-      assert json_response(conn, 200)["data"]["sub_status"] == order_attrs[:sub_status]
+      assert json_response(conn, 200)["data"]["state"] == "created_with_diagnosis"
       assert json_response(conn, 200)["data"]["customer_id"] == order_attrs[:customer_id]
     end
 

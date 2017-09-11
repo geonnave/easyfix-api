@@ -5,15 +5,17 @@ defmodule EasyFixApi.Factory do
   alias EasyFixApi.Accounts.{User, Garage, Customer}
   alias EasyFixApi.Payments.{Bank, BankAccount}
   alias EasyFixApi.Orders.{Diagnosis, DiagnosisPart, Budget, BudgetPart, Order}
+  alias EasyFixApi.Orders
   alias EasyFixApi.Parts.{Part, PartSubGroup, PartGroup, PartSystem, GarageCategory}
   alias EasyFixApi.Cars.{Model, Brand, Vehicle}
 
   def order_factory do
     %Order{
-      status: "new",
-      sub_status: "new",
-      opening_date: "2017-08-06T17:44:57.913808Z",
-      conclusion_date: "2017-08-07T17:44:57.913808Z",
+      # state: "started",
+      # state_due_date: "2017-08-06T17:44:57.913808Z",
+      # sub_state: "new",
+      # opening_date: "2017-08-06T17:44:57.913808Z",
+      # conclusion_date: "2017-08-07T17:44:57.913808Z",
     }
   end
   def order_with_all_params(customer_id, vehicle_id) do
@@ -30,6 +32,23 @@ defmodule EasyFixApi.Factory do
       opening_date: "2017-08-06T17:44:57.913808Z",
       due_date: "2017-08-07T17:44:57.913808Z",
     }
+  end
+
+  def budget_with_all_params do
+    garage = insert(:garage)
+    customer = insert(:customer)
+    [vehicle] = customer.vehicles
+    order_attrs = order_with_all_params(customer.id, vehicle.id)
+    {:ok, order} = Orders.create_order_with_diagnosis(order_attrs)
+
+    budget_attrs =
+      params_for(:budget)
+      |> put_in([:parts], parts_for_budget())
+      |> put_in([:diagnosis_id], order.diagnosis.id)
+      |> put_in([:issuer_id], garage.id)
+      |> put_in([:issuer_type], "garage")
+
+    {budget_attrs, garage, order}
   end
 
   def budget_part_factory do
