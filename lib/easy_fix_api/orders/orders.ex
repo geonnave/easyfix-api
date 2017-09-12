@@ -307,5 +307,4 @@ defmodule EasyFixApi.Orders do
   def delete_order(%Order{} = order) do
     Repo.delete(order)
   end
-
 end

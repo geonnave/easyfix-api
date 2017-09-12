@@ -64,6 +64,34 @@ defmodule EasyFixApi.OrderStateMachineTest do
       {:ok, _} = OrderStateMachine.start_link data
       assert {:budgeted_by_garages, _} = OrderStateMachine.get_state data[:order_id]
     end
+    def order_at_budgeted_by_garages do
+      order =
+        create_order_with_diagnosis()
+        |> update_order_state(:budgeted_by_garages)
+      %{order_id: order.id}
+    end
+
+    test "goes to timeout when timeout" do
+      data = order_at_budgeted_by_garages()
+      {:ok, _} = OrderStateMachine.start_link data
+
+      Process.sleep gt_timeout(:budgeted_by_garages)
+      assert {:timeout, _} = OrderStateMachine.get_state data[:order_id]
+    end
+    test "goes to budget_accepted_by_customer when customer_clicked_accept_budget" do
+      data = order_at_budgeted_by_garages()
+      {:ok, _} = OrderStateMachine.start_link data
+
+      OrderStateMachine.customer_clicked data[:order_id], :accept_budget
+      assert {:budget_accepted_by_customer, _} = OrderStateMachine.get_state data[:order_id]
+    end
+    test "goes to budget_accepted_by_customer when customer_clicked not_accept_budget" do
+      data = order_at_budgeted_by_garages()
+      {:ok, _} = OrderStateMachine.start_link data
+
+      OrderStateMachine.customer_clicked data[:order_id], :not_accept_budget
+      assert {:budget_not_accepted_by_customer, _} = OrderStateMachine.get_state data[:order_id]
+    end
   end
 
   def gt_timeout(state), do: OrderStateMachine.timeout_value(state) + 10

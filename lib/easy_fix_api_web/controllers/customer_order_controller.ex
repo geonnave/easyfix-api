@@ -32,4 +32,7 @@ defmodule EasyFixApiWeb.CustomerOrderController do
     |> put_resp_header("location", customer_order_path(conn, :show, customer_id, customer_order))
     |> render("show.json", customer_order: customer_order)
   end
+
+  def update(conn, _params = %{"customer_id" => customer_id, "id" => order_id}) do
+  end
 end

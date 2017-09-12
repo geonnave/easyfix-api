@@ -7,6 +7,9 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     GenStateMachine.start_link __MODULE__, data, name: name(data[:order_id])
   end
 
+  def customer_clicked(order_id, button) do
+    GenStateMachine.call name(order_id), {:customer_clicked, button}
+  end
   def get_state(order_id) do
     GenStateMachine.call name(order_id), :get_state
   end
@@ -51,9 +54,16 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
         end
     end
   end
-  # def handle_event(:state_timeout, :to_budgeted_by_garages, _state, _data) do
-  #   :keep_state_and_data
-  # end
+
+  def handle_event(:state_timeout, :to_budget_accepted_by_customer, :budgeted_by_garages, data) do
+    {:next_state, :timeout, data}
+  end
+  def handle_event({:call, from}, {:customer_clicked, :accept_budget}, :budgeted_by_garages, data) do
+    {:next_state, :budget_accepted_by_customer, data, [{:reply, from, :ok}]}
+  end
+  def handle_event({:call, from}, {:customer_clicked, :not_accept_budget}, :budgeted_by_garages, data) do
+    {:next_state, :budget_not_accepted_by_customer, data, [{:reply, from, :ok}]}
+  end
 
   def handle_event({:call, from}, :get_state, state, data) do
     {:keep_state_and_data, [{:reply, from, {state, data}}]}
