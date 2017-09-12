@@ -82,15 +82,22 @@ defmodule EasyFixApi.OrderStateMachineTest do
       data = order_at_budgeted_by_garages()
       {:ok, _} = OrderStateMachine.start_link data
 
-      OrderStateMachine.customer_clicked data[:order_id], :accept_budget
+      :ok = OrderStateMachine.customer_clicked data[:order_id], :accept_budget
       assert {:budget_accepted_by_customer, _} = OrderStateMachine.get_state data[:order_id]
     end
     test "goes to budget_accepted_by_customer when customer_clicked not_accept_budget" do
       data = order_at_budgeted_by_garages()
       {:ok, _} = OrderStateMachine.start_link data
 
-      OrderStateMachine.customer_clicked data[:order_id], :not_accept_budget
+      :ok = OrderStateMachine.customer_clicked data[:order_id], :not_accept_budget
       assert {:budget_not_accepted_by_customer, _} = OrderStateMachine.get_state data[:order_id]
+    end
+    test "returns error from budget_accepted_by_customer when customer_clicked invalid event" do
+      data = order_at_budgeted_by_garages()
+      {:ok, _} = OrderStateMachine.start_link data
+
+      {:error, _reason} = OrderStateMachine.customer_clicked data[:order_id], :some_invalid_event
+      assert {:budgeted_by_garages, _} = OrderStateMachine.get_state data[:order_id]
     end
   end
 

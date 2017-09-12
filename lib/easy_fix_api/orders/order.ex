@@ -31,7 +31,7 @@ defmodule EasyFixApi.Orders.Order do
   def update_state_changeset(struct, attrs) do
     struct
     |> cast(attrs, [:state, :state_due_date])
-    |> validate_required([:state, :state_due_date])
+    |> validate_required([:state])
   end
 
   @assoc_types %{diagnosis: :map, customer_id: :integer}

@@ -2,6 +2,7 @@ defmodule EasyFixApiWeb.CustomerOrderController do
   use EasyFixApiWeb, :controller
 
   alias EasyFixApi.{Orders}
+  alias EasyFixApi.Orders.OrderStateMachine
 
   action_fallback EasyFixApiWeb.FallbackController
 
@@ -25,7 +26,7 @@ defmodule EasyFixApiWeb.CustomerOrderController do
       |> put_in(["customer_id"], customer_id)
       |> Orders.create_order_with_diagnosis
 
-    # OrderStateMachine.start_link(:created_with_diagnosis, order_id: order.id)
+    OrderStateMachine.start_link(%{order_id: customer_order.id})
 
     conn
     |> put_status(:created)
@@ -33,6 +34,15 @@ defmodule EasyFixApiWeb.CustomerOrderController do
     |> render("show.json", customer_order: customer_order)
   end
 
-  def update(conn, _params = %{"customer_id" => customer_id, "id" => order_id}) do
+  def update_state(conn, params = %{"event" => event_params}) do
+    %{"customer_id" => customer_id, "order_id" => order_id} = params
+
+    {:ok, order} = Orders.get_customer_order(customer_id, order_id)
+
+    event = event_params["name"] |> String.to_atom
+    with :ok <- OrderStateMachine.customer_clicked(order.id, event) do
+      {:ok, updated_order} = Orders.get_customer_order(customer_id, order_id)
+      render(conn, "show.json", customer_order: updated_order)
+    end
   end
 end

@@ -34,7 +34,9 @@ defmodule EasyFixApiWeb.Router do
     end
 
     resources "/customers", CustomerController, except: [:new, :edit] do
-      resources "/orders", CustomerOrderController, only: [:index, :show, :create, :update], name: :order
+      resources "/orders", CustomerOrderController, only: [:index, :show, :create], name: :order do
+        put "/state", CustomerOrderController, :update_state, as: :state
+      end
     end
 
     resources "/addresses", AddressController, except: [:new, :edit]

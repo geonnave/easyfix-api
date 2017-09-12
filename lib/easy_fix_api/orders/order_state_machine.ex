@@ -24,7 +24,13 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     Application.get_env(:easy_fix_api, :order_states)[state][:timeout][:event]
   end
   def state_timeout_action(state, state_due_date) do
-    {:state_timeout, timeout_from_now(state_due_date), timeout_event(state)}
+    {:state_timeout, timeout_from_now(state_due_date), timeout_event(state)} |> IO.inspect
+  end
+  def next_state_attrs(state) do
+    %{
+      state: state,
+      state_due_date: Orders.calculate_state_due_date(state)
+    }
   end
 
   def init(data) do
@@ -37,15 +43,20 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
   end
 
   def handle_event(:state_timeout, :to_budgeted_by_garages, :created_with_diagnosis, data) do
+    Logger.debug ":state_timeout, :to_budgeted_by_garages, :created_with_diagnosis"
     case Orders.list_budgets_by_order(data[:order_id]) do
       [] ->
-        {:next_state, :not_budgeted_by_garages, data}
+        order = Orders.get_order!(data[:order_id])
+        next_state_attrs = next_state_attrs(:not_budgeted_by_garages)
+        case Orders.update_order_state(order, next_state_attrs) do
+          {:ok, %{state: state}} ->
+            {:next_state, state, data}
+          {:error, changeset} ->
+            {:next_state, :finished_error, put_in(data[:changeset], changeset)}
+        end
       _budgets ->
         order = Orders.get_order!(data[:order_id])
-        next_state_attrs = %{
-          state: :budgeted_by_garages,
-          state_due_date: Orders.calculate_state_due_date(:budgeted_by_garages)
-        }
+        next_state_attrs = next_state_attrs(:budgeted_by_garages)
         case Orders.update_order_state(order, next_state_attrs) do
           {:ok, %{state: state, state_due_date: state_due_date}} ->
             {:next_state, state, data, [state_timeout_action(state, state_due_date)]}
@@ -56,16 +67,35 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
   end
 
   def handle_event(:state_timeout, :to_budget_accepted_by_customer, :budgeted_by_garages, data) do
+    Logger.debug ":state_timeout, :to_budget_accepted_by_customer, :budgeted_by_garages"
     {:next_state, :timeout, data}
   end
   def handle_event({:call, from}, {:customer_clicked, :accept_budget}, :budgeted_by_garages, data) do
-    {:next_state, :budget_accepted_by_customer, data, [{:reply, from, :ok}]}
+    Logger.debug "{:call, from}, {:customer_clicked, :accept_budget}, :budgeted_by_garages"
+    order = Orders.get_order!(data[:order_id])
+    next_state_attrs = next_state_attrs(:budget_accepted_by_customer)
+    case Orders.update_order_state(order, next_state_attrs) do
+      {:ok, %{state: state, state_due_date: state_due_date}} ->
+        reply_action = {:reply, from, :ok}
+        timeout_action = state_timeout_action(state, state_due_date)
+        {:next_state, state, data, [reply_action, timeout_action]}
+      {:error, changeset} ->
+        reply_action = {:reply, from, {:error, changeset}}
+        {:next_state, :finished_error, put_in(data[:changeset], [reply_action])}
+    end
   end
   def handle_event({:call, from}, {:customer_clicked, :not_accept_budget}, :budgeted_by_garages, data) do
+    Logger.debug "{:call, from}, {:customer_clicked, :not_accept_budget}, :budgeted_by_garages"
     {:next_state, :budget_not_accepted_by_customer, data, [{:reply, from, :ok}]}
+  end
+  def handle_event({:call, from}, {:customer_clicked, event}, :budgeted_by_garages, _data) do
+    Logger.debug "INVALID event: {:call, from}, {:customer_clicked, event}, :budgeted_by_garages"
+    reply_action = {:reply, from, {:error, "the event #{inspect event} is invalid"}}
+    {:keep_state_and_data, [reply_action]}
   end
 
   def handle_event({:call, from}, :get_state, state, data) do
+    Logger.debug "{:call, from}, :get_state"
     {:keep_state_and_data, [{:reply, from, {state, data}}]}
   end
 
