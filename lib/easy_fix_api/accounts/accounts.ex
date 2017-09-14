@@ -221,6 +221,12 @@ defmodule EasyFixApi.Accounts do
     end
   end
 
+  def update_customer_lead(%CustomerLead{} = customer_lead, attrs) do
+    customer_lead
+    |> CustomerLead.changeset(attrs)
+    |> Repo.update()
+  end
+
   def delete_customer_lead(%CustomerLead{} = customer_lead) do
     Repo.delete(customer_lead)
   end

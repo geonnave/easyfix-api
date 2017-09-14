@@ -11,10 +11,9 @@ defmodule EasyFixApiWeb.BudgetPartView do
   end
 
   def render("budget_part.json", %{budget_part: budget_part}) do
-    %{part_id: budget_part.part.id,
-      part_name: budget_part.part.name,
-      price: budget_part.price,
+    %{id: budget_part.id,
       quantity: budget_part.quantity,
+      part: render_one(budget_part.part, EasyFixApiWeb.PartView, "part.json"),
     }
   end
 end

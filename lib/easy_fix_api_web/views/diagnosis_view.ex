@@ -17,7 +17,7 @@ defmodule EasyFixApiWeb.DiagnosisView do
       status: diagnosis.status,
       comment: diagnosis.comment,
       expiration_date: diagnosis.expiration_date,
-      parts: render_many(diagnosis.parts, EasyFixApiWeb.PartView, "part.json"),
+      parts: render_many(diagnosis.diagnosis_parts, EasyFixApiWeb.DiagnosisPartView, "diagnosis_part.json"),
       vehicle: render_one(diagnosis.vehicle, EasyFixApiWeb.VehicleView, "vehicle.json"),
     }
   end
