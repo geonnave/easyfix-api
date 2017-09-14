@@ -14,25 +14,6 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     GenStateMachine.call name(order_id), :get_state
   end
 
-  def timeout_from_now(state_due_date) do
-    Timex.diff(state_due_date, Timex.now, :milliseconds)
-  end
-  def timeout_value(state) do
-    Application.get_env(:easy_fix_api, :order_states)[state][:timeout][:value][:milliseconds]
-  end
-  def timeout_event(state) do
-    Application.get_env(:easy_fix_api, :order_states)[state][:timeout][:event]
-  end
-  def state_timeout_action(state, state_due_date) do
-    {:state_timeout, timeout_from_now(state_due_date), timeout_event(state)} |> IO.inspect
-  end
-  def next_state_attrs(state) do
-    %{
-      state: state,
-      state_due_date: Orders.calculate_state_due_date(state)
-    }
-  end
-
   def init(data) do
     case Orders.get_order!(data[:order_id]) do
       %{state: state, state_due_date: nil} ->
@@ -99,9 +80,26 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     {:keep_state_and_data, [{:reply, from, {state, data}}]}
   end
 
+  def timeout_from_now(state_due_date) do
+    Timex.diff(state_due_date, Timex.now, :milliseconds)
+  end
+  def timeout_value(state) do
+    Application.get_env(:easy_fix_api, :order_states)[state][:timeout][:value][:milliseconds]
+  end
+  def timeout_event(state) do
+    Application.get_env(:easy_fix_api, :order_states)[state][:timeout][:event]
+  end
+  def state_timeout_action(state, state_due_date) do
+    {:state_timeout, timeout_from_now(state_due_date), timeout_event(state)}
+  end
+  def next_state_attrs(state) do
+    %{
+      state: state,
+      state_due_date: Orders.calculate_state_due_date(state)
+    }
+  end
+
   def name(order_id) do
     {:via, Registry, {Registry.OrderStateMachine, order_id}}
   end
-
-  def order_id({_, _, {_, order_id}}), do: order_id
 end
