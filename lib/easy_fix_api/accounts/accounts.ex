@@ -201,4 +201,27 @@ defmodule EasyFixApi.Accounts do
     Repo.delete(customer)
   end
 
+  alias EasyFixApi.Accounts.CustomerLead
+
+  def list_customer_leads do
+    Repo.all(CustomerLead)
+  end
+
+  def get_customer_lead!(id) do
+    Repo.get!(CustomerLead, id)
+  end
+
+  def create_customer_lead(attrs \\ %{}) do
+    with customer_changeset = %{valid?: true} <- CustomerLead.create_changeset(attrs) do
+      customer_changeset
+      |> Repo.insert
+    else
+      %{valid?: false} = changeset ->
+        {:error, changeset}
+    end
+  end
+
+  def delete_customer_lead(%CustomerLead{} = customer_lead) do
+    Repo.delete(customer_lead)
+  end
 end

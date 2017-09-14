@@ -39,6 +39,8 @@ defmodule EasyFixApiWeb.Router do
       end
     end
 
+    resources "/customer_leads", CustomerLeadController, except: [:new, :edit]
+
     resources "/addresses", AddressController, except: [:new, :edit]
     get "/cities", CityController, :index
     resources "/bank_accounts", BankAccountController, except: [:new, :edit]
