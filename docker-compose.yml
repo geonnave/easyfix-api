@@ -2,7 +2,7 @@ web_dev:
   build: .
   dockerfile: Dockerfile.dev
   ports:
-    - "4000:4000"
+    - "5000:5000"
   command: iex -S mix phx.server
   environment:
     - MIX_ENV=dev
