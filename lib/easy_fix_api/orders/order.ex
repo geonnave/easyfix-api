@@ -3,10 +3,11 @@ defmodule EasyFixApi.Orders.Order do
   import Ecto.Changeset
 
   schema "orders" do
-    field :state, EasyFixApi.Orders.StateEnum
+    field :state, EasyFixApi.Orders.StateEnum # this information is mostly useful to internal business logic
     field :state_due_date, :utc_datetime
-    # field :sub_state, :string
-    # field :opening_date, :utc_datetime
+    field :status, :string # this information is mostly useful to final users
+
+    field :opening_date, :utc_datetime
     field :conclusion_date, :utc_datetime
 
     belongs_to :diagnosis, EasyFixApi.Orders.Diagnosis

@@ -56,8 +56,9 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
     create table(:orders) do
       add :state, :order_state
       add :state_due_date, :utc_datetime
-      # add :sub_state, :string
-      # add :opening_date, :utc_datetime
+      add :status, :string
+
+      add :opening_date, :utc_datetime
       add :conclusion_date, :utc_datetime
 
       add :diagnosis_id, references(:diagnosis)

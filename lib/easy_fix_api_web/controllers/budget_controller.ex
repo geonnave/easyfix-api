@@ -14,6 +14,14 @@ defmodule EasyFixApiWeb.BudgetController do
   def create(conn, _params = %{"budget" => budget_params, "garage_id" => garage_id, "order_id" => order_id}) do
     order = Orders.get_order!(order_id)
 
+    case Orders.get_budget_for_garage_order(garage_id, order_id) do
+      {:ok, budget} ->
+        Orders.delete_budget(budget)
+        IO.inspect "deletou"
+      _ ->
+        nil
+    end
+
     {:ok, budget} =
       budget_params
       |> put_in(["diagnosis_id"], order.diagnosis_id)

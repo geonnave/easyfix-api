@@ -14,7 +14,7 @@ defmodule EasyFixApi.Orders.Budget do
     field :issuer_type, EasyFixApi.Accounts.UserTypeEnum
     belongs_to :issuer, EasyFixApi.Accounts.User
 
-    has_many :budgets_parts, EasyFixApi.Orders.BudgetPart
+    has_many :budgets_parts, EasyFixApi.Orders.BudgetPart, on_delete: :delete_all
     has_many :parts, through: [:budgets_parts, :part]
     belongs_to :diagnosis, EasyFixApi.Orders.Diagnosis
 
