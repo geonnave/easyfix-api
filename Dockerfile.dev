@@ -6,4 +6,6 @@ RUN mix local.hex --force
 
 RUN mix archive.install --force https://github.com/phoenixframework/archives/raw/master/phx_new.ez
 
+EXPOSE 5000
+
 WORKDIR /app
