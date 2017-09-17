@@ -8,9 +8,14 @@ defmodule EasyFixApi.Orders.Diagnosis do
     field :need_tow_truck, :boolean, default: false
     field :status, :string
     field :expiration_date, :utc_datetime
+
+    has_many :budgets, EasyFixApi.Orders.Budget, on_delete: :delete_all
+    # has_one :order, EasyFixApi.Orders.Order
+    belongs_to :order, EasyFixApi.Orders.Order
+
     has_many :diagnosis_parts, EasyFixApi.Orders.DiagnosisPart
     has_many :parts, through: [:diagnosis_parts, :part]
-    has_many :budgets, EasyFixApi.Orders.Budget
+
     belongs_to :vehicle, EasyFixApi.Cars.Vehicle
 
     timestamps(type: :utc_datetime)

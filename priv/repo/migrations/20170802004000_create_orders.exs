@@ -2,6 +2,20 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
   use Ecto.Migration
 
   def change do
+    EasyFixApi.Orders.StateEnum.create_type
+    create table(:orders) do
+      add :state, :order_state
+      add :state_due_date, :utc_datetime
+      add :status, :string
+
+      add :opening_date, :utc_datetime
+      add :conclusion_date, :utc_datetime
+
+      add :customer_id, references(:customers)
+
+      timestamps(type: :timestamptz)
+    end
+
     create table(:diagnosis) do
       add :accepts_used_parts, :boolean, default: false, null: false
       add :need_tow_truck, :boolean, default: false, null: false
@@ -10,12 +24,13 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
       add :expiration_date, :utc_datetime
 
       add :vehicle_id, references(:vehicles)
+      add :order_id, references(:orders, on_delete: :delete_all)
 
       timestamps(type: :timestamptz)
     end
 
     create table(:diagnosis_parts) do
-      add :diagnosis_id, references(:diagnosis)
+      add :diagnosis_id, references(:diagnosis, on_delete: :delete_all)
       add :part_id, references(:parts)
       add :quantity, :integer
 
@@ -40,10 +55,9 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
 
       timestamps(type: :timestamptz)
     end
-    # create unique_index(:budgets, [:issuer_id, :issuer_type])
 
     create table(:budgets_parts) do
-      add :budget_id, references(:budgets)
+      add :budget_id, references(:budgets, on_delete: :delete_all)
       add :part_id, references(:parts)
       add :quantity, :integer
       add :price, :integer
@@ -51,20 +65,5 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
       timestamps(type: :timestamptz)
     end
     create unique_index(:budgets_parts, [:budget_id, :part_id])
-
-    EasyFixApi.Orders.StateEnum.create_type
-    create table(:orders) do
-      add :state, :order_state
-      add :state_due_date, :utc_datetime
-      add :status, :string
-
-      add :opening_date, :utc_datetime
-      add :conclusion_date, :utc_datetime
-
-      add :diagnosis_id, references(:diagnosis)
-      add :customer_id, references(:customers)
-
-      timestamps(type: :timestamptz)
-    end
   end
 end

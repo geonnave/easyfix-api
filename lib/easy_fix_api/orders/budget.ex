@@ -16,6 +16,7 @@ defmodule EasyFixApi.Orders.Budget do
 
     has_many :budgets_parts, EasyFixApi.Orders.BudgetPart, on_delete: :delete_all
     has_many :parts, through: [:budgets_parts, :part]
+
     belongs_to :diagnosis, EasyFixApi.Orders.Diagnosis
 
     timestamps(type: :utc_datetime)

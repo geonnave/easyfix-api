@@ -24,7 +24,7 @@ defmodule EasyFixApiWeb.BudgetController do
 
     {:ok, budget} =
       budget_params
-      |> put_in(["diagnosis_id"], order.diagnosis_id)
+      |> put_in(["diagnosis_id"], order.diagnosis.id)
       |> put_in(["issuer_id"], garage_id)
       |> put_in(["issuer_type"], "garage")
       |> Orders.create_budget()

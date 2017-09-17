@@ -161,6 +161,17 @@ defmodule EasyFixApi.OrdersTest do
       assert_raise Ecto.NoResultsError, fn -> Orders.get_order!(order.id) end
     end
 
+    test "delete_order/1 deletes the order and referenced diagnosis" do
+      customer = insert(:customer)
+      [vehicle] = customer.vehicles
+      order_attrs = order_with_all_params(customer.id, vehicle.id)
+      {:ok, order} = Orders.create_order_with_diagnosis(order_attrs)
+
+      assert {:ok, %Order{}} = Orders.delete_order(order)
+      assert_raise Ecto.NoResultsError, fn -> Orders.get_order!(order.id) end
+      assert_raise Ecto.NoResultsError, fn -> Orders.get_diagnosis!(order.diagnosis.id) end
+    end
+
     test "list_customer_orders/1 returns the corresponding orders" do
       customer = insert(:customer)
       [vehicle] = customer.vehicles

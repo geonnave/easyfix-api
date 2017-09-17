@@ -10,7 +10,7 @@ defmodule EasyFixApi.Orders.Order do
     field :opening_date, :utc_datetime
     field :conclusion_date, :utc_datetime
 
-    belongs_to :diagnosis, EasyFixApi.Orders.Diagnosis
+    has_one :diagnosis, EasyFixApi.Orders.Diagnosis
     belongs_to :customer, EasyFixApi.Accounts.Customer
 
     timestamps(type: :utc_datetime)

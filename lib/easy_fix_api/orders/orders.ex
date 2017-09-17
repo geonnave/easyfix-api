@@ -84,7 +84,7 @@ defmodule EasyFixApi.Orders do
   def list_budgets_by_order(order_id) do
     from(b in Budget,
       join: d in Diagnosis, on: d.id == b.diagnosis_id,
-      join: o in Order, on: d.id == o.diagnosis_id,
+      join: o in Order, on: d.order_id == o.id,
       where: o.id == ^order_id,
       select: b,
       preload: ^Budget.all_nested_assocs)
@@ -111,7 +111,7 @@ defmodule EasyFixApi.Orders do
       user ->
         from(b in Budget,
           join: d in Diagnosis, on: d.id == b.diagnosis_id,
-          join: o in Order, on: d.id == o.diagnosis_id,
+          join: o in Order, on: d.order_id == o.id,
           where: o.id == ^order_id and b.issuer_id == ^user.id and b.issuer_type == "garage",
           select: b,
           preload: ^Budget.all_nested_assocs)
