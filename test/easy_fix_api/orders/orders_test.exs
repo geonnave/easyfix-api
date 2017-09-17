@@ -64,6 +64,39 @@ defmodule EasyFixApi.OrdersTest do
       assert budget_part.price == budget_part_attrs[:price]
       assert budget_part.quantity == budget_part_attrs[:quantity]
     end
+
+    test "update_budget_part/2 updates non-assoc fields" do
+      budget = insert(:budget)
+      part = insert(:part)
+      budget_part_attrs =
+        params_for(:budget_part)
+        |> put_in([:part_id], part.id)
+      {:ok, %BudgetPart{} = budget_part} = Orders.create_budget_part(budget_part_attrs, budget.id)
+
+      update_attrs = %{quantity: 2, price: 5000}
+      {:ok, updated_budget_part} = Orders.update_budget_part(budget_part, update_attrs)
+      assert updated_budget_part.budget.id == budget.id
+      assert updated_budget_part.part.id == part.id
+      assert updated_budget_part.price == update_attrs[:price]
+      assert updated_budget_part.quantity == update_attrs[:quantity]
+    end
+
+    test "update_budget_part/2 updates assoc fields" do
+      budget = insert(:budget)
+      part = insert(:part)
+      budget_part_attrs =
+        params_for(:budget_part)
+        |> put_in([:part_id], part.id)
+      {:ok, %BudgetPart{} = budget_part} = Orders.create_budget_part(budget_part_attrs, budget.id)
+
+      new_part = insert(:part)
+      update_attrs = %{quantity: 2, price: 5000, part_id: new_part.id}
+      {:ok, updated_budget_part} = Orders.update_budget_part(budget_part, update_attrs)
+      assert updated_budget_part.budget.id == budget.id
+      assert updated_budget_part.part.id == new_part.id
+      assert updated_budget_part.price == update_attrs[:price]
+      assert updated_budget_part.quantity == update_attrs[:quantity]
+    end
   end
 
   describe "budgets" do

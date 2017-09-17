@@ -159,6 +159,31 @@ defmodule EasyFixApi.Orders do
     end
   end
 
+  def update_budget_parts(%Budget{} = budget, attrs) do
+    with budget_parts_assoc_changeset = %{valid?: true} <- Budget.assoc_parts_changeset(attrs),
+         budget_parts_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(budget_parts_assoc_changeset) do
+
+      Repo.transaction fn ->
+        for part_attrs <- budget_parts_assoc_attrs[:parts] do
+          case create_budget_part(part_attrs, budget.id) do
+            {:error, budget_part_error_changeset} ->
+              Repo.rollback(budget_part_error_changeset)
+            _ ->
+              nil
+          end
+        end
+
+        budget
+        |> Repo.preload(Budget.all_nested_assocs)
+      end
+    else
+      %{valid?: false} = changeset ->
+        {:error, changeset}
+      nil ->
+        {:error, "diagnosis or issuer does not exist"}
+    end
+  end
+
   def update_budget(%Budget{} = budget, attrs) do
     budget
     |> Budget.changeset(attrs)
@@ -172,17 +197,31 @@ defmodule EasyFixApi.Orders do
   alias EasyFixApi.Orders.BudgetPart
 
   def create_budget_part(attrs \\ %{}, budget_id) do
-    with budget_part_changeset = %{valid?: true} <- BudgetPart.create_changeset(attrs),
-         budget_part_assoc_changeset = %{valid?: true} <- BudgetPart.assoc_changeset(attrs),
-         budget_part_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(budget_part_assoc_changeset) do
-
-        part = Parts.get_part!(budget_part_assoc_attrs[:part_id])
+    with budget_part_changeset = %{valid?: true} <- BudgetPart.create_changeset(attrs) do
         budget = get_budget!(budget_id)
+        part = Parts.get_part!(budget_part_changeset.changes[:part_id])
 
         budget_part_changeset
         |> put_assoc(:part, part)
         |> put_assoc(:budget, budget)
         |> Repo.insert()
+    else
+      %{valid?: false} = changeset ->
+        {:error, changeset}
+    end
+  end
+
+  def update_budget_part(%BudgetPart{} = budget_part, attrs \\ %{}) do
+    with budget_part_changeset = %{valid?: true} <- BudgetPart.update_changeset(budget_part, attrs) do
+        budget_part_changeset
+        |> case do
+          changeset = %{changes: %{part_id: part_id}} ->
+            part = Parts.get_part!(part_id)
+            put_assoc(changeset, :part, part)
+          changeset ->
+            changeset
+        end
+        |> Repo.update()
     else
       %{valid?: false} = changeset ->
         {:error, changeset}
@@ -223,7 +262,7 @@ defmodule EasyFixApi.Orders do
     garage = Accounts.get_garage!(garage_id)
     order = get_order!(order_id)
 
-    garage_categories_ids = 
+    _garage_categories_ids = 
       garage_id
       |> Accounts.get_garage_categories_ids!
 

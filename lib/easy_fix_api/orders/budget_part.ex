@@ -4,30 +4,21 @@ defmodule EasyFixApi.Orders.BudgetPart do
 
   schema "budgets_parts" do
     belongs_to :budget, EasyFixApi.Orders.Budget
-    belongs_to :part, EasyFixApi.Parts.Part
+    belongs_to :part, EasyFixApi.Parts.Part, on_replace: :nilify
     field :quantity, :integer
     field :price, :integer
 
     timestamps(type: :utc_datetime)
   end
 
-  @required_attrs ~w(quantity price)a
-
   def create_changeset(attrs) do
     %__MODULE__{}
-    |> changeset(attrs)
+    |> cast(attrs, [:quantity, :price, :part_id])
+    |> validate_required([:quantity, :price, :part_id])
   end
 
-  def changeset(struct, attrs) do
-    struct
-    |> cast(attrs, @required_attrs)
-    |> validate_required(@required_attrs)
-  end
-
-  @assoc_types %{part_id: :integer}
-  def assoc_changeset(attrs) do
-    {attrs, @assoc_types}
-    |> cast(attrs, Map.keys(@assoc_types))
-    |> validate_required(Map.keys(@assoc_types))
+  def update_changeset(budget_part, attrs) do
+    budget_part
+    |> cast(attrs, [:quantity, :price, :part_id])
   end
 end
