@@ -99,13 +99,13 @@ defmodule EasyFixApi.Orders do
   def get_budget_by_user(user_id) do
     from(
       b in Budget,
-      preload: [parts: ^Part.all_nested_assocs, issuer: [:garage]],
+      preload: [budgets_parts: [part: ^Part.all_nested_assocs], issuer: [:garage]],
       where: ^user_id == b.issuer_id)
     |> Repo.one
   end
 
   def get_budget_for_garage_order(garage_id, order_id) do
-    case Accounts.get_user_by_type_id("garage", garage_id) do
+    case Accounts.get_user_by_type_id(:garage, garage_id) do
       nil ->
         {:error, "garage not found"}
       user ->
@@ -127,44 +127,18 @@ defmodule EasyFixApi.Orders do
 
   def create_budget(attrs \\ %{}) do
     with budget_changeset = %{valid?: true} <- Budget.create_changeset(attrs),
-         budget_assoc_changeset = %{valid?: true} <- Budget.assoc_changeset(attrs),
-         budget_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(budget_assoc_changeset),
-         diagnosis when not is_nil(diagnosis) <- Repo.get(Diagnosis, budget_assoc_attrs[:diagnosis_id]),
-         issuer when not is_nil(issuer) <- Accounts.get_user_by_type_id(budget_assoc_attrs[:issuer_type], budget_assoc_attrs[:issuer_id]) do
+         %{diagnosis_id: diagnosis_id, issuer_type: issuer_type, issuer_id: issuer_id} = budget_changeset.changes,
+         diagnosis when not is_nil(diagnosis) <- Repo.get(Diagnosis, diagnosis_id),
+         issuer when not is_nil(issuer) <- Accounts.get_user_by_type_id(issuer_type, issuer_id) do
 
       Repo.transaction fn ->
         budget =
           budget_changeset
-          |> put_assoc(:diagnosis, diagnosis)
+          |> put_change(:issuer_id, nil)
           |> put_assoc(:issuer, issuer)
           |> Repo.insert!()
 
-        for part_attrs <- budget_assoc_attrs[:parts] do
-          case create_budget_part(part_attrs, budget.id) do
-            {:error, budget_part_error_changeset} ->
-              Repo.rollback(budget_part_error_changeset)
-            _ ->
-              nil
-          end
-        end
-
-        budget
-        |> Repo.preload(Budget.all_nested_assocs)
-      end
-    else
-      %{valid?: false} = changeset ->
-        {:error, changeset}
-      nil ->
-        {:error, "diagnosis or issuer does not exist"}
-    end
-  end
-
-  def update_budget_parts(%Budget{} = budget, attrs) do
-    with budget_parts_assoc_changeset = %{valid?: true} <- Budget.assoc_parts_changeset(attrs),
-         budget_parts_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(budget_parts_assoc_changeset) do
-
-      Repo.transaction fn ->
-        for part_attrs <- budget_parts_assoc_attrs[:parts] do
+        for part_attrs <- budget_changeset.changes[:parts] do
           case create_budget_part(part_attrs, budget.id) do
             {:error, budget_part_error_changeset} ->
               Repo.rollback(budget_part_error_changeset)
@@ -185,9 +159,33 @@ defmodule EasyFixApi.Orders do
   end
 
   def update_budget(%Budget{} = budget, attrs) do
-    budget
-    |> Budget.changeset(attrs)
-    |> Repo.update()
+    with budget_changeset = %{valid?: true} <- Budget.update_changeset(budget, attrs) do
+      result = Repo.transaction fn ->
+        if budget_changeset.changes[:parts] do
+          for budget_part <- budget.budgets_parts do
+            {:ok, _} = delete_budget_part(budget_part)
+          end
+          for part_attrs <- budget_changeset.changes[:parts] do
+            case create_budget_part(part_attrs, budget.id) do
+              {:error, budget_part_error_changeset} ->
+                Repo.rollback(budget_part_error_changeset)
+              _ ->
+                nil
+            end
+          end
+        end
+
+        budget_changeset
+        |> Repo.update!()
+
+        get_budget!(budget.id)
+      end
+    else
+      %{valid?: false} = changeset ->
+        {:error, changeset}
+      nil ->
+        {:error, "diagnosis or issuer does not exist"}
+    end
   end
 
   def delete_budget(%Budget{} = budget) do
@@ -226,6 +224,10 @@ defmodule EasyFixApi.Orders do
       %{valid?: false} = changeset ->
         {:error, changeset}
     end
+  end
+
+  def delete_budget_part(%BudgetPart{} = budget_part) do
+    Repo.delete(budget_part)
   end
 
   alias EasyFixApi.Orders.Order

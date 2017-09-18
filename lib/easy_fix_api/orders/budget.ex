@@ -14,45 +14,37 @@ defmodule EasyFixApi.Orders.Budget do
     field :issuer_type, EasyFixApi.Accounts.UserTypeEnum
     belongs_to :issuer, EasyFixApi.Accounts.User
 
-    has_many :budgets_parts, EasyFixApi.Orders.BudgetPart, on_delete: :delete_all
-    has_many :parts, through: [:budgets_parts, :part]
-
+    has_many :budgets_parts, EasyFixApi.Orders.BudgetPart, on_delete: :delete_all, on_replace: :nilify
     belongs_to :diagnosis, EasyFixApi.Orders.Diagnosis
+
+    field :parts, {:array, :map}, virtual: true
 
     timestamps(type: :utc_datetime)
   end
 
-  @optional_attrs ~w()
-  @required_attrs ~w(service_cost status sub_status opening_date due_date issuer_type)a
+  @optional_attrs ~w(opening_date status sub_status)
+  @required_attrs ~w(service_cost due_date)a
+  @assoc_attrs ~w(diagnosis_id issuer_id issuer_type parts)a
+
+  def changeset(budget, attrs) do
+    budget
+    |> cast(attrs, @optional_attrs ++ @required_attrs ++ @assoc_attrs)
+    |> validate_required(@required_attrs ++ @assoc_attrs)
+  end
 
   def create_changeset(attrs) do
     %__MODULE__{}
     |> changeset(attrs)
   end
 
-  def changeset(budget, attrs) do
+  def update_changeset(budget, attrs) do
     budget
-    |> cast(attrs, @optional_attrs ++ @required_attrs)
-    |> validate_required(@required_attrs)
-  end
-
-  @assoc_types %{parts: {:array, :map}, diagnosis_id: :integer, issuer_id: :integer, issuer_type: :string}
-  def assoc_changeset(attrs) do
-    {attrs, @assoc_types}
-    |> cast(attrs, Map.keys(@assoc_types))
-    |> validate_required(Map.keys(@assoc_types))
-  end
-
-  @assoc_parts_types %{parts: {:array, :map}}
-  def assoc_parts_changeset(attrs) do
-    {attrs, @assoc_parts_types}
-    |> cast(attrs, Map.keys(@assoc_parts_types))
-    |> validate_required(Map.keys(@assoc_parts_types))
+    |> cast(attrs, [:parts] ++ @required_attrs)
   end
 
   def all_nested_assocs do
     [
-      parts: [:garage_category, [part_sub_group: [part_group: :part_system]], :repair_by_fixer_part],
+      budgets_parts: [part: EasyFixApi.Parts.Part.all_nested_assocs],
       diagnosis: [],
       issuer: [:garage]
     ]
