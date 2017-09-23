@@ -104,3 +104,8 @@ EasyFixApi.StaticDataSeeds.run_parts
 EasyFixApi.StaticDataSeeds.run_vehicles_models
 EasyFixApi.StaticDataSeeds.run_banks
 EasyFixApi.StaticDataSeeds.run_cities
+
+
+# state = Repo.insert!(%State{name: "São Paulo"})
+# city = Ecto.build_assoc(state, :cities, name: "São Paulo")
+# city = Repo.insert! city

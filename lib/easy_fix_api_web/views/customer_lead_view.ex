@@ -15,6 +15,7 @@ defmodule EasyFixApiWeb.CustomerLeadView do
       name: customer_lead.name,
       email: customer_lead.email,
       phone: customer_lead.phone,
+      garage_id: customer_lead.garage_id,
       car: %{
         model: customer_lead.car.model,
         brand: customer_lead.car.brand,

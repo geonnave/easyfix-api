@@ -17,6 +17,8 @@ defmodule EasyFixApi.Accounts.CustomerLead do
       field :neighborhood, :string
     end
 
+    belongs_to :garage, EasyFixApi.Accounts.Garage
+
     timestamps(type: :utc_datetime)
   end
 
@@ -27,8 +29,9 @@ defmodule EasyFixApi.Accounts.CustomerLead do
 
   def changeset(customer_lead, attrs) do
     customer_lead
-    |> cast(attrs, [:name, :phone, :email])
-    |> validate_required([:name, :email])
+    |> cast(attrs, [:name, :phone, :email, :garage_id])
+    |> cast_assoc(:garage)
+    |> validate_required([:name, :email, :phone])
     |> cast_embed(:car, with: &car_changeset/2)
     |> cast_embed(:address, with: &address_changeset/2)
   end

@@ -10,6 +10,8 @@ defmodule EasyFixApi.Repo.Migrations.CustomerLeads do
       add :car, :map
       add :address, :map
 
+      add :garage_id, references(:garages)
+
       timestamps(type: :timestamptz)
     end
   end
