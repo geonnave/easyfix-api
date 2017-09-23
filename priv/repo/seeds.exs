@@ -49,3 +49,58 @@ brand = Repo.insert!(%Brand{name: "A Brand"})
 
 model = Ecto.build_assoc(brand, :models, name: "A Model")
 model = Repo.insert! model
+
+# customer
+customer_attrs = %{
+  "accept_easyfix_policy" => "2017-08-06T17:44:57.913808Z",
+  "cpf" => "some cpf",
+  "email" => "some@email.com",
+  "name" => "some name",
+  "password" => "some password",
+  "phone" => "some phone",
+  "address" => %{
+    "address_line1" => "some address_line1",
+    "address_line2" => "some address_line2",
+    "city_id" => 1,
+    "neighborhood" => "some neighborhood",
+    "postal_code" => "some postal_code"
+  },
+  "bank_account" => %{
+    "agency" => "1111",
+    "bank_id" => 1,
+    "number" => "1234"
+  },
+  "vehicles" => [
+    %{
+      "model_id" => 1,
+      "model_year" => "2011",
+      "plate" => "cfd-2011",
+      "production_year" => "2011"
+    }
+  ]
+}
+{:ok, _customer} = Accounts.create_customer(customer_attrs)
+
+# garage
+garage_attrs = %{
+  "email" => "easyfix@easyfix.com",
+  "password" => "easyfix",
+  "phone" => "some phone",
+  "cnpj" => "some cnpj",
+  "garage_categories_ids" => [garage_category.id],
+  "name" => "some name",
+  "owner_name" => "some owner_name",
+  "address" => %{
+    "address_line1" => "some address_line1",
+    "address_line2" => "some address_line2",
+    "city_id" => 1,
+    "neighborhood" => "some neighborhood",
+    "postal_code" => "some postal_code"
+  },
+  "bank_account" => %{
+    "agency" => "1111",
+    "bank_id" => 1,
+    "number" => "1234"
+  },
+}
+{:ok, _garage} = Accounts.create_garage(garage_attrs)
