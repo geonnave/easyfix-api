@@ -100,7 +100,7 @@ defmodule EasyFixApi.Orders do
     from(
       b in Budget,
       join: d in Diagnosis, on: b.diagnosis_id == d.id,
-      preload: [parts: ^Part.all_nested_assocs, issuer: [:garage]],
+      preload: [budgets_parts: [part: ^Part.all_nested_assocs], issuer: [:garage]],
       where: b.issuer_id == ^user_id and d.id == ^diagnosis_id
     )
     |> Repo.one
@@ -162,7 +162,7 @@ defmodule EasyFixApi.Orders do
 
   def update_budget(%Budget{} = budget, attrs) do
     with budget_changeset = %{valid?: true} <- Budget.update_changeset(budget, attrs) do
-      result = Repo.transaction fn ->
+      _result = Repo.transaction fn ->
         if budget_changeset.changes[:parts] do
           for budget_part <- budget.budgets_parts do
             {:ok, _} = delete_budget_part(budget_part)
