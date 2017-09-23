@@ -62,12 +62,6 @@ defmodule EasyFixApiWeb.BudgetControllerTest do
       "service_cost" => 43}
   end
 
-  test "does not update chosen budget and renders errors when data is invalid", %{conn: conn} do
-    budget = insert(:budget)
-    conn = put conn, budget_path(conn, :update, budget), budget: @invalid_attrs
-    assert json_response(conn, 422)["errors"] != %{}
-  end
-
   test "deletes chosen budget", %{conn: conn} do
     budget = insert(:budget)
     conn = delete conn, budget_path(conn, :delete, budget)

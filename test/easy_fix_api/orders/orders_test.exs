@@ -120,11 +120,32 @@ defmodule EasyFixApi.OrdersTest do
         |> put_in([:issuer_type], "garage")
 
       assert {:ok, %Budget{} = budget} = Orders.create_budget(budget_attrs)
+
       assert budget.service_cost == budget_attrs[:service_cost]
-      assert length(budget.parts) == 2
+      assert length(budget.budgets_parts) == 2
       assert budget.diagnosis.id == diagnosis.id
       assert budget.issuer.id == garage.user.id
       assert budget.issuer_type == :garage
+    end
+
+    test "update_budget_parts" do
+      {budget_attrs, _garage, _order} = budget_with_all_params()
+      assert {:ok, budget} = Orders.create_budget(budget_attrs)
+
+      [part1, _part2] = budget_attrs[:parts]
+      part1 =
+        part1
+        |> put_in([:part_id], insert(:part).id)
+        |> put_in([:price], 123)
+
+      update_budget_attrs =
+        budget_attrs
+        |> put_in([:parts], [part1])
+        |> put_in([:service_cost], 144)
+
+      {:ok, updated_budget} = Orders.update_budget(budget, update_budget_attrs)
+      assert updated_budget.service_cost == update_budget_attrs[:service_cost]
+      assert length(updated_budget.budgets_parts) == 1
     end
 
     test "list_budgets_by_order" do

@@ -29,7 +29,10 @@ defmodule EasyFixApiWeb.Router do
 
     resources "/garages", GarageController, except: [:new, :edit] do
       resources "/orders", GarageOrderController, only: [:index, :show], name: :order do
-        resources "/budget", BudgetController, only: [:show, :create], name: :budget, singleton: true
+        resources "/budget", GarageOrderBudgetController,
+          only: [:show, :create, :update],
+          name: :budget,
+          singleton: true
       end
     end
 

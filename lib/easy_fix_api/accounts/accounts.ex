@@ -28,7 +28,7 @@ defmodule EasyFixApi.Accounts do
   def get_user!(id) do
     Repo.get!(User, id)
   end
-  def get_user_by_type_id("garage", garage_id) do
+  def get_user_by_type_id(:garage, garage_id) do
     from(g in Garage,
       join: u in User,
       on: g.user_id == u.id,
