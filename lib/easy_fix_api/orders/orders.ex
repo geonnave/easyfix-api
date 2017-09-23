@@ -96,11 +96,13 @@ defmodule EasyFixApi.Orders do
     |> Repo.preload(Budget.all_nested_assocs)
   end
 
-  def get_budget_by_user(user_id) do
+  def get_budget_for_order_by_user(user_id, diagnosis_id) do
     from(
       b in Budget,
+      join: d in Diagnosis, on: b.diagnosis_id == d.id,
       preload: [parts: ^Part.all_nested_assocs, issuer: [:garage]],
-      where: ^user_id == b.issuer_id)
+      where: b.issuer_id == ^user_id and d.id == ^diagnosis_id
+    )
     |> Repo.one
   end
 
@@ -236,6 +238,7 @@ defmodule EasyFixApi.Orders do
   end
 
   # must find intersection(garage_id_categories, diagnosis_categories)
+  # TODO: write this using Ecto.Query
   def list_garage_order(garage_id) do
     garage = Accounts.get_garage!(garage_id)
 
@@ -246,7 +249,7 @@ defmodule EasyFixApi.Orders do
     list_orders()
     |> Enum.filter(&order_matches_garage_categories?(&1, garage_categories_ids))
     |> Enum.map(fn order ->
-      budget = get_budget_by_user(garage.user.id)
+      budget = get_budget_for_order_by_user(garage.user.id, order.diagnosis.id)
       %{order: order, budget: budget}
     end)
   end
@@ -266,7 +269,7 @@ defmodule EasyFixApi.Orders do
       garage_id
       |> Accounts.get_garage_categories_ids!
 
-    budget = get_budget_by_user(garage.user.id)
+    budget = get_budget_for_order_by_user(garage.user.id, order.diagnosis.id)
     %{order: order, budget: budget}
   end
 
