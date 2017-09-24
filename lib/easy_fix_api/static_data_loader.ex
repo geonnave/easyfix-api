@@ -58,7 +58,7 @@ defmodule EasyFixApi.StaticDataLoader do
     |> prepare_csv()
     |> Enum.map(fn [_ispb, _short_name, code, _is_compe_member, _access, name, _birth] ->
       %{
-        code: (if code == "n/a", do: nil, else: code),
+        code: code,
         name: String.trim(name)
       }
     end)
