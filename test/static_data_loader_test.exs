@@ -100,7 +100,7 @@ ISPB,Nome_Reduzido,Número_Código,Participa_da_Compe,Acesso_Principal,Nome_Exte
     assert length(banks) == 6
 
     selic = Enum.find(banks, & &1[:name] == "Banco Central do Brasil - Selic")
-    assert selic[:code] == nil
+    assert selic[:code] == "n/a"
 
     itau = Enum.find(banks, & &1[:name] == "Itaú Unibanco S.A.")
     assert itau[:code] == "341"

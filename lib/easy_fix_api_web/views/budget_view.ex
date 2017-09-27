@@ -1,6 +1,6 @@
 defmodule EasyFixApiWeb.BudgetView do
   use EasyFixApiWeb, :view
-  alias EasyFixApiWeb.BudgetView
+  alias EasyFixApiWeb.{BudgetView, DateView}
 
   def render("index.json", %{budgets: budgets}) do
     %{data: render_many(budgets, BudgetView, "budget.json")}
@@ -15,9 +15,9 @@ defmodule EasyFixApiWeb.BudgetView do
       service_cost: budget.service_cost,
       status: budget.status,
       sub_status: budget.sub_status,
-      opening_date: budget.opening_date,
-      due_date: budget.due_date,
-      conclusion_date: budget.conclusion_date,
+      opening_date: DateView.render("iso_at_sao_paulo_tz", budget.opening_date),
+      due_date: DateView.render("iso_at_sao_paulo_tz", budget.due_date),
+      conclusion_date: DateView.render("iso_at_sao_paulo_tz", budget.conclusion_date),
       # parts: render_many(budget.parts, EasyFixApiWeb.PartView, "part.json"),
       parts: render_many(budget.budgets_parts, EasyFixApiWeb.BudgetPartView, "budget_part.json"),
       diagnosis_id: budget.diagnosis_id,

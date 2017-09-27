@@ -1,6 +1,6 @@
 defmodule EasyFixApiWeb.DiagnosisView do
   use EasyFixApiWeb, :view
-  alias EasyFixApiWeb.DiagnosisView
+  alias EasyFixApiWeb.{DiagnosisView, DateView}
 
   def render("index.json", %{diagnosis: diagnosis}) do
     %{data: render_many(diagnosis, DiagnosisView, "diagnosis.json")}
@@ -16,7 +16,7 @@ defmodule EasyFixApiWeb.DiagnosisView do
       need_tow_truck: diagnosis.need_tow_truck,
       status: diagnosis.status,
       comment: diagnosis.comment,
-      expiration_date: diagnosis.expiration_date,
+      expiration_date: DateView.render("iso_at_sao_paulo_tz", diagnosis.expiration_date),
       parts: render_many(diagnosis.diagnosis_parts, EasyFixApiWeb.DiagnosisPartView, "diagnosis_part.json"),
       vehicle: render_one(diagnosis.vehicle, EasyFixApiWeb.VehicleView, "vehicle.json"),
     }

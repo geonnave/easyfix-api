@@ -14,7 +14,7 @@ defmodule EasyFixApiWeb.OrderView do
     %{id: order.id,
       state: order.state,
       state_due_date: order.state_due_date,
-      inserted_at: order.inserted_at,
+      opening_date: order.inserted_at,
       conclusion_date: order.conclusion_date,
       diagnosis: render_one(order.diagnosis, EasyFixApiWeb.DiagnosisView, "diagnosis.json"),
       customer_id: order.customer.id,
