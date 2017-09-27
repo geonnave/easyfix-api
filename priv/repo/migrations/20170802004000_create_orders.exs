@@ -8,7 +8,6 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
       add :state_due_date, :utc_datetime
       add :status, :string
 
-      add :opening_date, :utc_datetime
       add :conclusion_date, :utc_datetime
 
       add :customer_id, references(:customers)
@@ -44,7 +43,6 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
       add :status, :string
       add :sub_status, :string
 
-      add :opening_date, :utc_datetime
       add :due_date, :utc_datetime
       add :conclusion_date, :utc_datetime
 

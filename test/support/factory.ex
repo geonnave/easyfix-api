@@ -14,7 +14,6 @@ defmodule EasyFixApi.Factory do
       # state: "started",
       # state_due_date: "2017-08-06T17:44:57.913808Z",
       # sub_state: "new",
-      # opening_date: "2017-08-06T17:44:57.913808Z",
       # conclusion_date: "2017-08-07T17:44:57.913808Z",
     }
   end
@@ -29,7 +28,6 @@ defmodule EasyFixApi.Factory do
       service_cost: 42,
       status: "new",
       sub_status: "new",
-      opening_date: "2017-08-06T17:44:57.913808Z",
       due_date: "2017-08-07T17:44:57.913808Z",
     }
   end

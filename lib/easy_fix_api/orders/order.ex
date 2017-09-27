@@ -7,7 +7,6 @@ defmodule EasyFixApi.Orders.Order do
     field :state_due_date, :utc_datetime
     field :status, :string # this information is mostly useful to final users
 
-    field :opening_date, :utc_datetime
     field :conclusion_date, :utc_datetime
 
     has_one :diagnosis, EasyFixApi.Orders.Diagnosis

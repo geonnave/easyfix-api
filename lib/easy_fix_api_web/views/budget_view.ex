@@ -15,7 +15,7 @@ defmodule EasyFixApiWeb.BudgetView do
       service_cost: budget.service_cost,
       status: budget.status,
       sub_status: budget.sub_status,
-      opening_date: DateView.render("iso_at_sao_paulo_tz", budget.opening_date),
+      opening_date: DateView.render("iso_at_sao_paulo_tz", budget.inserted_at),
       due_date: DateView.render("iso_at_sao_paulo_tz", budget.due_date),
       conclusion_date: DateView.render("iso_at_sao_paulo_tz", budget.conclusion_date),
       # parts: render_many(budget.parts, EasyFixApiWeb.PartView, "part.json"),

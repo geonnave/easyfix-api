@@ -7,7 +7,6 @@ defmodule EasyFixApi.Orders.Budget do
     field :status, :string
     field :sub_status, :string
 
-    field :opening_date, :utc_datetime
     field :due_date, :utc_datetime
     field :conclusion_date, :utc_datetime
 
@@ -22,8 +21,8 @@ defmodule EasyFixApi.Orders.Budget do
     timestamps(type: :utc_datetime)
   end
 
-  @optional_attrs ~w(opening_date status sub_status)
-  @required_attrs ~w(service_cost due_date)a
+  @optional_attrs ~w(due_date status sub_status)
+  @required_attrs ~w(service_cost)a
   @assoc_attrs ~w(diagnosis_id issuer_id issuer_type parts)a
 
   def changeset(budget, attrs) do
