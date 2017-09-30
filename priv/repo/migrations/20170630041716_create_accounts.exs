@@ -8,6 +8,7 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Accounts do
 
       timestamps(type: :timestamptz)
     end
+    create unique_index(:users, [:email])
 
     create table(:garages) do
       add :name, :string

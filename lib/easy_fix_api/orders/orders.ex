@@ -136,7 +136,7 @@ defmodule EasyFixApi.Orders do
       Repo.transaction fn ->
         budget =
           budget_changeset
-          |> put_change(:issuer_id, nil)
+          |> delete_change(:issuer_id)
           |> put_assoc(:issuer, issuer)
           |> Repo.insert!()
 
@@ -156,24 +156,23 @@ defmodule EasyFixApi.Orders do
       %{valid?: false} = changeset ->
         {:error, changeset}
       nil ->
-        {:error, "diagnosis or issuer does not exist"}
+        {:error, "budget or issuer does not exist"}
     end
   end
 
   def update_budget(%Budget{} = budget, attrs) do
-    with budget_changeset = %{valid?: true} <- Budget.update_changeset(budget, attrs) do
-      _result = Repo.transaction fn ->
-        if budget_changeset.changes[:parts] do
-          for budget_part <- budget.budgets_parts do
-            {:ok, _} = delete_budget_part(budget_part)
-          end
-          for part_attrs <- budget_changeset.changes[:parts] do
-            case create_budget_part(part_attrs, budget.id) do
-              {:error, budget_part_error_changeset} ->
-                Repo.rollback(budget_part_error_changeset)
-              _ ->
-                nil
-            end
+    with budget_changeset = %{valid?: true} <- Budget.update_changeset(budget, attrs),
+         parts_changes when not is_nil(parts_changes) <- budget_changeset.changes[:parts] do
+      Repo.transaction fn ->
+        for budget_part <- budget.budgets_parts do
+          {:ok, _} = delete_budget_part(budget_part)
+        end
+        for part_attrs <- parts_changes do
+          case create_budget_part(part_attrs, budget.id) do
+            {:error, budget_part_error_changeset} ->
+              Repo.rollback(budget_part_error_changeset)
+            _ ->
+              nil
           end
         end
 
@@ -186,7 +185,7 @@ defmodule EasyFixApi.Orders do
       %{valid?: false} = changeset ->
         {:error, changeset}
       nil ->
-        {:error, "diagnosis or issuer does not exist"}
+        {:error, "no parts to change"}
     end
   end
 
