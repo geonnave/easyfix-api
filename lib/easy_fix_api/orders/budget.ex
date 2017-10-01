@@ -10,6 +10,8 @@ defmodule EasyFixApi.Orders.Budget do
     field :due_date, :utc_datetime
     field :conclusion_date, :utc_datetime
 
+    field :total_amount, :integer, virtual: true
+
     field :issuer_type, EasyFixApi.Accounts.UserTypeEnum
     belongs_to :issuer, EasyFixApi.Accounts.User
 
