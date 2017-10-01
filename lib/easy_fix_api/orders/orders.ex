@@ -127,6 +127,35 @@ defmodule EasyFixApi.Orders do
     end
   end
 
+  def get_customer_best_budget(customer_id, order_id) do
+    from(d in Diagnosis,
+      join: o in Order, on: d.order_id == o.id,
+      where: o.id == ^order_id and o.customer_id == ^customer_id,
+      preload: [budgets: [budgets_parts: [part: ^EasyFixApi.Parts.Part.all_nested_assocs], issuer: [:garage]]])
+    |> Repo.one
+    |> case do
+      nil ->
+        {:error, "order not found for this customer"}
+      diagnosis ->
+        best_budget =
+          diagnosis.budgets
+          |> Enum.map(fn budget ->
+            %{budget | total_amount: calculate_total_amount(budget)}
+          end)
+          |> Enum.sort(& &1.total_amount < &2.total_amount)
+          |> List.first
+        {:ok, best_budget}
+    end
+  end
+
+  # TODO: add EasyFix tax
+  def calculate_total_amount(budget) do
+    budget.budgets_parts
+    |> Enum.reduce(budget.service_cost, fn budgets_parts, acc ->
+      acc + budgets_parts.price
+    end)
+  end
+
   def create_budget(attrs \\ %{}) do
     with budget_changeset = %{valid?: true} <- Budget.create_changeset(attrs),
          %{diagnosis_id: diagnosis_id, issuer_type: issuer_type, issuer_id: issuer_id} = budget_changeset.changes,
@@ -295,6 +324,14 @@ defmodule EasyFixApi.Orders do
   def get_order!(id) do
     Repo.get!(Order, id)
     |> Repo.preload(Order.all_nested_assocs)
+  end
+  def get_order(id) do
+    case Repo.get(Order, id) do
+      nil ->
+        {:error, "Order not found"}
+      order ->
+        {:ok, Repo.preload(order, Order.all_nested_assocs)}
+    end
   end
 
   def calculate_state_due_date(state) do

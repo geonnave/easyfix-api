@@ -166,6 +166,18 @@ defmodule EasyFixApi.OrdersTest do
       assert {:error, _} = Orders.get_budget_for_garage_order(0, order.id)
       assert {:error, _} = Orders.get_budget_for_garage_order(garage.id, 0)
     end
+
+    test "put_budget_total_amount" do
+      {budget_attrs, _garage, _order} = budget_with_all_params()
+      assert {:ok, budget} = Orders.create_budget(budget_attrs)
+      
+      budget_total_amount = Orders.calculate_total_amount(budget)
+
+      [bpart1, bpart2] = budget.budgets_parts
+      total_amount = bpart1.price + bpart2.price + budget.service_cost
+
+      assert total_amount == budget_total_amount
+    end
   end
 
   describe "orders" do
