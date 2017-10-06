@@ -40,8 +40,7 @@ defmodule EasyFixApiWeb.CustomerOrderController do
     {:ok, order} = Orders.get_customer_order(customer_id, order_id)
 
     event = event_params["name"] |> String.to_atom
-    with :ok <- OrderStateMachine.customer_clicked(order.id, event) do
-      {:ok, updated_order} = Orders.get_customer_order(customer_id, order_id)
+    with {:ok, updated_order} <- OrderStateMachine.customer_clicked(order.id, event) do
       render(conn, "show.json", customer_order: updated_order)
     end
   end

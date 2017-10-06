@@ -291,6 +291,7 @@ defmodule EasyFixApi.Orders do
     |> Repo.all
   end
 
+  # FIXME: make this function return nice error messages
   def get_garage_order(garage_id, order_id) do
     garage = Accounts.get_garage!(garage_id)
     order = get_order!(order_id)

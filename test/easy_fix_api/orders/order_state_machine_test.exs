@@ -78,18 +78,18 @@ defmodule EasyFixApi.OrderStateMachineTest do
       Process.sleep gt_timeout(:budgeted_by_garages)
       assert {:timeout, _} = OrderStateMachine.get_state data[:order_id]
     end
-    test "goes to budget_accepted_by_customer when customer_clicked_accept_budget" do
+    test "goes to budget_accepted_by_customer when customer_clicked accept_budget" do
       data = order_at_budgeted_by_garages()
       {:ok, _} = OrderStateMachine.start_link data
 
-      :ok = OrderStateMachine.customer_clicked data[:order_id], :accept_budget
+      {:ok, _updated_order} = OrderStateMachine.customer_clicked data[:order_id], :accept_budget
       assert {:budget_accepted_by_customer, _} = OrderStateMachine.get_state data[:order_id]
     end
-    test "goes to budget_accepted_by_customer when customer_clicked not_accept_budget" do
+    test "goes to budget_not_accepted_by_customer when customer_clicked not_accept_budget" do
       data = order_at_budgeted_by_garages()
       {:ok, _} = OrderStateMachine.start_link data
 
-      :ok = OrderStateMachine.customer_clicked data[:order_id], :not_accept_budget
+      {:ok, _updated_order} = OrderStateMachine.customer_clicked data[:order_id], :not_accept_budget
       assert {:budget_not_accepted_by_customer, _} = OrderStateMachine.get_state data[:order_id]
     end
     test "returns error from budget_accepted_by_customer when customer_clicked invalid event" do
@@ -98,6 +98,18 @@ defmodule EasyFixApi.OrderStateMachineTest do
 
       {:error, _reason} = OrderStateMachine.customer_clicked data[:order_id], :some_invalid_event
       assert {:budgeted_by_garages, _} = OrderStateMachine.get_state data[:order_id]
+    end
+  end
+
+  describe "budget_accepted_by_customer" do
+    test "start_link can initialize at budget_accepted_by_customer" do
+      order =
+        create_order_with_diagnosis()
+        |> update_order_state(:budget_accepted_by_customer)
+
+      data = %{order_id: order.id}
+      {:ok, _} = OrderStateMachine.start_link data
+      assert {:budget_accepted_by_customer, _} = OrderStateMachine.get_state data[:order_id]
     end
   end
 
