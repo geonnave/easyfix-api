@@ -10,6 +10,7 @@ defmodule EasyFixApiWeb.CustomerControllerTest do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
+  @tag :skip # TOOD: only an admin can list all users.. but we don't have 'admin users' yet.
   describe "index" do
     test "lists all customers", %{conn: conn} do
       conn = get conn, customer_path(conn, :index)
@@ -22,8 +23,15 @@ defmodule EasyFixApiWeb.CustomerControllerTest do
       customer_attrs = customer_with_all_params()
       conn = post conn, customer_path(conn, :create), customer: customer_attrs
       assert %{"id" => id} = json_response(conn, 201)["data"]
+      assert json_response(conn, 201)["jwt"]
 
-      conn = get conn, customer_path(conn, :show, id)
+      jwt = json_response(conn, 201)["jwt"]
+      conn = 
+        conn
+        |> recycle()
+        |> put_req_header("authorization", "Bearer #{jwt}")
+        |> get(customer_path(conn, :show, id))
+
       assert json_response(conn, 200)["data"]["id"] == id
     end
 
@@ -33,10 +41,10 @@ defmodule EasyFixApiWeb.CustomerControllerTest do
     end
   end
 
-  @tag :skip
   describe "update customer" do
     setup [:create_customer]
 
+    @tag :skip
     test "renders customer when data is valid", %{conn: conn, customer: %Customer{id: id} = customer} do
       conn = put conn, customer_path(conn, :update, customer), customer: @update_attrs
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
@@ -47,7 +55,10 @@ defmodule EasyFixApiWeb.CustomerControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, customer: customer} do
-      conn = put conn, customer_path(conn, :update, customer), customer: @invalid_attrs
+      conn =
+        conn
+        |> authenticate(customer.user)
+        |> put(customer_path(conn, :update, customer), customer: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -56,10 +67,16 @@ defmodule EasyFixApiWeb.CustomerControllerTest do
     setup [:create_customer]
 
     test "deletes chosen customer", %{conn: conn, customer: customer} do
-      conn = delete conn, customer_path(conn, :delete, customer)
+      conn =
+        conn
+        |> authenticate(customer.user)
+        |> delete(customer_path(conn, :delete, customer))
+
       assert response(conn, 204)
       assert_error_sent 404, fn ->
-        get conn, customer_path(conn, :show, customer)
+        conn
+        |> authenticate(customer.user)
+        |> get(customer_path(conn, :show, customer))
       end
     end
   end
@@ -67,5 +84,12 @@ defmodule EasyFixApiWeb.CustomerControllerTest do
   defp create_customer(_) do
     customer = insert(:customer)
     {:ok, customer: customer}
+  end
+
+  def authenticate(conn, user) do
+    {:ok, jwt, _full_claims} = Guardian.encode_and_sign(user, :token)
+    conn
+    |> recycle()
+    |> put_req_header("authorization", "Bearer #{jwt}")
   end
 end

@@ -9,6 +9,9 @@ defmodule EasyFixApiWeb.CustomerView do
   def render("show.json", %{customer: customer}) do
     %{data: render_one(customer, CustomerView, "customer.json")}
   end
+  def render("show_registration.json", %{customer: customer, jwt: jwt}) do
+    %{data: render_one(customer, CustomerView, "customer.json"), jwt: jwt}
+  end
 
   def render("customer.json", %{customer: customer}) do
     %{id: customer.id,

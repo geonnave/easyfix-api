@@ -5,6 +5,8 @@ defmodule EasyFixApiWeb.CustomerController do
   alias EasyFixApi.Accounts.Customer
 
   action_fallback EasyFixApiWeb.FallbackController
+  plug Guardian.Plug.EnsureAuthenticated,
+    [handler: EasyFixApiWeb.SessionController] when not action in [:create]
 
   def index(conn, _params) do
     customers = Accounts.list_customers()
@@ -13,10 +15,12 @@ defmodule EasyFixApiWeb.CustomerController do
 
   def create(conn, %{"customer" => customer_params}) do
     with {:ok, %Customer{} = customer} <- Accounts.create_customer(customer_params) do
+      {:ok, jwt, _full_claims} = Guardian.encode_and_sign(customer.user, :token)
+
       conn
       |> put_status(:created)
       |> put_resp_header("location", customer_path(conn, :show, customer))
-      |> render("show.json", customer: customer)
+      |> render("show_registration.json", customer: customer, jwt: jwt)
     end
   end
 

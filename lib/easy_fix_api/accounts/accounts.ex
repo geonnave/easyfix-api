@@ -7,7 +7,7 @@ defmodule EasyFixApi.Accounts do
   import EasyFixApi.Helpers
 
   alias EasyFixApi.{Repo, Addresses, Payments}
-  alias EasyFixApi.Accounts.{User, Garage}
+  alias EasyFixApi.Accounts.{User, Garage, Customer}
   alias EasyFixApi.Cars
   alias EasyFixApi.Parts.GarageCategory
 
@@ -18,7 +18,16 @@ defmodule EasyFixApi.Accounts do
       where: u.email == ^email
     )
     |> Repo.one
-    |> garage_preload_all_nested_assocs()
+    |> Repo.preload(Garage.all_nested_assocs)
+  end
+  def get_by_email("customer", email) do
+    from(c in Customer,
+      join: u in User,
+      on: c.user_id == u.id,
+      where: u.email == ^email
+    )
+    |> Repo.one
+    |> Repo.preload(Customer.all_nested_assocs)
   end
 
   def list_users do
@@ -69,7 +78,7 @@ defmodule EasyFixApi.Accounts do
 
   def get_garage!(id) do
     Repo.get!(Garage, id)
-    |> garage_preload_all_nested_assocs()
+    |> Repo.preload(Garage.all_nested_assocs)
   end
 
   def get_garage_categories_ids!(id) do
@@ -79,10 +88,6 @@ defmodule EasyFixApi.Accounts do
       where: ^id == g.id,
       select: gcs.id
     ) |> Repo.all
-  end
-
-  def garage_preload_all_nested_assocs(garage) do
-    Repo.preload(garage, Garage.all_nested_assocs)
   end
 
   def create_garage(attrs \\ %{}) do
@@ -114,7 +119,7 @@ defmodule EasyFixApi.Accounts do
           |> Repo.insert!()
 
         garage
-        |> garage_preload_all_nested_assocs()
+        |> Repo.preload(Garage.all_nested_assocs)
       end
     else
       %{valid?: false} = changeset ->
