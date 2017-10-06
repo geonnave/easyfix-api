@@ -9,6 +9,15 @@ use Mix.Config
 config :easy_fix_api,
   ecto_repos: [EasyFixApi.Repo]
 
+# Configuration for fees and fixed prices.
+# A `price` is a fixed value that is charged from someone.
+# A `fee` is a percentage that EasyFix collects over any fixed or dynamic price.
+config :easy_fix_api,
+  client_fee_on_budget_by_garage: [value: 0.1, max: 7000],
+  fixer_fee_on_service_by_fixer: [value: 0.2, max: :infinity],
+  client_price_of_diagnosis_by_fixer: 1500,
+  fixer_fee_on_diagnosis_by_fixer: 0.2
+
 # Configures the endpoint
 config :easy_fix_api, EasyFixApiWeb.Endpoint,
   url: [host: "localhost"],
