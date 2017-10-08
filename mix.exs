@@ -38,6 +38,7 @@ defmodule EasyFixApi.Mixfile do
       {:ecto_enum, "~> 1.0"},
       {:gen_state_machine, "~> 2.0"},
       {:timex, "~> 3.1"},
+      {:bamboo, "~> 0.8"},
 
       {:ex_machina, "~> 2.0", only: [:dev, :test]},
    ]
