@@ -11,10 +11,6 @@ defmodule EasyFixApi.Factory do
 
   def order_factory do
     %Order{
-      # state: "started",
-      # state_due_date: "2017-08-06T17:44:57.913808Z",
-      # sub_state: "new",
-      # conclusion_date: "2017-08-07T17:44:57.913808Z",
     }
   end
   def order_with_all_params(customer_id, vehicle_id) do
@@ -71,6 +67,9 @@ defmodule EasyFixApi.Factory do
       quantity: 1,
     }
   end
+  def with_part(diagnosis_part, part) do
+    %{diagnosis_part | part: part}
+  end
   def diagnosis_parts_with_diagnosis(diagnosis) do
     build(:diagnosis_part, diagnosis: diagnosis)
   end
@@ -87,7 +86,11 @@ defmodule EasyFixApi.Factory do
       need_tow_truck: true,
       status: "some status",
       expiration_date: "2017-08-05 17:44:57.913808Z",
-      }
+      vehicle: build(:vehicle),
+    }
+  end
+  def with_diagnosis_parts(diagnosis, diagnosis_parts) do
+    %{diagnosis | diagnosis_parts: diagnosis_parts}
   end
   def diagnosis_with_diagnosis_parts_params(vehicle_id) do
     params_for(:diagnosis)
@@ -200,6 +203,10 @@ defmodule EasyFixApi.Factory do
       garage_category: build(:garage_category),
     }
   end
+  def with_category(part, gc) do
+    %{part | garage_category: gc}
+  end
+
   def part_sub_group_factory do
     %PartSubGroup{
       name: sequence("some part_sub_group"),
@@ -262,5 +269,9 @@ defmodule EasyFixApi.Factory do
       number: "2345",
       bank: build(:bank)
     }
+  end
+
+  def with_name(struct, name) do
+    %{struct | name: name}
   end
 end

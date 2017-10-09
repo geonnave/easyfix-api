@@ -73,7 +73,7 @@ defmodule EasyFixApi.Accounts do
 
   def list_garages do
     Repo.all(Garage)
-    |> Repo.preload(user: [], garage_categories: [])
+    |> Repo.preload(Garage.all_nested_assocs)
   end
 
   def get_garage!(id) do

@@ -3,14 +3,16 @@ defmodule EasyFixApi.Emails do
 
   def test_email do
     new_email(
-      to: "Contato Easyfix <contato@easyfix.net.br>",
+      # TODO: verify domain at Mailgun
+      to: "Oficina XYZ <geonnave@gmail.com>",
+      # to: "Contato Easyfix <contato@easyfix.net.br>",
 
       # TODO: verify domain at Mailgun
       # from: "Algum Cliente <cliente_easyfix@gmail.com>",
       from: "Cliente Easyfix <contato@easyfx.net.br>",
 
       subject: "Testing mail from EasyFixApi",
-      text_body: "The test works!"
+      text_body: "#{inspect(Timex.now)} The test works!"
     )
   end
 end
