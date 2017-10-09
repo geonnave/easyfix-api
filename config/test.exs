@@ -22,6 +22,9 @@ config :easy_fix_api, EasyFixApi.Repo,
 config :comeonin, :bcrypt_log_rounds, 4
 config :comeonin, :pbkdf2_rounds, 1
 
+config :easy_fix_api, EasyFixApi.Mailer,
+  adapter: Bamboo.TestAdapter
+
 config :easy_fix_api, :order_states,
   started: [],
   created_with_diagnosis: [

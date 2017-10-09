@@ -42,10 +42,7 @@ config :guardian, Guardian,
   serializer: EasyFixApi.GuardianSerializer
 
 config :easy_fix_api, EasyFixApi.Mailer,
-  adapter: Bamboo.MailgunAdapter,
-  # TODO: move the value of api_key to System.get_env("MAILGUN_API_KEY")
-  api_key: "key-49f5d6429dafd96af42d6b65fa5dd3f5",
-  domain: "easyfix.net.br"
+  adapter: Bamboo.LocalAdapter
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

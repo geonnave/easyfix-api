@@ -27,6 +27,7 @@ defmodule EasyFixApiWeb.CustomerOrderController do
       |> Orders.create_order_with_diagnosis
 
     OrderStateMachine.start_link(%{order_id: customer_order.id})
+    EasyFixApi.Emails.send_email_to_matching_garages(customer_order)
 
     conn
     |> put_status(:created)
