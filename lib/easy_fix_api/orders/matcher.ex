@@ -16,12 +16,16 @@ defmodule EasyFixApi.Orders.Matcher do
   end
 
   def diagnosis_matches_garage_categories?(diagnosis, garage_gcs) do
-    parts = Enum.map(diagnosis.diagnosis_parts, & &1.part)
-    parts_gcs = Enum.map(parts, & &1.garage_category)
-    Enum.all?(parts_gcs, fn part_gc ->
-      Enum.any?(garage_gcs, &part_and_garage_gc_match?(part_gc, &1))
+    diagnosis.diagnosis_parts
+    |> Enum.map(& &1.part)
+    |> Enum.all?(fn %{garage_category: part_gc, repair_by_fixer: repair_by_fixer} ->
+      Enum.any?(garage_gcs, &part_and_garage_gc_match?(part_gc, &1)) ||
+      Enum.any?(garage_gcs, &part_and_autonomous_garage_match?(repair_by_fixer, &1))
     end)
   end
+
+  def part_and_autonomous_garage_match?(true, "Autonomo"), do: true
+  def part_and_autonomous_garage_match?(_part, _garage_gc), do: false
 
   def part_and_garage_gc_match?(part_gc, garage_gc) do
     part_gc.name == garage_gc.name ||

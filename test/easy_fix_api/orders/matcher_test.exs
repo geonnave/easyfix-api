@@ -1,8 +1,6 @@
 defmodule EasyFixApi.OrdersMatcherTest do
   use EasyFixApi.DataCase
 
-  alias EasyFixApi.Orders
-  alias EasyFixApi.Parts.GarageCategory
   alias EasyFixApi.Orders.Matcher
 
   setup do
@@ -11,12 +9,14 @@ defmodule EasyFixApi.OrdersMatcherTest do
       vidros: create_gc("Vidros"),
       todas: create_gc("Todas"),
       fluidos: create_gc("Fluidos"),
+      autonomo: create_gc("Autonomo"),
     }
     diag_parts = %{
       mecanica1: create_diag_part("mecanica1", gcs[:mecanica]),
       vidros1: create_diag_part("vidros1", gcs[:vidros]),
       todas1: create_diag_part("todas1", gcs[:todas]),
       fluidos1: create_diag_part("fluidos1", gcs[:fluidos]),
+      autonomo1: create_diag_part("autonomo1", gcs[:autonomo]),
     }
 
     {:ok, %{gcs: gcs, diag_parts: diag_parts}}
@@ -41,10 +41,11 @@ defmodule EasyFixApi.OrdersMatcherTest do
 
       refute Matcher.part_and_garage_gc_match?(gcs[:vidros], diag_parts[:mecanica1].part.garage_category)
     end
+  end
 
-    test "part with repair_by_fixer = true matches with garage garage_category 'Autonomo'" do
-      # TODO
-    end
+  test "part with repair_by_fixer = true matches with garage garage_category 'Autonomo'" do
+    assert Matcher.part_and_autonomous_garage_match?(true, "Autonomo")
+    refute Matcher.part_and_autonomous_garage_match?(true, "anything")
   end
 
   describe "test diagnosis_matches_garage_categories?" do
@@ -56,6 +57,18 @@ defmodule EasyFixApi.OrdersMatcherTest do
 
       assert Matcher.diagnosis_matches_garage_categories?(diagnosis, [gcs[:vidros]])
       assert Matcher.diagnosis_matches_garage_categories?(diagnosis, [gcs[:vidros], gcs[:mecanica]])
+
+      refute Matcher.diagnosis_matches_garage_categories?(diagnosis, [gcs[:mecanica]])
+    end
+
+    test "match with autonomo", %{gcs: gcs, diag_parts: diag_parts} do
+      diagnosis =
+        build(:diagnosis)
+        |> with_diagnosis_parts([diag_parts[:autonomo1]])
+        |> insert
+
+      assert Matcher.diagnosis_matches_garage_categories?(diagnosis, [gcs[:autonomo]])
+      assert Matcher.diagnosis_matches_garage_categories?(diagnosis, [gcs[:autonomo], gcs[:mecanica]])
 
       refute Matcher.diagnosis_matches_garage_categories?(diagnosis, [gcs[:mecanica]])
     end
