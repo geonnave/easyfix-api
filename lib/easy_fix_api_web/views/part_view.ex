@@ -16,7 +16,7 @@ defmodule EasyFixApiWeb.PartView do
       part_sub_group: part.part_sub_group.name,
       part_group: part.part_sub_group.part_group.name,
       part_system: part.part_sub_group.part_group.part_system.name,
-      repair_by_fixer_part: part.repair_by_fixer_part != nil,
+      repair_by_fixer: part.repair_by_fixer,
       name: part.name}
   end
 end

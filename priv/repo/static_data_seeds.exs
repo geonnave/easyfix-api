@@ -6,7 +6,6 @@ defmodule EasyFixApi.StaticDataSeeds do
   alias EasyFixApi.Cars.{Brand}
   alias EasyFixApi.Parts.{Part, PartSubGroup, PartGroup, PartSystem, GarageCategory}
   alias EasyFixApi.Payments.{Bank}
-  alias EasyFixApi.Business.RepairByFixerPart
   alias EasyFixApi.Addresses
 
   def run_vehicles_models do
@@ -33,7 +32,13 @@ defmodule EasyFixApi.StaticDataSeeds do
     "lista_pecas_#{system}.csv"
     |> read_from_path_priv_repo()
     |> parse_parts()
-    |> Enum.map(fn(%{name: name, group: group, sub_group: sub_group, garage_type: garage_type, repair_by_fixer: repair_by_fixer}) ->
+    |> Enum.map(fn(part) ->
+      %{name: name,
+        group: group,
+        sub_group: sub_group,
+        garage_type: garage_type,
+        repair_by_fixer: repair_by_fixer} = part
+
       Repo.transaction(fn ->
         system = String.capitalize(system)
         part_system = case Repo.get_by(PartSystem, name: system) do
@@ -69,17 +74,10 @@ defmodule EasyFixApi.StaticDataSeeds do
         part_changeset =
           %Part{}
           |> cast(%{name: name}, [:name])
+          |> cast(%{repair_by_fixer: repair_by_fixer}, [:repair_by_fixer])
           |> put_assoc(:part_sub_group, part_sub_group)
           |> put_assoc(:garage_category, garage_category)
         part = Repo.insert! part_changeset
-
-        if repair_by_fixer do
-          by_fixer =
-            %RepairByFixerPart{}
-            |> change()
-            |> put_assoc(:part, part)
-          Repo.insert! by_fixer
-        end
 
       end)
     end)

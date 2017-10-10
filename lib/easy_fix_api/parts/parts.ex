@@ -91,7 +91,7 @@ defmodule EasyFixApi.Parts do
   end
 
   defp preload_all_nested_associations(part) do
-    Repo.preload(part, [:garage_category, [part_sub_group: [part_group: :part_system]], :repair_by_fixer_part])
+    Repo.preload(part, [:garage_category, [part_sub_group: [part_group: :part_system]]])
   end
 
   def create_part(attrs \\ %{}) do

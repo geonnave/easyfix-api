@@ -178,14 +178,14 @@ defmodule EasyFixApi.Factory do
 
   def user_factory do
     %User{
-      email: "some@email.com",
+      email: sequence("some@email.com"),
       # password: "some password",
       password_hash: "$2b$12$jOt0r0C8tEVmmLsW6rd/pOGjgJn1pWmqob0KpIPYwfWMkgFlcto/K",
     }
   end
   def user_with_password_factory do
     %User{
-      email: "some@email.com",
+      email: sequence("some@email.com"),
       password: "some password",
     }
   end

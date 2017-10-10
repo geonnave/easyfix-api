@@ -34,11 +34,11 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Parts do
 
     create table(:parts) do
       add :name, :string
+      add :repair_by_fixer, :boolean
       add :part_sub_group_id, references(:part_sub_groups)
       add :garage_category_id, references(:garage_categories)
 
       timestamps(type: :timestamptz)
     end
-
   end
 end
