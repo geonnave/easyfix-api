@@ -82,16 +82,12 @@ defmodule EasyFixApi.Parts do
 
   def list_parts do
     Repo.all(Part)
-    |> preload_all_nested_associations()
+    |> Repo.preload(Part.all_nested_assocs)
   end
 
   def get_part!(id) do
     Repo.get!(Part, id)
-    |> preload_all_nested_associations()
-  end
-
-  defp preload_all_nested_associations(part) do
-    Repo.preload(part, [:garage_category, [part_sub_group: [part_group: :part_system]]])
+    |> Repo.preload(Part.all_nested_assocs)
   end
 
   def create_part(attrs \\ %{}) do
@@ -119,5 +115,4 @@ defmodule EasyFixApi.Parts do
     |> cast(attrs, [:name])
     |> validate_required([:name])
   end
-
 end

@@ -22,30 +22,23 @@ defmodule EasyFixApi.OrdersMatcherTest do
     {:ok, %{gcs: gcs, diag_parts: diag_parts}}
   end
 
-  describe "part_and_garage_gc_match?" do
+  describe "part_matches_garage?" do
     test "match same name", %{gcs: gcs, diag_parts: diag_parts} do
-      assert Matcher.part_and_garage_gc_match?(gcs[:vidros], diag_parts[:vidros1].part.garage_category)
+      assert Matcher.part_matches_garage?(gcs[:vidros], diag_parts[:vidros1].part.garage_category)
 
-      refute Matcher.part_and_garage_gc_match?(gcs[:vidros], diag_parts[:mecanica1].part.garage_category)
-      refute Matcher.part_and_garage_gc_match?(gcs[:mecanica], diag_parts[:vidros1].part.garage_category)
+      refute Matcher.part_matches_garage?(gcs[:vidros], diag_parts[:mecanica1].part.garage_category)
+      refute Matcher.part_matches_garage?(gcs[:mecanica], diag_parts[:vidros1].part.garage_category)
     end
 
     test "match part garage_category 'Todas'", %{gcs: gcs, diag_parts: diag_parts} do
-      assert Matcher.part_and_garage_gc_match?(gcs[:todas], diag_parts[:vidros1].part.garage_category)
-      assert Matcher.part_and_garage_gc_match?(gcs[:todas], diag_parts[:mecanica1].part.garage_category)
-    end
-
-    test "part garage_category 'Fluidos' also matches with garage garage_category 'Mecanica'", %{gcs: gcs, diag_parts: diag_parts} do
-      assert Matcher.part_and_garage_gc_match?(gcs[:mecanica], diag_parts[:mecanica1].part.garage_category)
-      assert Matcher.part_and_garage_gc_match?(gcs[:fluidos], diag_parts[:mecanica1].part.garage_category)
-
-      refute Matcher.part_and_garage_gc_match?(gcs[:vidros], diag_parts[:mecanica1].part.garage_category)
+      assert Matcher.part_matches_garage?(gcs[:todas], diag_parts[:vidros1].part.garage_category)
+      assert Matcher.part_matches_garage?(gcs[:todas], diag_parts[:mecanica1].part.garage_category)
     end
   end
 
   test "part with repair_by_fixer = true matches with garage garage_category 'Autonomo'" do
-    assert Matcher.part_and_autonomous_garage_match?(true, "Autonomo")
-    refute Matcher.part_and_autonomous_garage_match?(true, "anything")
+    assert Matcher.repair_by_fixer_matches_autonomous_garage?(true, "Autonomo")
+    refute Matcher.repair_by_fixer_matches_autonomous_garage?(true, "anything")
   end
 
   describe "test diagnosis_matches_garage_categories?" do

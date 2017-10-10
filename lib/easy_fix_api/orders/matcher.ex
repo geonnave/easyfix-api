@@ -19,18 +19,17 @@ defmodule EasyFixApi.Orders.Matcher do
     diagnosis.diagnosis_parts
     |> Enum.map(& &1.part)
     |> Enum.all?(fn %{garage_category: part_gc, repair_by_fixer: repair_by_fixer} ->
-      Enum.any?(garage_gcs, &part_and_garage_gc_match?(part_gc, &1)) ||
-      Enum.any?(garage_gcs, &part_and_autonomous_garage_match?(repair_by_fixer, &1))
+      Enum.any?(garage_gcs, &part_matches_garage?(part_gc, &1)) ||
+      Enum.any?(garage_gcs, &repair_by_fixer_matches_autonomous_garage?(repair_by_fixer, &1))
     end)
   end
 
-  def part_and_autonomous_garage_match?(true, "Autonomo"), do: true
-  def part_and_autonomous_garage_match?(_part, _garage_gc), do: false
+  def repair_by_fixer_matches_autonomous_garage?(true, "Autonomo"), do: true
+  def repair_by_fixer_matches_autonomous_garage?(_part, _garage_gc), do: false
 
-  def part_and_garage_gc_match?(part_gc, garage_gc) do
+  def part_matches_garage?(part_gc, garage_gc) do
     part_gc.name == garage_gc.name ||
     part_gc.name == "Todas" ||
-    garage_gc.name == "Todas" ||
-    String.match?(part_gc.name, ~r/fluidos/i) && garage_gc.name == "Mecanica"
+    garage_gc.name == "Todas"
   end
 end
