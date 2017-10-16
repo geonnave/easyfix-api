@@ -60,6 +60,7 @@ defmodule EasyFixApiWeb.Router do
     resources "/brands", BrandController, except: [:new, :edit]
 
     resources "/parts", PartController, except: [:new, :edit]
+    get "/parts-call-direct", PartController, :parts_call_direct
     resources "/garage_categories", GarageCategoryController, except: [:new, :edit]
     resources "/part_systems", PartSystemController, except: [:new, :edit]
     resources "/part_groups", PartGroupController, except: [:new, :edit]

@@ -78,7 +78,7 @@ defmodule EasyFixApi.Parts do
     |> validate_required([:name])
   end
 
-  alias EasyFixApi.Parts.Part
+  alias EasyFixApi.Parts.{Part}
 
   def list_parts do
     Repo.all(Part)
