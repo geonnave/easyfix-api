@@ -186,6 +186,8 @@ defmodule EasyFixApi.Orders do
         {:error, changeset}
       nil ->
         {:error, "budget or issuer does not exist"}
+      error ->
+        error
     end
   end
 

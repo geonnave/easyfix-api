@@ -8,14 +8,17 @@ defmodule EasyFixApiWeb.GarageOrderBudgetController do
   def create(conn, _params = %{"budget" => budget_params, "garage_id" => garage_id, "order_id" => order_id}) do
     order = Orders.get_order!(order_id)
 
-    {:ok, budget} =
+    budget_params =
       budget_params
       |> put_in(["diagnosis_id"], order.diagnosis.id)
       |> put_in(["issuer_id"], garage_id)
       |> put_in(["issuer_type"], "garage")
-      |> Orders.create_budget()
 
-    render(conn, EasyFixApiWeb.BudgetView, "show.json", budget: budget)
+    with {:ok, budget} <- Orders.create_budget(budget_params) do
+      conn
+      |> put_status(:created)
+      |> render(EasyFixApiWeb.BudgetView, "show.json", budget: budget)
+    end
   end
 
   def show(conn, %{"garage_id" => garage_id, "order_id" => order_id}) do
