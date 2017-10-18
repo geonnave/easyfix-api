@@ -14,7 +14,8 @@ defmodule EasyFixApi.Mixfile do
 
   def application do
     [mod: {EasyFixApi.Application, []},
-     extra_applications: [:logger, :runtime_tools]]
+     extra_applications: [:logger, :runtime_tools]
+   ]
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
@@ -42,6 +43,7 @@ defmodule EasyFixApi.Mixfile do
 
       {:ex_machina, "~> 2.0", only: [:dev, :test]},
 
+      {:edeliver, "~> 1.4.4"},
       {:distillery, "~> 1.5", runtime: false},
    ]
   end

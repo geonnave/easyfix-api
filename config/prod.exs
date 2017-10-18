@@ -27,8 +27,6 @@ config :logger, level: :info
 # Configure your database (without credentials)
 config :easy_fix_api, EasyFixApi.Repo,
   adapter: Ecto.Adapters.Postgres,
-  host: "easyfix-db-beta.crr0gbh7eqtz.us-east-2.rds.amazonaws.com",
-  database: "easy_fix_api_prod",
   pool_size: 15
 
 config :easy_fix_api, EasyFixApi.Mailer,
