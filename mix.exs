@@ -41,6 +41,8 @@ defmodule EasyFixApi.Mixfile do
       {:bamboo, "~> 0.8"},
 
       {:ex_machina, "~> 2.0", only: [:dev, :test]},
+
+      {:distillery, "~> 1.5", runtime: false},
    ]
   end
 
