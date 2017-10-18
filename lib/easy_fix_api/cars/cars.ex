@@ -30,6 +30,11 @@ defmodule EasyFixApi.Cars do
     Repo.all(Model)
     |> Repo.preload(:brand)
   end
+  def list_models(brand_id) do
+    Repo.all(Model)
+    |> Enum.filter(& &1.brand_id == brand_id)
+    |> Repo.preload(:brand)
+  end
 
   def get_model!(id), do: Repo.get!(Model, id) |> Repo.preload(:brand)
 

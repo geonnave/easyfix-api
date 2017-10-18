@@ -5,6 +5,10 @@ defmodule EasyFixApiWeb.ModelController do
 
   action_fallback EasyFixApiWeb.FallbackController
 
+  def index(conn, %{"brand_id" => brand_id}) do
+    models = Cars.list_models(String.to_integer(brand_id))
+    render(conn, "index.json", models: models)
+  end
   def index(conn, _params) do
     models = Cars.list_models()
     render(conn, "index.json", models: models)
