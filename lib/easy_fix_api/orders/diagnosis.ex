@@ -20,8 +20,8 @@ defmodule EasyFixApi.Orders.Diagnosis do
     timestamps(type: :utc_datetime)
   end
 
-  @optional_attrs ~w(comment)
-  @required_attrs ~w(accepts_used_parts need_tow_truck status expiration_date)a
+  @optional_attrs ~w(comment status expiration_date)
+  @required_attrs ~w(accepts_used_parts need_tow_truck)a
 
   def create_changeset(attrs) do
     %__MODULE__{}
