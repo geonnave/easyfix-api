@@ -1,6 +1,6 @@
 defmodule EasyFixApiWeb.CustomerOrderView do
   use EasyFixApiWeb, :view
-  alias EasyFixApiWeb.CustomerOrderView
+  alias EasyFixApiWeb.{CustomerOrderView, DateView}
 
   def render("index.json", %{customer_orders: customer_orders}) do
     %{data: render_many(customer_orders, CustomerOrderView, "customer_order.json")}
@@ -11,15 +11,13 @@ defmodule EasyFixApiWeb.CustomerOrderView do
   end
 
   def render("customer_order.json", %{customer_order: customer_order}) do
-    order = customer_order#.order
-    # budget = customer_order.budget
-    %{id: order.id,
-      state: order.state,
-      state_due_date: order.state_due_date,
-      conclusion_date: order.conclusion_date,
-      customer_id: order.customer.id,
-      diagnosis: render_one(order.diagnosis, EasyFixApiWeb.DiagnosisView, "diagnosis.json"),
-      # budget: render_one(budget, EasyFixApiWeb.BudgetView, "budget.json")
+    %{id: customer_order.id,
+      state: customer_order.state,
+      state_due_date: DateView.render("iso_at_sao_paulo_tz", customer_order.state_due_date),
+      opening_date: DateView.render("iso_at_sao_paulo_tz", customer_order.inserted_at),
+      conclusion_date: DateView.render("iso_at_sao_paulo_tz", customer_order.conclusion_date),
+      diagnosis: render_one(customer_order.diagnosis, EasyFixApiWeb.DiagnosisView, "diagnosis.json"),
+      customer_id: customer_order.customer.id,
     }
   end
 end
