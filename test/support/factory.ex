@@ -235,6 +235,7 @@ defmodule EasyFixApi.Factory do
       production_year: "2010",
       plate: "cfd-2211",
       vehicle_id_number: "9BW ZZZ377 VT 004251",
+      mileage: 30_000,
       model: build(:model),
     }
   end
@@ -242,8 +243,9 @@ defmodule EasyFixApi.Factory do
     %Vehicle{
       model_year: "2010",
       production_year: "2010",
-      vehicle_id_number: "9BW ZZZ377 VT 004251",
       plate: "cfd-2211",
+      vehicle_id_number: "9BW ZZZ377 VT 004251",
+      mileage: 30_000,
       model: build(:model),
     }
   end

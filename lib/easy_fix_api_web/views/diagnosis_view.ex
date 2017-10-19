@@ -17,6 +17,7 @@ defmodule EasyFixApiWeb.DiagnosisView do
       status: diagnosis.status,
       comment: diagnosis.comment,
       expiration_date: DateView.render("iso_at_sao_paulo_tz", diagnosis.expiration_date),
+      vehicle_mileage: diagnosis.vehicle_mileage,
       parts: render_many(diagnosis.diagnosis_parts, EasyFixApiWeb.DiagnosisPartView, "diagnosis_part.json"),
       vehicle: render_one(diagnosis.vehicle, EasyFixApiWeb.VehicleView, "vehicle.json"),
     }

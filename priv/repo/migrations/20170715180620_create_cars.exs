@@ -20,6 +20,7 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Cars do
       add :model_year, :string
       add :plate, :string
       add :vehicle_id_number, :string # chassis
+      add :mileage, :integer
       add :model_id, references(:models)
 
       timestamps(type: :timestamptz)

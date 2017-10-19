@@ -21,6 +21,7 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
       add :status, :string
       add :comment, :string
       add :expiration_date, :utc_datetime
+      add :vehicle_mileage, :integer
 
       add :vehicle_id, references(:vehicles)
       add :order_id, references(:orders, on_delete: :delete_all)

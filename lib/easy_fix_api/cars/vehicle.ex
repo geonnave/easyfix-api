@@ -7,13 +7,14 @@ defmodule EasyFixApi.Cars.Vehicle do
     field :production_year, :string
     field :plate, :string
     field :vehicle_id_number, :string # chassis
+    field :mileage, :integer
     belongs_to :model, EasyFixApi.Cars.Model
     has_one :brand, through: [:model, :brand]
 
     timestamps(type: :utc_datetime)
   end
 
-  @required_fields ~w(production_year model_year vehicle_id_number plate)a
+  @required_fields ~w(production_year model_year vehicle_id_number mileage plate)a
 
   def create_changeset(attrs) do
     %__MODULE__{}

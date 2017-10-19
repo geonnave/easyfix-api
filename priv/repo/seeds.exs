@@ -75,6 +75,8 @@ customer_attrs = %{
       "model_id" => 1,
       "model_year" => "2011",
       "plate" => "cfd-2011",
+      "vehicle_id_number" => "9BW ZZZ377 VT 004251",
+      "mileage" => 30_000,
       "production_year" => "2011"
     }
   ]
