@@ -35,7 +35,7 @@ defmodule EasyFixApiWeb.GarageOrderControllerTest do
       |> put_in([:parts], parts_for_budget())
     conn = post conn, garage_order_budget_path(conn, :create, garage.id, order.id), budget: budget_attrs
 
-    data_resp = json_response(conn, 200)["data"]
+    data_resp = json_response(conn, 201)["data"]
 
     assert is_list(data_resp["parts"])
     assert data_resp["diagnosis_id"] == order.diagnosis.id

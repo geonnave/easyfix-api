@@ -20,8 +20,8 @@ config :easy_fix_api,
 
 # Configures the endpoint
 config :easy_fix_api, EasyFixApiWeb.Endpoint,
-  url: [host: "localhost"],
   secret_key_base: "GXA/2t6xovuVZHkDqMEie6sTQ0aypucKoOGe5oQtfvGzw2iDsL1v5AkdhvHEdhlV",
+  url: [host: "localhost"],
   render_errors: [view: EasyFixApiWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: EasyFixApi.PubSub,
            adapter: Phoenix.PubSub.PG2]

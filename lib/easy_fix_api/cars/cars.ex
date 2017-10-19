@@ -70,6 +70,7 @@ defmodule EasyFixApi.Cars do
       {:ok, vehicle} =
         vehicle_changeset
         |> put_change(:plate, String.upcase(vehicle_changeset.changes[:plate]))
+        |> put_change(:vehicle_id_number, String.upcase(vehicle_changeset.changes[:vehicle_id_number]))
         |> put_assoc(:model, model)
         |> Repo.insert()
 
