@@ -24,30 +24,32 @@ defmodule EasyFixApi.StaticDataLoader do
     {parts, _, _} =
       raw_csv
       |> prepare_csv()
-      |> Enum.reduce({[], "", ""}, fn(part, {acc, last_group, last_sub_group}) ->
-        [group, sub_group, name, garage_type, _, repair_by_fixer, _, _, _] =
-          part
-          |> Enum.map(&String.trim/1)
-          |> Enum.map(&String.capitalize/1)
+      |> Enum.reduce({[], "", ""}, fn
+        ([_, _, "" | _rest], whole_acc) -> whole_acc
+        (part, {acc, last_group, last_sub_group}) ->
+          [group, sub_group, name, garage_type, _, repair_by_fixer, _repair_by_garage | _rest] =
+            part
+            |> Enum.map(&String.trim/1)
+            |> Enum.map(&String.capitalize/1)
 
-        repair_by_fixer = String.match? repair_by_fixer, ~r/X|x/i
+          repair_by_fixer = String.match? repair_by_fixer, ~r/X|x/i
 
-        {group, sub_group, last_group, last_sub_group} =
-          cond do
-            group != "" && sub_group != "" ->
-              {group, sub_group, group, sub_group}
-            group != "" && sub_group == "" ->
-              {group, "", group, ""}
-            group == "" && sub_group == "" ->
-              {last_group, last_sub_group, last_group, last_sub_group}
-            group == "" && sub_group != "" ->
-              {last_group, sub_group, last_group, sub_group}
-          end
+          {group, sub_group, last_group, last_sub_group} =
+            cond do
+              group != "" && sub_group != "" ->
+                {group, sub_group, group, sub_group}
+              group != "" && sub_group == "" ->
+                {group, "", group, ""}
+              group == "" && sub_group == "" ->
+                {last_group, last_sub_group, last_group, last_sub_group}
+              group == "" && sub_group != "" ->
+                {last_group, sub_group, last_group, sub_group}
+            end
 
-        part = %{group: group, sub_group: sub_group, name: name,
-          garage_type: garage_type, repair_by_fixer: repair_by_fixer}
-        acc = [part | acc]
-        {acc, last_group, last_sub_group}
+          part = %{group: group, sub_group: sub_group, name: name,
+            garage_type: garage_type, repair_by_fixer: repair_by_fixer}
+          acc = [part | acc]
+          {acc, last_group, last_sub_group}
       end)
 
     parts

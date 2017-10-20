@@ -9,7 +9,7 @@ defmodule EasyFixApi.OrdersMatcherTest do
       vidros: create_gc("Vidros"),
       todas: create_gc("Todas"),
       fluidos: create_gc("Fluidos"),
-      autonomo: create_gc("Autonomo"),
+      autonomo: create_gc("Autônomo"),
     }
     diag_parts = %{
       mecanica1: create_diag_part("mecanica1", gcs[:mecanica]),
@@ -36,8 +36,8 @@ defmodule EasyFixApi.OrdersMatcherTest do
     end
   end
 
-  test "part with repair_by_fixer = true matches with garage garage_category 'Autonomo'" do
-    assert Matcher.repair_by_fixer_matches_autonomous_garage?(true, "Autonomo")
+  test "part with repair_by_fixer = true matches with garage garage_category 'Autônomo'" do
+    assert Matcher.repair_by_fixer_matches_autonomous_garage?(true, "Autônomo")
     refute Matcher.repair_by_fixer_matches_autonomous_garage?(true, "anything")
   end
 

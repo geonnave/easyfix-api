@@ -24,7 +24,7 @@ defmodule EasyFixApi.Orders.Matcher do
     end)
   end
 
-  def repair_by_fixer_matches_autonomous_garage?(true, "Autonomo"), do: true
+  def repair_by_fixer_matches_autonomous_garage?(true, "Autônomo"), do: true
   def repair_by_fixer_matches_autonomous_garage?(_part, _garage_gc), do: false
 
   def part_matches_garage?(part_gc, garage_gc) do
