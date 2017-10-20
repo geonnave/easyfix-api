@@ -4,7 +4,7 @@ defmodule EasyFixApi.Factory do
   alias EasyFixApi.Addresses.{Address, City, State}
   alias EasyFixApi.Accounts.{User, Garage, Customer}
   alias EasyFixApi.Payments.{Bank, BankAccount}
-  alias EasyFixApi.Orders.{Diagnosis, DiagnosisPart, Budget, BudgetPart, Order}
+  alias EasyFixApi.Orders.{Diagnosis, DiagnosisPart, Quote, QuotePart, Order}
   alias EasyFixApi.Orders
   alias EasyFixApi.Parts.{Part, PartSubGroup, PartGroup, PartSystem, GarageCategory}
   alias EasyFixApi.Cars.{Model, Brand, Vehicle}
@@ -19,52 +19,52 @@ defmodule EasyFixApi.Factory do
     |> put_in([:customer_id], customer_id)
   end
 
-  def budget_factory do
-    %Budget{
+  def quote_factory do
+    %Quote{
       service_cost: 42,
       status: "new",
       sub_status: "new",
       due_date: "2017-08-07T17:44:57.913808Z",
-      budgets_parts: build_list(2, :budget_part)
+      quotes_parts: build_list(2, :quote_part)
     }
   end
-  def with_service_cost(budget, sc), do: %{budget | service_cost: Money.new(sc)}
-  def with_total_amount(budget, total_amount), do: %{budget | total_amount: Money.new(total_amount)}
-  def with_budgets_parts_price(budget, price) do
-    %{budget |
-      budgets_parts: Enum.map(budget.budgets_parts, fn budget_part ->
-        %{budget_part | price: Money.new(price)}
+  def with_service_cost(quote, sc), do: %{quote | service_cost: Money.new(sc)}
+  def with_total_amount(quote, total_amount), do: %{quote | total_amount: Money.new(total_amount)}
+  def with_quotes_parts_price(quote, price) do
+    %{quote |
+      quotes_parts: Enum.map(quote.quotes_parts, fn quote_part ->
+        %{quote_part | price: Money.new(price)}
       end)
     }
   end
 
-  def budget_with_all_params do
+  def quote_with_all_params do
     garage = insert(:garage)
     customer = insert(:customer)
     [vehicle] = customer.vehicles
     order_attrs = order_with_all_params(customer.id, vehicle.id)
     {:ok, order} = Orders.create_order_with_diagnosis(order_attrs)
 
-    budget_attrs =
-      params_for(:budget)
-      |> put_in([:parts], parts_for_budget())
+    quote_attrs =
+      params_for(:quote)
+      |> put_in([:parts], parts_for_quote())
       |> put_in([:diagnosis_id], order.diagnosis.id)
       |> put_in([:issuer_id], garage.id)
       |> put_in([:issuer_type], "garage")
 
-    {budget_attrs, garage, order}
+    {quote_attrs, garage, order}
   end
 
-  def budget_part_factory do
-    %BudgetPart{
+  def quote_part_factory do
+    %QuotePart{
       part: build(:part),
-      # budget: build(:budget),
+      # quote: build(:quote),
       quantity: 1,
       price: 4200
     }
   end
 
-  def parts_for_budget do
+  def parts_for_quote do
     [
       %{part_id: insert(:part).id, price: 4200, quantity: 1},
       %{part_id: insert(:part).id, price: 200, quantity: 4},

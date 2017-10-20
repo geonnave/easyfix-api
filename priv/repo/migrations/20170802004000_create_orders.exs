@@ -39,7 +39,7 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
     create unique_index(:diagnosis_parts, [:diagnosis_id, :part_id])
 
     EasyFixApi.Accounts.UserTypeEnum.create_type
-    create table(:budgets) do
+    create table(:quotes) do
       add :service_cost, :integer
       add :status, :string
       add :sub_status, :string
@@ -55,14 +55,14 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
       timestamps(type: :timestamptz)
     end
 
-    create table(:budgets_parts) do
-      add :budget_id, references(:budgets, on_delete: :delete_all)
+    create table(:quotes_parts) do
+      add :quote_id, references(:quotes, on_delete: :delete_all)
       add :part_id, references(:parts)
       add :quantity, :integer
       add :price, :integer
 
       timestamps(type: :timestamptz)
     end
-    create unique_index(:budgets_parts, [:budget_id, :part_id])
+    create unique_index(:quotes_parts, [:quote_id, :part_id])
   end
 end

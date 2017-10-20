@@ -1,9 +1,9 @@
-defmodule EasyFixApi.Orders.BudgetPart do
+defmodule EasyFixApi.Orders.QuotePart do
   use Ecto.Schema
   import Ecto.Changeset, warn: false
 
-  schema "budgets_parts" do
-    belongs_to :budget, EasyFixApi.Orders.Budget
+  schema "quotes_parts" do
+    belongs_to :quote, EasyFixApi.Orders.Quote
     belongs_to :part, EasyFixApi.Parts.Part, on_replace: :nilify
     field :quantity, :integer
     field :price, Money.Ecto.Type
@@ -17,8 +17,8 @@ defmodule EasyFixApi.Orders.BudgetPart do
     |> validate_required([:quantity, :price, :part_id])
   end
 
-  def update_changeset(budget_part, attrs) do
-    budget_part
+  def update_changeset(quote_part, attrs) do
+    quote_part
     |> cast(attrs, [:quantity, :price, :part_id])
   end
 end

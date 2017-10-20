@@ -74,115 +74,115 @@ defmodule EasyFixApi.Orders do
     Repo.delete(diagnosis)
   end
 
-  alias EasyFixApi.Orders.Budget
+  alias EasyFixApi.Orders.Quote
 
-  def list_budgets do
-    Repo.all(Budget)
-    |> Repo.preload(Budget.all_nested_assocs)
+  def list_quotes do
+    Repo.all(Quote)
+    |> Repo.preload(Quote.all_nested_assocs)
     |> Enum.map(&with_total_amount/1)
   end
 
-  def list_budgets_by_order(order_id) do
-    from(b in Budget,
+  def list_quotes_by_order(order_id) do
+    from(b in Quote,
       join: d in Diagnosis, on: d.id == b.diagnosis_id,
       join: o in Order, on: d.order_id == o.id,
       where: o.id == ^order_id,
       select: b,
-      preload: ^Budget.all_nested_assocs)
+      preload: ^Quote.all_nested_assocs)
     |> Repo.all
     |> Enum.map(&with_total_amount/1)
   end
 
-  def get_budget!(id) do
-    Repo.get!(Budget, id)
-    |> Repo.preload(Budget.all_nested_assocs)
+  def get_quote!(id) do
+    Repo.get!(Quote, id)
+    |> Repo.preload(Quote.all_nested_assocs)
     |> with_total_amount()
   end
 
-  def get_budget_for_order_by_user(user_id, diagnosis_id) do
+  def get_quote_for_order_by_user(user_id, diagnosis_id) do
     from(
-      b in Budget,
+      b in Quote,
       join: d in Diagnosis, on: b.diagnosis_id == d.id,
-      preload: [budgets_parts: [part: ^Part.all_nested_assocs], issuer: [:garage]],
+      preload: [quotes_parts: [part: ^Part.all_nested_assocs], issuer: [:garage]],
       where: b.issuer_id == ^user_id and d.id == ^diagnosis_id
     )
     |> Repo.one
     |> with_total_amount()
   end
 
-  def get_budget_for_garage_order(garage_id, order_id) do
+  def get_quote_for_garage_order(garage_id, order_id) do
     case Accounts.get_user_by_type_id(:garage, garage_id) do
       nil ->
         {:error, "garage not found"}
       user ->
-        from(b in Budget,
+        from(b in Quote,
           join: d in Diagnosis, on: d.id == b.diagnosis_id,
           join: o in Order, on: d.order_id == o.id,
           where: o.id == ^order_id and b.issuer_id == ^user.id and b.issuer_type == "garage",
           select: b,
-          preload: ^Budget.all_nested_assocs)
+          preload: ^Quote.all_nested_assocs)
         |> Repo.one
         |> case do
           nil ->
-            {:error, "budget not found"}
-          budget ->
-            {:ok, budget |> with_total_amount()}
+            {:error, "quote not found"}
+          quote ->
+            {:ok, quote |> with_total_amount()}
         end
     end
   end
 
-  def get_customer_best_budget(customer_id, order_id) do
+  def get_customer_best_quote(customer_id, order_id) do
     from(d in Diagnosis,
       join: o in Order, on: d.order_id == o.id,
       where: o.id == ^order_id and o.customer_id == ^customer_id,
-      preload: [budgets: [budgets_parts: [part: ^EasyFixApi.Parts.Part.all_nested_assocs], issuer: [:garage]]])
+      preload: [quotes: [quotes_parts: [part: ^EasyFixApi.Parts.Part.all_nested_assocs], issuer: [:garage]]])
     |> Repo.one
     |> case do
       nil ->
         {:error, "order not found for this customer"}
       diagnosis ->
-        best_budget =
-          diagnosis.budgets
-          |> Enum.map(fn budget ->
-            %{budget | total_amount: calculate_total_amount(budget)}
+        best_quote =
+          diagnosis.quotes
+          |> Enum.map(fn quote ->
+            %{quote | total_amount: calculate_total_amount(quote)}
           end)
           |> Enum.sort(& &1.total_amount < &2.total_amount)
           |> List.first
           |> add_customer_fee()
-        {:ok, best_budget}
+        {:ok, best_quote}
     end
   end
 
   def with_total_amount(nil), do: nil
-  def with_total_amount(budget) do
-    %{budget | total_amount: calculate_total_amount(budget)}
+  def with_total_amount(quote) do
+    %{quote | total_amount: calculate_total_amount(quote)}
   end
 
-  def calculate_total_amount(budget) do
-    calculate_total_amount(budget.budgets_parts, budget.service_cost)
+  def calculate_total_amount(quote) do
+    calculate_total_amount(quote.quotes_parts, quote.service_cost)
   end
-  def calculate_total_amount(budgets_parts, service_cost) do
-    budgets_parts
-    |> Enum.reduce(service_cost, fn budgets_parts, acc ->
-      Money.add(acc, budgets_parts.price)
+  def calculate_total_amount(quotes_parts, service_cost) do
+    quotes_parts
+    |> Enum.reduce(service_cost, fn quotes_parts, acc ->
+      Money.add(acc, quotes_parts.price)
     end)
   end
 
-  def add_customer_fee(budget) do
-    whole_percent_fee = get_whole_percent_fee(budget)
-    budgets_parts = Enum.map(budget.budgets_parts, fn budget_part ->
-      %{budget_part | price: Money.multiply(budget_part.price, whole_percent_fee)}
+  def add_customer_fee(quote) do
+    whole_percent_fee = get_whole_percent_fee(quote)
+    quotes_parts = Enum.map(quote.quotes_parts, fn quote_part ->
+      %{quote_part | price: Money.multiply(quote_part.price, whole_percent_fee)}
     end)
-    service_cost = Money.multiply(budget.service_cost, whole_percent_fee)
-    total_amount = calculate_total_amount(budgets_parts, service_cost)
+    service_cost = Money.multiply(quote.service_cost, whole_percent_fee)
+    total_amount = calculate_total_amount(quotes_parts, service_cost)
 
-    %{budget | budgets_parts: budgets_parts, service_cost: service_cost, total_amount: total_amount}
+    %{quote | quotes_parts: quotes_parts, service_cost: service_cost, total_amount: total_amount}
   end
 
-  def get_whole_percent_fee(budget) do
-    customer_fee = Application.get_env(:easy_fix_api, :fees)[:customer_fee_on_budget_by_garage]
+  def get_whole_percent_fee(quote) do
+    customer_fee = Application.get_env(:easy_fix_api, :fees)[:customer_fee_on_quote_by_garage]
 
-    budget.total_amount
+    quote.total_amount
     |> calculate_customer_percent_fee(Money.new(customer_fee[:max_amount]), customer_fee[:percent_fee])
     |> Kernel.+(1)
   end
@@ -195,61 +195,61 @@ defmodule EasyFixApi.Orders do
     end
   end
 
-  def create_budget(attrs \\ %{}) do
-    with budget_changeset = %{valid?: true} <- Budget.create_changeset(attrs),
-         %{diagnosis_id: diagnosis_id, issuer_type: issuer_type, issuer_id: issuer_id} = budget_changeset.changes,
+  def create_quote(attrs \\ %{}) do
+    with quote_changeset = %{valid?: true} <- Quote.create_changeset(attrs),
+         %{diagnosis_id: diagnosis_id, issuer_type: issuer_type, issuer_id: issuer_id} = quote_changeset.changes,
          diagnosis when not is_nil(diagnosis) <- Repo.get(Diagnosis, diagnosis_id),
          issuer when not is_nil(issuer) <- Accounts.get_user_by_type_id(issuer_type, issuer_id) do
 
       Repo.transaction fn ->
-        budget =
-          budget_changeset
+        quote =
+          quote_changeset
           |> delete_change(:issuer_id)
           |> put_assoc(:issuer, issuer)
           |> Repo.insert!()
 
-        for part_attrs <- budget_changeset.changes[:parts] do
-          case create_budget_part(part_attrs, budget.id) do
-            {:error, budget_part_error_changeset} ->
-              Repo.rollback(budget_part_error_changeset)
+        for part_attrs <- quote_changeset.changes[:parts] do
+          case create_quote_part(part_attrs, quote.id) do
+            {:error, quote_part_error_changeset} ->
+              Repo.rollback(quote_part_error_changeset)
             _ ->
               nil
           end
         end
 
-        budget
-        |> Repo.preload(Budget.all_nested_assocs)
+        quote
+        |> Repo.preload(Quote.all_nested_assocs)
       end
     else
       %{valid?: false} = changeset ->
         {:error, changeset}
       nil ->
-        {:error, "budget or issuer does not exist"}
+        {:error, "quote or issuer does not exist"}
       error ->
         error
     end
   end
 
-  def update_budget(%Budget{} = budget, attrs) do
-    with budget_changeset = %{valid?: true} <- Budget.update_changeset(budget, attrs),
-         parts_changes when not is_nil(parts_changes) <- budget_changeset.changes[:parts] do
+  def update_quote(%Quote{} = quote, attrs) do
+    with quote_changeset = %{valid?: true} <- Quote.update_changeset(quote, attrs),
+         parts_changes when not is_nil(parts_changes) <- quote_changeset.changes[:parts] do
       Repo.transaction fn ->
-        for budget_part <- budget.budgets_parts do
-          {:ok, _} = delete_budget_part(budget_part)
+        for quote_part <- quote.quotes_parts do
+          {:ok, _} = delete_quote_part(quote_part)
         end
         for part_attrs <- parts_changes do
-          case create_budget_part(part_attrs, budget.id) do
-            {:error, budget_part_error_changeset} ->
-              Repo.rollback(budget_part_error_changeset)
+          case create_quote_part(part_attrs, quote.id) do
+            {:error, quote_part_error_changeset} ->
+              Repo.rollback(quote_part_error_changeset)
             _ ->
               nil
           end
         end
 
-        budget_changeset
+        quote_changeset
         |> Repo.update!()
 
-        get_budget!(budget.id)
+        get_quote!(quote.id)
       end
     else
       %{valid?: false} = changeset ->
@@ -259,20 +259,20 @@ defmodule EasyFixApi.Orders do
     end
   end
 
-  def delete_budget(%Budget{} = budget) do
-    Repo.delete(budget)
+  def delete_quote(%Quote{} = quote) do
+    Repo.delete(quote)
   end
 
-  alias EasyFixApi.Orders.BudgetPart
+  alias EasyFixApi.Orders.QuotePart
 
-  def create_budget_part(attrs \\ %{}, budget_id) do
-    with budget_part_changeset = %{valid?: true} <- BudgetPart.create_changeset(attrs) do
-        budget = get_budget!(budget_id)
-        part = Parts.get_part!(budget_part_changeset.changes[:part_id])
+  def create_quote_part(attrs \\ %{}, quote_id) do
+    with quote_part_changeset = %{valid?: true} <- QuotePart.create_changeset(attrs) do
+        quote = get_quote!(quote_id)
+        part = Parts.get_part!(quote_part_changeset.changes[:part_id])
 
-        budget_part_changeset
+        quote_part_changeset
         |> put_assoc(:part, part)
-        |> put_assoc(:budget, budget)
+        |> put_assoc(:quote, quote)
         |> Repo.insert()
     else
       %{valid?: false} = changeset ->
@@ -280,9 +280,9 @@ defmodule EasyFixApi.Orders do
     end
   end
 
-  def update_budget_part(%BudgetPart{} = budget_part, attrs \\ %{}) do
-    with budget_part_changeset = %{valid?: true} <- BudgetPart.update_changeset(budget_part, attrs) do
-        budget_part_changeset
+  def update_quote_part(%QuotePart{} = quote_part, attrs \\ %{}) do
+    with quote_part_changeset = %{valid?: true} <- QuotePart.update_changeset(quote_part, attrs) do
+        quote_part_changeset
         |> case do
           changeset = %{changes: %{part_id: part_id}} ->
             part = Parts.get_part!(part_id)
@@ -297,8 +297,8 @@ defmodule EasyFixApi.Orders do
     end
   end
 
-  def delete_budget_part(%BudgetPart{} = budget_part) do
-    Repo.delete(budget_part)
+  def delete_quote_part(%QuotePart{} = quote_part) do
+    Repo.delete(quote_part)
   end
 
   alias EasyFixApi.Orders.Order
@@ -320,8 +320,8 @@ defmodule EasyFixApi.Orders do
     list_orders()
     |> Enum.filter(&order_matches_garage_categories?(&1, garage_categories_ids))
     |> Enum.map(fn order ->
-      budget = get_budget_for_order_by_user(garage.user.id, order.diagnosis.id)
-      %{order: order, budget: budget}
+      quote = get_quote_for_order_by_user(garage.user.id, order.diagnosis.id)
+      %{order: order, quote: quote}
     end)
   end
 
@@ -341,8 +341,8 @@ defmodule EasyFixApi.Orders do
       garage_id
       |> Accounts.get_garage_categories_ids!
 
-    budget = get_budget_for_order_by_user(garage.user.id, order.diagnosis.id)
-    %{order: order, budget: budget}
+    quote = get_quote_for_order_by_user(garage.user.id, order.diagnosis.id)
+    %{order: order, quote: quote}
   end
 
   def order_matches_garage_categories?(_order = %{diagnosis: diagnosis}, garage_categories_ids) do

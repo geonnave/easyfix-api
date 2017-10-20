@@ -14,26 +14,26 @@ defmodule EasyFixApiWeb.GarageOrderControllerTest do
     order_attrs = order_with_all_params(customer.id, vehicle.id)
     {:ok, order} = Orders.create_order_with_diagnosis(order_attrs)
 
-    budget_attrs =
-      params_for(:budget)
-      |> put_in([:parts], parts_for_budget())
-    conn = get conn, garage_order_path(conn, :show, garage.id, order.id), budget: budget_attrs
+    quote_attrs =
+      params_for(:quote)
+      |> put_in([:parts], parts_for_quote())
+    conn = get conn, garage_order_path(conn, :show, garage.id, order.id), quote: quote_attrs
     data_resp = json_response(conn, 200)["data"]
 
     assert data_resp["diagnosis"]["id"] == order.diagnosis.id
   end
 
-  test "garage submits a budget", %{conn: conn} do
+  test "garage submits a quote", %{conn: conn} do
     garage = insert(:garage)
     customer = insert(:customer)
     [vehicle] = customer.vehicles
     order_attrs = order_with_all_params(customer.id, vehicle.id)
     {:ok, order} = Orders.create_order_with_diagnosis(order_attrs)
 
-    budget_attrs =
-      params_for(:budget)
-      |> put_in([:parts], parts_for_budget())
-    conn = post conn, garage_order_budget_path(conn, :create, garage.id, order.id), budget: budget_attrs
+    quote_attrs =
+      params_for(:quote)
+      |> put_in([:parts], parts_for_quote())
+    conn = post conn, garage_order_quote_path(conn, :create, garage.id, order.id), quote: quote_attrs
 
     data_resp = json_response(conn, 201)["data"]
 

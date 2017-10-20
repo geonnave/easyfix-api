@@ -29,9 +29,9 @@ defmodule EasyFixApiWeb.Router do
 
     resources "/garages", GarageController, except: [:new, :edit] do
       resources "/orders", GarageOrderController, only: [:index, :show], name: :order do
-        resources "/budget", GarageOrderBudgetController,
+        resources "/quote", GarageOrderQuoteController,
           only: [:show, :create, :update],
-          name: :budget,
+          name: :quote,
           singleton: true
       end
     end
@@ -39,7 +39,7 @@ defmodule EasyFixApiWeb.Router do
     resources "/customers", CustomerController, except: [:new, :edit] do
       resources "/orders", CustomerOrderController, only: [:index, :show, :create], name: :order do
         put "/state", CustomerOrderController, :update_state, as: :state
-        get "/best-budget", CustomerOrderBudgetController, :best_budget, as: :best_budget
+        get "/best-quote", CustomerOrderQuoteController, :best_quote, as: :best_quote
       end
     end
 
@@ -52,7 +52,7 @@ defmodule EasyFixApiWeb.Router do
 
     resources "/users", UserController, only: [:index, :create, :show]
     resources "/diagnosis", DiagnosisController, except: [:new, :edit]
-    resources "/budgets", BudgetController, except: [:new, :edit]
+    resources "/quotes", QuoteController, except: [:new, :edit]
     resources "/orders", OrderController, except: [:new, :edit]
 
     resources "/vehicles", VehicleController, except: [:new, :edit]

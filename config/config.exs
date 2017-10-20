@@ -13,7 +13,7 @@ config :easy_fix_api,
 # A `price` is a fixed value that is charged from someone.
 # A `fee` is a percentage that EasyFix collects over any fixed or dynamic price.
 config :easy_fix_api, :fees,
-  customer_fee_on_budget_by_garage: [percent_fee: 0.1, max_amount: 70_00],
+  customer_fee_on_quote_by_garage: [percent_fee: 0.1, max_amount: 70_00],
   fixer_fee_on_service_by_fixer: [percent_fee: 0.2, max_amount: :infinity],
   customer_price_of_diagnosis_by_fixer: 15_00,
   fixer_fee_on_diagnosis_by_fixer: 0.2

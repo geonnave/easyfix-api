@@ -16,7 +16,7 @@ alias EasyFixApi.Parts.{Part, PartSubGroup, PartGroup, PartSystem, GarageCategor
 alias EasyFixApi.Accounts.{User, Garage}
 alias EasyFixApi.Business.RepairByFixerPart
 alias EasyFixApi.Addresses.{State, City, Address}
-alias EasyFixApi.Orders.{Diagnosis, Budget}
+alias EasyFixApi.Orders.{Diagnosis, Quote}
 alias EasyFixApi.Payments.{Bank, BankAccount}
 import Ecto.Changeset
 

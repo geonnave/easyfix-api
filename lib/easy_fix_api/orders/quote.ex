@@ -1,8 +1,8 @@
-defmodule EasyFixApi.Orders.Budget do
+defmodule EasyFixApi.Orders.Quote do
   use Ecto.Schema
   import Ecto.Changeset, warn: false
 
-  schema "budgets" do
+  schema "quotes" do
     field :service_cost, Money.Ecto.Type
     field :status, :string
     field :sub_status, :string
@@ -15,7 +15,7 @@ defmodule EasyFixApi.Orders.Budget do
     field :issuer_type, EasyFixApi.Accounts.UserTypeEnum
     belongs_to :issuer, EasyFixApi.Accounts.User
 
-    has_many :budgets_parts, EasyFixApi.Orders.BudgetPart, on_delete: :delete_all, on_replace: :nilify
+    has_many :quotes_parts, EasyFixApi.Orders.QuotePart, on_delete: :delete_all, on_replace: :nilify
     belongs_to :diagnosis, EasyFixApi.Orders.Diagnosis
 
     field :parts, {:array, :map}, virtual: true
@@ -27,8 +27,8 @@ defmodule EasyFixApi.Orders.Budget do
   @required_attrs ~w(service_cost)a
   @assoc_attrs ~w(diagnosis_id issuer_id issuer_type parts)a
 
-  def changeset(budget, attrs) do
-    budget
+  def changeset(quote, attrs) do
+    quote
     |> cast(attrs, @optional_attrs ++ @required_attrs ++ @assoc_attrs)
     |> validate_required(@required_attrs ++ @assoc_attrs)
   end
@@ -38,14 +38,14 @@ defmodule EasyFixApi.Orders.Budget do
     |> changeset(attrs)
   end
 
-  def update_changeset(budget, attrs) do
-    budget
+  def update_changeset(quote, attrs) do
+    quote
     |> cast(attrs, [:parts] ++ @required_attrs)
   end
 
   def all_nested_assocs do
     [
-      budgets_parts: [part: EasyFixApi.Parts.Part.all_nested_assocs],
+      quotes_parts: [part: EasyFixApi.Parts.Part.all_nested_assocs],
       diagnosis: [],
       issuer: [:garage]
     ]

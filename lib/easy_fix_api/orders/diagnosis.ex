@@ -10,7 +10,7 @@ defmodule EasyFixApi.Orders.Diagnosis do
     field :expiration_date, :utc_datetime
     field :vehicle_mileage, :integer
 
-    has_many :budgets, EasyFixApi.Orders.Budget, on_delete: :delete_all
+    has_many :quotes, EasyFixApi.Orders.Quote, on_delete: :delete_all
     belongs_to :order, EasyFixApi.Orders.Order
 
     has_many :diagnosis_parts, EasyFixApi.Orders.DiagnosisPart

@@ -27,21 +27,21 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     end
   end
 
-  def handle_event(:state_timeout, :to_budgeted_by_garages, :created_with_diagnosis, data) do
-    Logger.warn ":state_timeout, :to_budgeted_by_garages, :created_with_diagnosis"
-    case Orders.list_budgets_by_order(data[:order_id]) do
+  def handle_event(:state_timeout, :to_quoted_by_garages, :created_with_diagnosis, data) do
+    Logger.warn ":state_timeout, :to_quoted_by_garages, :created_with_diagnosis"
+    case Orders.list_quotes_by_order(data[:order_id]) do
       [] ->
         order = Orders.get_order!(data[:order_id])
-        next_state_attrs = next_state_attrs(:not_budgeted_by_garages)
+        next_state_attrs = next_state_attrs(:not_quoted_by_garages)
         case Orders.update_order_state(order, next_state_attrs) do
           {:ok, %{state: state}} ->
             {:next_state, state, data}
           {:error, changeset} ->
             {:next_state, :finished_error, put_in(data[:changeset], changeset)}
         end
-      _budgets ->
+      _quotes ->
         order = Orders.get_order!(data[:order_id])
-        next_state_attrs = next_state_attrs(:budgeted_by_garages)
+        next_state_attrs = next_state_attrs(:quoted_by_garages)
         case Orders.update_order_state(order, next_state_attrs) do
           {:ok, %{state: state, state_due_date: state_due_date}} ->
             {:next_state, state, data, [state_timeout_action(state, state_due_date)]}
@@ -51,8 +51,8 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     end
   end
 
-  def handle_event(:state_timeout, :to_budget_accepted_by_customer, :budgeted_by_garages, data) do
-    Logger.warn ":state_timeout, :to_budget_accepted_by_customer, :budgeted_by_garages"
+  def handle_event(:state_timeout, :to_quote_accepted_by_customer, :quoted_by_garages, data) do
+    Logger.warn ":state_timeout, :to_quote_accepted_by_customer, :quoted_by_garages"
 
     next_state_attrs = next_state_attrs(:timeout)
     {:ok, _updated_order} =
@@ -62,9 +62,9 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
 
     {:next_state, :timeout, data}
   end
-  def handle_event({:call, from}, {:customer_clicked, :accept_budget}, :budgeted_by_garages, data) do
-    Logger.debug "{:call, _from}, {:customer_clicked, :accept_budget}, :budgeted_by_garages"
-    next_state_attrs = next_state_attrs(:budget_accepted_by_customer)
+  def handle_event({:call, from}, {:customer_clicked, :accept_quote}, :quoted_by_garages, data) do
+    Logger.debug "{:call, _from}, {:customer_clicked, :accept_quote}, :quoted_by_garages"
+    next_state_attrs = next_state_attrs(:quote_accepted_by_customer)
     order = Orders.get_order!(data[:order_id])
     case Orders.update_order_state(order, next_state_attrs) do
       {:ok, updated_order = %{state: state, state_due_date: state_due_date}} ->
@@ -76,19 +76,19 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
         {:next_state, :finished_error, put_in(data[:changeset], [reply_action])}
     end
   end
-  def handle_event({:call, from}, {:customer_clicked, :not_accept_budget}, :budgeted_by_garages, data) do
-    Logger.debug "{:call, from}, {:customer_clicked, :not_accept_budget}, :budgeted_by_garages"
+  def handle_event({:call, from}, {:customer_clicked, :not_accept_quote}, :quoted_by_garages, data) do
+    Logger.debug "{:call, from}, {:customer_clicked, :not_accept_quote}, :quoted_by_garages"
 
-    next_state_attrs = next_state_attrs(:budget_not_accepted_by_customer)
+    next_state_attrs = next_state_attrs(:quote_not_accepted_by_customer)
     reply = {:ok, _updated_order} =
       data[:order_id]
       |> Orders.get_order!
       |> Orders.update_order_state(next_state_attrs)
 
-    {:next_state, :budget_not_accepted_by_customer, data, [{:reply, from, reply}]}
+    {:next_state, :quote_not_accepted_by_customer, data, [{:reply, from, reply}]}
   end
-  def handle_event({:call, from}, {:customer_clicked, event}, :budgeted_by_garages, _data) do
-    Logger.debug "INVALID event: {:call, from}, {:customer_clicked, event}, :budgeted_by_garages"
+  def handle_event({:call, from}, {:customer_clicked, event}, :quoted_by_garages, _data) do
+    Logger.debug "INVALID event: {:call, from}, {:customer_clicked, event}, :quoted_by_garages"
     reply_action = {:reply, from, {:error, "the event #{inspect event} is invalid"}}
     {:keep_state_and_data, [reply_action]}
   end
@@ -97,10 +97,10 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     {:keep_state_and_data, [{:reply, from, {:error, "invalid event for state #{state}"}}]}
   end
 
-  def handle_event(:state_timeout, :to_finish_by_garage, :budget_accepted_by_customer, _data) do
+  def handle_event(:state_timeout, :to_finish_by_garage, :quote_accepted_by_customer, _data) do
     # TODO: we not handling any scenario after the customer had paid us
     # we need to fix that for next releases.
-    Logger.warn "ignoring event :state_timeout, :to_finish_by_garage, :budget_accepted_by_customer"
+    Logger.warn "ignoring event :state_timeout, :to_finish_by_garage, :quote_accepted_by_customer"
     :keep_state_and_data
   end
 
