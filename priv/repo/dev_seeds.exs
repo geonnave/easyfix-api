@@ -10,14 +10,11 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-alias EasyFixApi.{Cars, Parts, Accounts, Business, Addresses, Orders, Payments, GuardianSerializer, Repo}
-alias EasyFixApi.Cars.{Brand, Model}
-alias EasyFixApi.Parts.{Part, PartSubGroup, PartGroup, PartSystem, GarageCategory}
-alias EasyFixApi.Accounts.{User, Garage}
-alias EasyFixApi.Business.RepairByFixerPart
-alias EasyFixApi.Addresses.{State, City, Address}
-alias EasyFixApi.Orders.{Diagnosis, Quote}
-alias EasyFixApi.Payments.{Bank, BankAccount}
+alias EasyFixApi.{Accounts, Repo}
+alias EasyFixApi.Cars.{Brand}
+alias EasyFixApi.Parts.{Part, PartSystem, GarageCategory}
+alias EasyFixApi.Addresses.{State}
+alias EasyFixApi.Payments.{Bank}
 import Ecto.Changeset
 
 
@@ -52,11 +49,11 @@ model = Repo.insert! model
 
 # customer
 customer_attrs = %{
+  "email" => "customer@email.com",
+  "password" => "customer@email.com",
   "accept_easyfix_policy" => "2017-08-06T17:44:57.913808Z",
   "cpf" => "some cpf",
-  "email" => "some@email.com",
   "name" => "some name",
-  "password" => "some password",
   "phone" => "some phone",
   "address" => %{
     "address_line1" => "some address_line1",
@@ -85,8 +82,8 @@ customer_attrs = %{
 
 # garage
 garage_attrs = %{
-  "email" => "easyfix@easyfix.com",
-  "password" => "easyfix",
+  "email" => "garage@email.com",
+  "password" => "garage@email.com",
   "phone" => "some phone",
   "cnpj" => "some cnpj",
   "garage_categories_ids" => [garage_category.id],
