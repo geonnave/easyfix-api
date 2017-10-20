@@ -79,6 +79,7 @@ defmodule EasyFixApi.Orders do
   def list_budgets do
     Repo.all(Budget)
     |> Repo.preload(Budget.all_nested_assocs)
+    |> Enum.map(&with_total_amount/1)
   end
 
   def list_budgets_by_order(order_id) do
@@ -89,11 +90,13 @@ defmodule EasyFixApi.Orders do
       select: b,
       preload: ^Budget.all_nested_assocs)
     |> Repo.all
+    |> Enum.map(&with_total_amount/1)
   end
 
   def get_budget!(id) do
     Repo.get!(Budget, id)
     |> Repo.preload(Budget.all_nested_assocs)
+    |> with_total_amount()
   end
 
   def get_budget_for_order_by_user(user_id, diagnosis_id) do
@@ -104,6 +107,7 @@ defmodule EasyFixApi.Orders do
       where: b.issuer_id == ^user_id and d.id == ^diagnosis_id
     )
     |> Repo.one
+    |> with_total_amount()
   end
 
   def get_budget_for_garage_order(garage_id, order_id) do
@@ -122,7 +126,7 @@ defmodule EasyFixApi.Orders do
           nil ->
             {:error, "budget not found"}
           budget ->
-            {:ok, budget}
+            {:ok, budget |> with_total_amount()}
         end
     end
   end
@@ -144,16 +148,51 @@ defmodule EasyFixApi.Orders do
           end)
           |> Enum.sort(& &1.total_amount < &2.total_amount)
           |> List.first
+          |> add_customer_fee()
         {:ok, best_budget}
     end
   end
 
-  # TODO: add EasyFix tax
+  def with_total_amount(nil), do: nil
+  def with_total_amount(budget) do
+    %{budget | total_amount: calculate_total_amount(budget)}
+  end
+
   def calculate_total_amount(budget) do
-    budget.budgets_parts
-    |> Enum.reduce(budget.service_cost, fn budgets_parts, acc ->
-      acc + budgets_parts.price
+    calculate_total_amount(budget.budgets_parts, budget.service_cost)
+  end
+  def calculate_total_amount(budgets_parts, service_cost) do
+    budgets_parts
+    |> Enum.reduce(service_cost, fn budgets_parts, acc ->
+      Money.add(acc, budgets_parts.price)
     end)
+  end
+
+  def add_customer_fee(budget) do
+    whole_percent_fee = get_whole_percent_fee(budget)
+    budgets_parts = Enum.map(budget.budgets_parts, fn budget_part ->
+      %{budget_part | price: Money.multiply(budget_part.price, whole_percent_fee)}
+    end)
+    service_cost = Money.multiply(budget.service_cost, whole_percent_fee)
+    total_amount = calculate_total_amount(budgets_parts, service_cost)
+
+    %{budget | budgets_parts: budgets_parts, service_cost: service_cost, total_amount: total_amount}
+  end
+
+  def get_whole_percent_fee(budget) do
+    customer_fee = Application.get_env(:easy_fix_api, :fees)[:customer_fee_on_budget_by_garage]
+
+    budget.total_amount
+    |> calculate_customer_percent_fee(Money.new(customer_fee[:max_amount]), customer_fee[:percent_fee])
+    |> Kernel.+(1)
+  end
+
+  def calculate_customer_percent_fee(total_amount, max_amount, percent_fee) do
+    if Money.multiply(total_amount, percent_fee) > max_amount do
+      (max_amount.amount / total_amount.amount) |> Float.round(4)
+    else
+      percent_fee
+    end
   end
 
   def create_budget(attrs \\ %{}) do

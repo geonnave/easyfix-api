@@ -40,6 +40,7 @@ defmodule EasyFixApi.Mixfile do
       {:gen_state_machine, "~> 2.0"},
       {:timex, "~> 3.1"},
       {:bamboo, "~> 0.8"},
+      {:money, "~> 1.2.1"},
 
       {:ex_machina, "~> 2.0", only: [:dev, :test]},
 

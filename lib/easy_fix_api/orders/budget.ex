@@ -3,14 +3,14 @@ defmodule EasyFixApi.Orders.Budget do
   import Ecto.Changeset, warn: false
 
   schema "budgets" do
-    field :service_cost, :integer
+    field :service_cost, Money.Ecto.Type
     field :status, :string
     field :sub_status, :string
 
     field :due_date, :utc_datetime
     field :conclusion_date, :utc_datetime
 
-    field :total_amount, :integer, virtual: true
+    field :total_amount, Money.Ecto.Type, virtual: true
 
     field :issuer_type, EasyFixApi.Accounts.UserTypeEnum
     belongs_to :issuer, EasyFixApi.Accounts.User

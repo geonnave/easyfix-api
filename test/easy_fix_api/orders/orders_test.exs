@@ -61,7 +61,7 @@ defmodule EasyFixApi.OrdersTest do
       {:ok, %BudgetPart{} = budget_part} = Orders.create_budget_part(budget_part_attrs, budget.id)
       assert budget_part.budget.id == budget.id
       assert budget_part.part.id == part.id
-      assert budget_part.price == budget_part_attrs[:price]
+      assert budget_part.price.amount == budget_part_attrs[:price]
       assert budget_part.quantity == budget_part_attrs[:quantity]
     end
 
@@ -77,7 +77,7 @@ defmodule EasyFixApi.OrdersTest do
       {:ok, updated_budget_part} = Orders.update_budget_part(budget_part, update_attrs)
       assert updated_budget_part.budget.id == budget.id
       assert updated_budget_part.part.id == part.id
-      assert updated_budget_part.price == update_attrs[:price]
+      assert updated_budget_part.price.amount == update_attrs[:price]
       assert updated_budget_part.quantity == update_attrs[:quantity]
     end
 
@@ -94,7 +94,7 @@ defmodule EasyFixApi.OrdersTest do
       {:ok, updated_budget_part} = Orders.update_budget_part(budget_part, update_attrs)
       assert updated_budget_part.budget.id == budget.id
       assert updated_budget_part.part.id == new_part.id
-      assert updated_budget_part.price == update_attrs[:price]
+      assert updated_budget_part.price.amount == update_attrs[:price]
       assert updated_budget_part.quantity == update_attrs[:quantity]
     end
   end
@@ -121,7 +121,7 @@ defmodule EasyFixApi.OrdersTest do
 
       assert {:ok, %Budget{} = budget} = Orders.create_budget(budget_attrs)
 
-      assert budget.service_cost == budget_attrs[:service_cost]
+      assert budget.service_cost.amount == budget_attrs[:service_cost]
       assert length(budget.budgets_parts) == 2
       assert budget.diagnosis.id == diagnosis.id
       assert budget.issuer.id == garage.user.id
@@ -144,7 +144,7 @@ defmodule EasyFixApi.OrdersTest do
         |> put_in([:service_cost], 144)
 
       {:ok, updated_budget} = Orders.update_budget(budget, update_budget_attrs)
-      assert updated_budget.service_cost == update_budget_attrs[:service_cost]
+      assert updated_budget.service_cost.amount == update_budget_attrs[:service_cost]
       assert length(updated_budget.budgets_parts) == 1
     end
 
@@ -174,9 +174,41 @@ defmodule EasyFixApi.OrdersTest do
       budget_total_amount = Orders.calculate_total_amount(budget)
 
       [bpart1, bpart2] = budget.budgets_parts
-      total_amount = bpart1.price + bpart2.price + budget.service_cost
+      total_amount = bpart1.price |> Money.add(bpart2.price) |> Money.add(budget.service_cost)
 
       assert total_amount == budget_total_amount
+    end
+
+    @max_amount Application.get_env(:easy_fix_api, :fees)[:customer_fee_on_budget_by_garage][:max_amount]
+    @percent_fee Application.get_env(:easy_fix_api, :fees)[:customer_fee_on_budget_by_garage][:percent_fee]
+    test "calculate_customer_percent_fee" do
+      assert 0.0875 == Orders.calculate_customer_percent_fee(Money.new(800_00), Money.new(@max_amount), @percent_fee)
+      assert 0.05 == Orders.calculate_customer_percent_fee(Money.new(1400_00), Money.new(@max_amount), @percent_fee)
+    end
+
+    test "will add customer @percent_fee to budget" do
+      budget =
+        build(:budget)
+        |> with_service_cost(100_00)
+        |> with_budgets_parts_price(100_00)
+        |> with_total_amount(300_00)
+      assert budget.total_amount == Orders.calculate_total_amount(budget)
+
+      customer_budget = Orders.add_customer_fee(budget)
+      whole_percent_fee = 1 + @percent_fee
+      assert Money.multiply(budget.total_amount, whole_percent_fee) == customer_budget.total_amount
+    end
+
+    test "will add at most @max_amount customer fee to budget" do
+      budget =
+        build(:budget)
+        |> with_service_cost(1000_00)
+        |> with_budgets_parts_price(200_00)
+        |> with_total_amount(1400_00)
+      assert budget.total_amount == Orders.calculate_total_amount(budget)
+
+      customer_budget = Orders.add_customer_fee(budget)
+      assert Money.add(budget.total_amount, Money.new(@max_amount)) == customer_budget.total_amount
     end
   end
 

@@ -12,15 +12,14 @@ defmodule EasyFixApiWeb.BudgetView do
 
   def render("budget.json", %{budget: budget}) do
     %{id: budget.id,
-      service_cost: budget.service_cost,
+      service_cost: budget.service_cost.amount,
       status: budget.status,
       sub_status: budget.sub_status,
       opening_date: DateView.render("iso_at_sao_paulo_tz", budget.inserted_at),
       due_date: DateView.render("iso_at_sao_paulo_tz", budget.due_date),
       conclusion_date: DateView.render("iso_at_sao_paulo_tz", budget.conclusion_date),
-      # parts: render_many(budget.parts, EasyFixApiWeb.PartView, "part.json"),
       parts: render_many(budget.budgets_parts, EasyFixApiWeb.BudgetPartView, "budget_part.json"),
-      total_amount: budget.total_amount,
+      total_amount: (if budget.total_amount, do: budget.total_amount.amount, else: nil),
       diagnosis_id: budget.diagnosis_id,
       issuer_type: budget.issuer_type,
       issuer_id: Map.get(budget.issuer, budget.issuer_type).id,

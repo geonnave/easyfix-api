@@ -25,6 +25,16 @@ defmodule EasyFixApi.Factory do
       status: "new",
       sub_status: "new",
       due_date: "2017-08-07T17:44:57.913808Z",
+      budgets_parts: build_list(2, :budget_part)
+    }
+  end
+  def with_service_cost(budget, sc), do: %{budget | service_cost: Money.new(sc)}
+  def with_total_amount(budget, total_amount), do: %{budget | total_amount: Money.new(total_amount)}
+  def with_budgets_parts_price(budget, price) do
+    %{budget |
+      budgets_parts: Enum.map(budget.budgets_parts, fn budget_part ->
+        %{budget_part | price: Money.new(price)}
+      end)
     }
   end
 

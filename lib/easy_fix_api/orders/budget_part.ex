@@ -6,7 +6,7 @@ defmodule EasyFixApi.Orders.BudgetPart do
     belongs_to :budget, EasyFixApi.Orders.Budget
     belongs_to :part, EasyFixApi.Parts.Part, on_replace: :nilify
     field :quantity, :integer
-    field :price, :integer
+    field :price, Money.Ecto.Type
 
     timestamps(type: :utc_datetime)
   end
