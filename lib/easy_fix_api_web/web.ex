@@ -27,7 +27,7 @@ defmodule EasyFixApiWeb do
 
   def view do
     quote do
-      use Phoenix.View, root: "lib/easy_fix_api/web/templates",
+      use Phoenix.View, root: "lib/easy_fix_api_web/templates",
                         namespace: EasyFixApiWeb
 
       # Import convenience functions from controllers

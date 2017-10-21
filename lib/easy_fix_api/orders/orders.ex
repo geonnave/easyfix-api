@@ -307,7 +307,7 @@ defmodule EasyFixApi.Orders do
     Repo.delete(quote_part)
   end
 
-  alias EasyFixApi.Orders.Order
+  alias EasyFixApi.Orders.{Order, Matcher}
 
   def list_orders do
     Repo.all(Order)
@@ -316,15 +316,11 @@ defmodule EasyFixApi.Orders do
 
   # must find intersection(garage_id_categories, diagnosis_categories)
   # TODO: write this using Ecto.Query
-  def list_garage_order(garage_id) do
+  def list_garage_orders(garage_id) do
     garage = Accounts.get_garage!(garage_id)
 
-    garage_categories_ids = 
-      garage_id
-      |> Accounts.get_garage_categories_ids!
-
-    list_orders()
-    |> Enum.filter(&order_matches_garage_categories?(&1, garage_categories_ids))
+    garage
+    |> Matcher.list_orders_matching_garage
     |> Enum.map(fn order ->
       quote = get_quote_for_order_by_user(garage.user.id, order.diagnosis.id)
       %{order: order, quote: quote}
@@ -343,17 +339,8 @@ defmodule EasyFixApi.Orders do
     garage = Accounts.get_garage!(garage_id)
     order = get_order!(order_id)
 
-    _garage_categories_ids = 
-      garage_id
-      |> Accounts.get_garage_categories_ids!
-
     quote = get_quote_for_order_by_user(garage.user.id, order.diagnosis.id)
     %{order: order, quote: quote}
-  end
-
-  def order_matches_garage_categories?(_order = %{diagnosis: diagnosis}, garage_categories_ids) do
-    diganostic_gc_ids = Enum.map(diagnosis.parts, & &1.garage_category_id)
-    Enum.all?(garage_categories_ids, & Enum.member?(diganostic_gc_ids, &1))
   end
 
   def get_customer_order(customer_id, order_id) do

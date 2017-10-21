@@ -6,7 +6,7 @@ defmodule EasyFixApiWeb.GarageOrderController do
   action_fallback EasyFixApiWeb.FallbackController
 
   def index(conn, _params = %{"garage_id" => garage_id}) do
-    garage_orders = Orders.list_garage_order(garage_id)
+    garage_orders = Orders.list_garage_orders(garage_id)
     render(conn, "index.json", garage_orders: garage_orders)
   end
 

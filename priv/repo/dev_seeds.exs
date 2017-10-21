@@ -49,8 +49,8 @@ model = Repo.insert! model
 
 # customer
 customer_attrs = %{
-  "email" => "customer@email.com",
-  "password" => "customer@email.com",
+  "email" => "c@gmail.com",
+  "password" => "c",
   "accept_easyfix_policy" => "2017-08-06T17:44:57.913808Z",
   "cpf" => "some cpf",
   "name" => "some name",
@@ -82,8 +82,8 @@ customer_attrs = %{
 
 # garage
 garage_attrs = %{
-  "email" => "garage@email.com",
-  "password" => "garage@email.com",
+  "email" => "g@gmail.com",
+  "password" => "g",
   "phone" => "some phone",
   "cnpj" => "some cnpj",
   "garage_categories_ids" => [garage_category.id],
