@@ -70,6 +70,12 @@ defmodule EasyFixApi.Orders do
     end
   end
 
+  def update_diagnosis(%Diagnosis{} = diagnosis, attrs) do
+    diagnosis
+    |> Diagnosis.update_changeset(attrs)
+    |> Repo.update()
+  end
+
   def delete_diagnosis(%Diagnosis{} = diagnosis) do
     Repo.delete(diagnosis)
   end
@@ -392,12 +398,15 @@ defmodule EasyFixApi.Orders do
 
       customer = Accounts.get_customer!(order_assoc_attrs[:customer_id])
       Repo.transaction fn ->
-        {:ok, diagnosis} = create_diagnosis(order_assoc_attrs[:diagnosis])
         state = :created_with_diagnosis
+        state_due_date = calculate_state_due_date(state)
+
+        {:ok, diagnosis} = create_diagnosis(order_assoc_attrs[:diagnosis])
+        {:ok, diagnosis} = update_diagnosis(diagnosis, %{expiration_date: state_due_date})
 
         order_changeset
         |> put_change(:state, state)
-        |> put_change(:state_due_date, calculate_state_due_date(state))
+        |> put_change(:state_due_date, state_due_date)
         |> put_assoc(:diagnosis, diagnosis)
         |> put_assoc(:customer, customer)
         |> Repo.insert()

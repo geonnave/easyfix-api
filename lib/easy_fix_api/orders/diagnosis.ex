@@ -35,6 +35,12 @@ defmodule EasyFixApi.Orders.Diagnosis do
     |> validate_required(@required_attrs)
   end
 
+  def update_changeset(struct, attrs) do
+    struct
+    |> cast(attrs, [:expiration_date])
+    |> validate_required([:expiration_date])
+  end
+
   @assoc_types %{parts: {:array, :map}, vehicle_id: :integer}
   def assoc_changeset(attrs) do
     {attrs, @assoc_types}
