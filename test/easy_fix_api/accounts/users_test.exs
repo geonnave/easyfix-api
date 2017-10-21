@@ -10,7 +10,8 @@ defmodule EasyFixApi.AccountsTest do
 
   def fixture(:user, attrs \\ @create_attrs) do
     {:ok, user} = Accounts.create_user(attrs)
-    %{user | password: nil}
+    # %{user | password: nil}
+    user
   end
 
   test "list_users/1 returns all users" do

@@ -5,7 +5,10 @@ defmodule EasyFixApi.Accounts.User do
   schema "users" do
     field :email, :string
     field :password_hash, :string
-    field :password, :string, virtual: true
+
+    # TODO make this field virtual: true
+    field :password, :string
+
     has_many :addresses, EasyFixApi.Addresses.Address
     has_one :garage, EasyFixApi.Accounts.Garage
     # has_one :customer, EasyFixApi.Accounts.Customer

@@ -4,6 +4,7 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Accounts do
   def change do
     create table(:users) do
       add :email, :string
+      add :password, :string
       add :password_hash, :string
 
       timestamps(type: :timestamptz)
