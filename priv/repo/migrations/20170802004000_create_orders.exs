@@ -10,7 +10,7 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
 
       add :conclusion_date, :utc_datetime
 
-      add :customer_id, references(:customers)
+      add :customer_id, references(:customers, on_delete: :nothing)
 
       timestamps(type: :timestamptz)
     end

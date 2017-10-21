@@ -166,10 +166,6 @@ defmodule EasyFixApi.Accounts do
       Repo.transaction fn ->
         {:ok, user} = create_user(attrs)
 
-        {:ok, bank_account} =
-          customer_assoc_attrs[:bank_account]
-          |> Payments.create_bank_account()
-
         {:ok, address} =
           customer_assoc_attrs[:address]
           |> Addresses.create_address()
@@ -182,7 +178,6 @@ defmodule EasyFixApi.Accounts do
         customer =
           customer_changeset
           |> put_assoc(:user, user)
-          |> put_assoc(:bank_account, bank_account)
           |> put_assoc(:address, address)
           |> put_assoc(:vehicles, vehicles)
           |> Repo.insert!()

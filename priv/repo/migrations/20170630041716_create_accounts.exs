@@ -34,7 +34,6 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Accounts do
       add :cpf, :string
       add :accept_easyfix_policy, :utc_datetime
       add :user_id, references(:users)
-      add :bank_account_id, references(:bank_accounts)
 
       timestamps(type: :timestamptz)
     end

@@ -27,9 +27,9 @@ part_group = Repo.insert! part_group
 part_sub_group = Ecto.build_assoc(part_group, :part_sub_groups, name: "Part Sub Group")
 part_sub_group = Repo.insert! part_sub_group
 
-garage_category = Repo.insert! %GarageCategory{name: "Example"}
+garage_category = Repo.insert! %GarageCategory{name: "Mecânica"}
 
-part_changeset = %Part{} |> cast(%{name: "a part"}, [:name]) |> put_assoc(:part_sub_group, part_sub_group) |> put_assoc(:garage_category, garage_category)
+part_changeset = %Part{} |> cast(%{name: "Pneu"}, [:name]) |> put_assoc(:part_sub_group, part_sub_group) |> put_assoc(:garage_category, garage_category)
 part = Repo.insert! part_changeset
 
 # inserting one Bank
@@ -61,11 +61,6 @@ customer_attrs = %{
     "city_id" => 1,
     "neighborhood" => "some neighborhood",
     "postal_code" => "some postal_code"
-  },
-  "bank_account" => %{
-    "agency" => "1111",
-    "bank_id" => 1,
-    "number" => "1234"
   },
   "vehicles" => [
     %{

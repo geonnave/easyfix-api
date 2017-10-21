@@ -26,7 +26,6 @@ defmodule EasyFixApi.CustomersTest do
     assert customer.accept_easyfix_policy == accept_easyfix_policy
     assert customer.cpf == customer_attrs[:cpf]
     assert customer.user.email == customer_attrs[:email]
-    assert customer.bank_account.number == customer_attrs[:bank_account][:number]
     assert is_map(customer.address)
     assert length(customer.vehicles) == 1
   end

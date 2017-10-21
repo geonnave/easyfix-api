@@ -138,14 +138,12 @@ defmodule EasyFixApi.Factory do
       cpf: "some cpf",
       accept_easyfix_policy: "2017-08-05 17:44:57.913808Z",
       user: build(:user),
-      bank_account: build(:bank_account),
       address: build(:address),
       vehicles: build_list(1, :vehicle_with_model),
     }
   end
   def customer_with_all_params do
     address_attrs = params_with_assocs(:address)
-    bank_account_attrs = params_with_assocs(:bank_account)
     vehicle_attrs = params_with_assocs(:vehicle_with_model)
     user_attrs = params_for(:user_with_password)
 
@@ -154,7 +152,6 @@ defmodule EasyFixApi.Factory do
     |> put_in([:password], user_attrs[:password])
     |> put_in([:vehicles], [vehicle_attrs])
     |> put_in([:address], address_attrs)
-    |> put_in([:bank_account], bank_account_attrs)
   end
 
   def address_with_user(user) do
