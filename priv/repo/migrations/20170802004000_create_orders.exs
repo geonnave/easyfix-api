@@ -53,6 +53,7 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
 
       timestamps(type: :timestamptz)
     end
+    create unique_index(:quotes, [:issuer_type, :issuer_id, :diagnosis_id])
 
     create table(:quotes_parts) do
       add :quote_id, references(:quotes, on_delete: :delete_all)
