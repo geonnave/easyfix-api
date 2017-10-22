@@ -197,15 +197,18 @@ defmodule EasyFixApi.Orders do
       nil ->
         {:error, "order not found for this customer"}
       diagnosis ->
-        best_quote =
-          diagnosis.quotes
-          |> Enum.map(fn quote ->
-            %{quote | total_amount: calculate_total_amount(quote)}
-          end)
-          |> Enum.sort(& &1.total_amount < &2.total_amount)
-          |> List.first
-          |> add_customer_fee()
-        {:ok, best_quote}
+        diagnosis.quotes
+        |> Enum.map(fn quote ->
+          %{quote | total_amount: calculate_total_amount(quote)}
+        end)
+        |> Enum.sort(& &1.total_amount < &2.total_amount)
+        |> List.first
+        |> case do
+          nil ->
+            {:error, "there are no quotes yet"}
+          best_quote ->
+            {:ok, add_customer_fee(best_quote)}
+        end
     end
   end
 
