@@ -18,6 +18,7 @@ defmodule EasyFixApiWeb.CustomerOrderView do
       conclusion_date: DateView.render("iso_at_sao_paulo_tz", customer_order.conclusion_date),
       diagnosis: render_one(customer_order.diagnosis, EasyFixApiWeb.DiagnosisView, "diagnosis.json"),
       customer_id: customer_order.customer.id,
+      accepted_quote: render_one(customer_order.accepted_quote, EasyFixApiWeb.CustomerQuoteView, "customer_quote.json"),
     }
   end
 end

@@ -416,6 +416,12 @@ defmodule EasyFixApi.Orders do
     |> Repo.update()
   end
 
+  def set_order_accepted_quote(%Order{} = order, attrs) do
+    order
+    |> Order.set_accepted_quote_changeset(attrs)
+    |> Repo.update()
+  end
+
   def update_order(%Order{} = order, attrs) do
     order
     |> Order.changeset(attrs)

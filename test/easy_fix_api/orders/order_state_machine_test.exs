@@ -68,35 +68,38 @@ defmodule EasyFixApi.OrderStateMachineTest do
       order =
         create_order_with_diagnosis()
         |> update_order_state(:quoted_by_garages)
-      %{order_id: order.id}
+
+      {quote, _garage} = create_quote_for_order(order)
+      {%{order_id: order.id}, quote}
     end
 
     test "goes to timeout when timeout" do
-      data = order_at_quoted_by_garages()
+      {data, _quote} = order_at_quoted_by_garages()
       {:ok, _} = OrderStateMachine.start_link data
 
       Process.sleep gt_timeout(:quoted_by_garages)
       assert {:timeout, _} = OrderStateMachine.get_state data[:order_id]
     end
     test "goes to quote_accepted_by_customer when customer_clicked accept_quote" do
-      data = order_at_quoted_by_garages()
+      {data, quote} = order_at_quoted_by_garages()
       {:ok, _} = OrderStateMachine.start_link data
 
-      {:ok, _updated_order} = OrderStateMachine.customer_clicked data[:order_id], :accept_quote
+      attrs = %{accepted_quote_id: quote.id}
+      {:ok, _updated_order} = OrderStateMachine.customer_clicked data[:order_id], :accept_quote, attrs
       assert {:quote_accepted_by_customer, _} = OrderStateMachine.get_state data[:order_id]
     end
     test "goes to quote_not_accepted_by_customer when customer_clicked not_accept_quote" do
-      data = order_at_quoted_by_garages()
+      {data, _quote} = order_at_quoted_by_garages()
       {:ok, _} = OrderStateMachine.start_link data
 
-      {:ok, _updated_order} = OrderStateMachine.customer_clicked data[:order_id], :not_accept_quote
+      {:ok, _updated_order} = OrderStateMachine.customer_clicked data[:order_id], :not_accept_quote, nil
       assert {:quote_not_accepted_by_customer, _} = OrderStateMachine.get_state data[:order_id]
     end
     test "returns error from quote_accepted_by_customer when customer_clicked invalid event" do
-      data = order_at_quoted_by_garages()
+      {data, _quote} = order_at_quoted_by_garages()
       {:ok, _} = OrderStateMachine.start_link data
 
-      {:error, _reason} = OrderStateMachine.customer_clicked data[:order_id], :some_invalid_event
+      {:error, _reason} = OrderStateMachine.customer_clicked data[:order_id], :some_invalid_event, nil
       assert {:quoted_by_garages, _} = OrderStateMachine.get_state data[:order_id]
     end
   end
@@ -127,7 +130,7 @@ defmodule EasyFixApi.OrderStateMachineTest do
 
   def create_quote_for_order(order) do
     garage = insert(:garage)
-    quote =
+    {:ok, quote} =
       params_for(:quote)
       |> put_in([:parts], parts_for_quote())
       |> put_in([:diagnosis_id], order.diagnosis.id)

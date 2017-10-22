@@ -9,7 +9,7 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
       add :state_due_date, :utc_datetime
       add :conclusion_date, :utc_datetime
 
-      add :customer_id, references(:customers, on_delete: :nothing)
+      add :customer_id, references(:customers, on_delete: :nilify_all)
 
       timestamps(type: :timestamptz)
     end
@@ -61,5 +61,9 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
       timestamps(type: :timestamptz)
     end
     create unique_index(:quotes_parts, [:quote_id, :part_id])
+
+    alter table(:orders) do
+      add :accepted_quote_id, references(:quotes)
+    end
   end
 end

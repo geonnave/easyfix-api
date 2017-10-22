@@ -10,6 +10,7 @@ defmodule EasyFixApi.Orders.Order do
 
     has_one :diagnosis, EasyFixApi.Orders.Diagnosis
     belongs_to :customer, EasyFixApi.Accounts.Customer
+    belongs_to :accepted_quote, EasyFixApi.Orders.Quote
 
     timestamps(type: :utc_datetime)
   end
@@ -33,6 +34,12 @@ defmodule EasyFixApi.Orders.Order do
     |> validate_required([:state])
   end
 
+  def set_accepted_quote_changeset(struct, attrs) do
+    struct
+    |> cast(attrs, [:accepted_quote_id])
+    |> validate_required([:accepted_quote_id])
+  end
+
   @assoc_types %{diagnosis: :map, customer_id: :integer}
   def assoc_changeset(attrs) do
     {attrs, @assoc_types}
@@ -43,7 +50,8 @@ defmodule EasyFixApi.Orders.Order do
   def all_nested_assocs do
     [
       diagnosis: [EasyFixApi.Orders.Diagnosis.all_nested_assocs],
-      customer: [EasyFixApi.Accounts.Customer.all_nested_assocs]
+      customer: [EasyFixApi.Accounts.Customer.all_nested_assocs],
+      accepted_quote: [EasyFixApi.Orders.Quote.all_nested_assocs],
     ]
   end
 end
