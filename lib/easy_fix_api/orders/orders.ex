@@ -120,6 +120,12 @@ defmodule EasyFixApi.Orders do
     end
   end
 
+  def update_diagnosis_expiration(%Diagnosis{} = diagnosis, attrs) do
+    diagnosis
+    |> Diagnosis.update_expiration_changeset(attrs)
+    |> Repo.update()
+  end
+
   def delete_diagnosis(%Diagnosis{} = diagnosis) do
     Repo.delete(diagnosis)
   end
@@ -433,7 +439,7 @@ defmodule EasyFixApi.Orders do
         state_due_date = calculate_state_due_date(state)
 
         {:ok, diagnosis} = create_diagnosis(order_assoc_attrs[:diagnosis])
-        {:ok, diagnosis} = update_diagnosis(diagnosis, %{expiration_date: state_due_date})
+        {:ok, diagnosis} = update_diagnosis_expiration(diagnosis, %{expiration_date: state_due_date})
 
         order_changeset
         |> put_change(:state, state)

@@ -37,7 +37,12 @@ defmodule EasyFixApi.Orders.Diagnosis do
 
   def update_changeset(struct, attrs) do
     struct
-    |> cast(attrs, [:accepts_used_parts, :comment, :need_tow_truck, :expiration_date, :vehicle_mileage, :parts])
+    |> cast(attrs, [:accepts_used_parts, :comment, :need_tow_truck, :vehicle_mileage, :parts])
+  end
+
+  def update_expiration_changeset(struct, attrs) do
+    struct
+    |> cast(attrs, [:expiration_date])
   end
 
   @assoc_types %{parts: {:array, :map}, vehicle_id: :integer}
