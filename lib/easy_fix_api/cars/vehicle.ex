@@ -14,7 +14,8 @@ defmodule EasyFixApi.Cars.Vehicle do
     timestamps(type: :utc_datetime)
   end
 
-  @required_fields ~w(production_year model_year vehicle_id_number mileage plate)a
+  @optional_fields ~w(vehicle_id_number)a
+  @required_fields ~w(production_year model_year mileage plate)a
 
   def create_changeset(attrs) do
     %__MODULE__{}
@@ -23,7 +24,7 @@ defmodule EasyFixApi.Cars.Vehicle do
 
   def changeset(vehicle, attrs) do
     vehicle
-    |> cast(attrs, @required_fields)
+    |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
   end
 
