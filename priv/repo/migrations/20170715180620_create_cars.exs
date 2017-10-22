@@ -25,6 +25,8 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Cars do
 
       timestamps(type: :timestamptz)
     end
+    create unique_index(:vehicles, [:plate])
+    create unique_index(:vehicles, [:vehicle_id_number])
 
     create table(:vehicles_customers) do
       add :vehicle_id, references(:vehicles)
