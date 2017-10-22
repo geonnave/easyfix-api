@@ -22,8 +22,6 @@ defmodule EasyFixApi.Factory do
   def quote_factory do
     %Quote{
       service_cost: 42,
-      status: "new",
-      sub_status: "new",
       due_date: "2017-08-07T17:44:57.913808Z",
       quotes_parts: build_list(2, :quote_part)
     }
@@ -94,7 +92,6 @@ defmodule EasyFixApi.Factory do
       accepts_used_parts: true,
       comment: "some comment",
       need_tow_truck: true,
-      status: "some status",
       expiration_date: "2017-08-05 17:44:57.913808Z",
       vehicle: build(:vehicle),
     }

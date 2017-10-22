@@ -3,10 +3,8 @@ defmodule EasyFixApi.Orders.Quote do
   import Ecto.Changeset, warn: false
 
   schema "quotes" do
+    field :state, :string
     field :service_cost, Money.Ecto.Type
-    field :status, :string
-    field :sub_status, :string
-
     field :due_date, :utc_datetime
     field :conclusion_date, :utc_datetime
 
@@ -23,7 +21,7 @@ defmodule EasyFixApi.Orders.Quote do
     timestamps(type: :utc_datetime)
   end
 
-  @optional_attrs ~w(due_date status sub_status)
+  @optional_attrs ~w(due_date state)
   @required_attrs ~w(service_cost)a
   @assoc_attrs ~w(diagnosis_id issuer_id issuer_type parts)a
 

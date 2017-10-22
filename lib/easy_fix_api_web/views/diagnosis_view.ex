@@ -14,7 +14,7 @@ defmodule EasyFixApiWeb.DiagnosisView do
     %{id: diagnosis.id,
       accepts_used_parts: diagnosis.accepts_used_parts,
       need_tow_truck: diagnosis.need_tow_truck,
-      status: diagnosis.status,
+      state: diagnosis.state,
       comment: diagnosis.comment,
       expiration_date: DateView.render("iso_at_sao_paulo_tz", diagnosis.expiration_date),
       vehicle_mileage: diagnosis.vehicle_mileage,

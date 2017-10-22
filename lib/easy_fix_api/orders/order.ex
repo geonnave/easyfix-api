@@ -4,9 +4,8 @@ defmodule EasyFixApi.Orders.Order do
 
   schema "orders" do
     field :state, EasyFixApi.Orders.StateEnum # this information is mostly useful to internal business logic
+    field :state_meta, :string
     field :state_due_date, :utc_datetime
-    field :status, :string # this information is mostly useful to final users
-
     field :conclusion_date, :utc_datetime
 
     has_one :diagnosis, EasyFixApi.Orders.Diagnosis

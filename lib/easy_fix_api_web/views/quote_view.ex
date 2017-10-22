@@ -13,8 +13,7 @@ defmodule EasyFixApiWeb.QuoteView do
   def render("quote.json", %{quote: quote}) do
     %{id: quote.id,
       service_cost: quote.service_cost.amount,
-      status: quote.status,
-      sub_status: quote.sub_status,
+      state: quote.state,
       opening_date: DateView.render("iso_at_sao_paulo_tz", quote.inserted_at),
       due_date: DateView.render("iso_at_sao_paulo_tz", quote.due_date),
       conclusion_date: DateView.render("iso_at_sao_paulo_tz", quote.conclusion_date),

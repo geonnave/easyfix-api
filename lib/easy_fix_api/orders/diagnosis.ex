@@ -6,7 +6,7 @@ defmodule EasyFixApi.Orders.Diagnosis do
     field :accepts_used_parts, :boolean, default: false
     field :comment, :string
     field :need_tow_truck, :boolean, default: false
-    field :status, :string
+    field :state, :string
     field :expiration_date, :utc_datetime
     field :vehicle_mileage, :integer
 
@@ -21,7 +21,7 @@ defmodule EasyFixApi.Orders.Diagnosis do
     timestamps(type: :utc_datetime)
   end
 
-  @optional_attrs ~w(comment status expiration_date vehicle_mileage)
+  @optional_attrs ~w(comment state expiration_date vehicle_mileage)
   @required_attrs ~w(accepts_used_parts need_tow_truck)a
 
   def create_changeset(attrs) do

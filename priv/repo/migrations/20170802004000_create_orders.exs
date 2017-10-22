@@ -5,9 +5,8 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
     EasyFixApi.Orders.StateEnum.create_type
     create table(:orders) do
       add :state, :order_state
+      add :state_meta, :string
       add :state_due_date, :utc_datetime
-      add :status, :string
-
       add :conclusion_date, :utc_datetime
 
       add :customer_id, references(:customers, on_delete: :nothing)
@@ -16,9 +15,9 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
     end
 
     create table(:diagnosis) do
+      add :state, :string # not used for now
       add :accepts_used_parts, :boolean, default: false, null: false
       add :need_tow_truck, :boolean, default: false, null: false
-      add :status, :string
       add :comment, :string
       add :expiration_date, :utc_datetime
       add :vehicle_mileage, :integer
@@ -40,10 +39,8 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
 
     EasyFixApi.Accounts.UserTypeEnum.create_type
     create table(:quotes) do
+      add :state, :string
       add :service_cost, :integer
-      add :status, :string
-      add :sub_status, :string
-
       add :due_date, :utc_datetime
       add :conclusion_date, :utc_datetime
 
