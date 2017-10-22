@@ -11,18 +11,18 @@ defmodule EasyFixApi.Orders.Diagnosis do
     field :vehicle_mileage, :integer
 
     has_many :quotes, EasyFixApi.Orders.Quote, on_delete: :delete_all
-    belongs_to :order, EasyFixApi.Orders.Order
-
     has_many :diagnosis_parts, EasyFixApi.Orders.DiagnosisPart
-    has_many :parts, through: [:diagnosis_parts, :part]
-
+    belongs_to :order, EasyFixApi.Orders.Order
     belongs_to :vehicle, EasyFixApi.Cars.Vehicle
+
+    field :parts, {:array, :map}, virtual: true
 
     timestamps(type: :utc_datetime)
   end
 
   @optional_attrs ~w(comment state expiration_date vehicle_mileage)
   @required_attrs ~w(accepts_used_parts need_tow_truck)a
+  @assoc_attrs ~w(parts vehicle_id)a
 
   def create_changeset(attrs) do
     %__MODULE__{}
@@ -31,14 +31,13 @@ defmodule EasyFixApi.Orders.Diagnosis do
 
   def changeset(struct, attrs) do
     struct
-    |> cast(attrs, @optional_attrs ++ @required_attrs)
-    |> validate_required(@required_attrs)
+    |> cast(attrs, @optional_attrs ++ @required_attrs ++ @assoc_attrs)
+    |> validate_required(@required_attrs ++ @assoc_attrs)
   end
 
   def update_changeset(struct, attrs) do
     struct
-    |> cast(attrs, [:expiration_date])
-    |> validate_required([:expiration_date])
+    |> cast(attrs, [:accepts_used_parts, :comment, :need_tow_truck, :expiration_date, :vehicle_mileage, :parts])
   end
 
   @assoc_types %{parts: {:array, :map}, vehicle_id: :integer}
@@ -50,7 +49,7 @@ defmodule EasyFixApi.Orders.Diagnosis do
 
   def all_nested_assocs do
     [
-      parts: [:garage_category, [part_sub_group: [part_group: :part_system]]],
+      diagnosis_parts: [part: EasyFixApi.Parts.Part.all_nested_assocs],
       vehicle: [EasyFixApi.Cars.Vehicle.all_nested_assocs]
     ]
   end

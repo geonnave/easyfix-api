@@ -10,8 +10,6 @@ defmodule EasyFixApi.Orders.DiagnosisPart do
     timestamps(type: :utc_datetime)
   end
 
-  @required_attrs ~w(quantity)a
-
   def create_changeset(attrs) do
     %__MODULE__{}
     |> changeset(attrs)
@@ -19,14 +17,12 @@ defmodule EasyFixApi.Orders.DiagnosisPart do
 
   def changeset(struct, attrs) do
     struct
-    |> cast(attrs, @required_attrs)
-    |> validate_required(@required_attrs)
+    |> cast(attrs, [:quantity, :part_id])
+    |> validate_required([:quantity, :part_id])
   end
 
-  @assoc_types %{part_id: :integer}
-  def assoc_changeset(attrs) do
-    {attrs, @assoc_types}
-    |> cast(attrs, Map.keys(@assoc_types))
-    |> validate_required(Map.keys(@assoc_types))
+  def update_changeset(struct, attrs) do
+    struct
+    |> cast(attrs, [:quantity, :part_id])
   end
 end

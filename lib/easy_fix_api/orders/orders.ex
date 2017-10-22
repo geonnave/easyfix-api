@@ -7,24 +7,43 @@ defmodule EasyFixApi.Orders do
   alias EasyFixApi.{Parts, Accounts, Repo, Helpers}
 
   alias EasyFixApi.Parts.Part
+  alias EasyFixApi.Cars.Vehicle
   alias EasyFixApi.Orders.{DiagnosisPart, Order, Diagnosis}
 
   def create_diagnosis_part(attrs \\ %{}, diagnosis_id) do
-    with diagnosis_part_changeset = %{valid?: true} <- DiagnosisPart.create_changeset(attrs),
-         diagnosis_part_assoc_changeset = %{valid?: true} <- DiagnosisPart.assoc_changeset(attrs),
-         diagnosis_part_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(diagnosis_part_assoc_changeset) do
+    with diagnosis_part_changeset = %{valid?: true} <- DiagnosisPart.create_changeset(attrs) do
+      diagnosis = get_diagnosis!(diagnosis_id)
+      part = Parts.get_part!(diagnosis_part_changeset.changes[:part_id])
 
-        part = Parts.get_part!(diagnosis_part_assoc_attrs[:part_id])
-        diagnosis = get_diagnosis!(diagnosis_id)
-
-        diagnosis_part_changeset
-        |> put_assoc(:part, part)
-        |> put_assoc(:diagnosis, diagnosis)
-        |> Repo.insert()
+      diagnosis_part_changeset
+      |> put_assoc(:part, part)
+      |> put_assoc(:diagnosis, diagnosis)
+      |> Repo.insert()
     else
       %{valid?: false} = changeset ->
         {:error, changeset}
     end
+  end
+
+  def update_diagnosis_part(%DiagnosisPart{} = diagnosis_part, attrs \\ %{}) do
+    with diagnosis_part_changeset = %{valid?: true} <- DiagnosisPart.update_changeset(diagnosis_part, attrs) do
+        diagnosis_part_changeset
+        |> case do
+          changeset = %{changes: %{part_id: part_id}} ->
+            part = Parts.get_part!(part_id)
+            put_assoc(changeset, :part, part)
+          changeset ->
+            changeset
+        end
+        |> Repo.update()
+    else
+      %{valid?: false} = changeset ->
+        {:error, changeset}
+    end
+  end
+
+  def delete_diagnosis_part(%DiagnosisPart{} = diagnosis_part) do
+    Repo.delete(diagnosis_part)
   end
 
   # Diagnosis
@@ -41,39 +60,64 @@ defmodule EasyFixApi.Orders do
 
   def create_diagnosis(attrs \\ %{}) do
     with diagnosis_changeset = %{valid?: true} <- Diagnosis.create_changeset(attrs),
-         diagnosis_assoc_changeset = %{valid?: true} <- Diagnosis.assoc_changeset(attrs),
-         diagnosis_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(diagnosis_assoc_changeset) do
+         %{vehicle_id: vehicle_id} = diagnosis_changeset.changes,
+         vehicle when not is_nil(vehicle) <- Repo.get(Vehicle, vehicle_id) do
 
-      vehicle = EasyFixApi.Cars.get_vehicle!(diagnosis_assoc_attrs[:vehicle_id])
       Repo.transaction fn ->
-        diagnosis_changeset
-        |> put_assoc(:vehicle, vehicle)
-        |> Repo.insert()
-        |> case do
-          {:ok, diagnosis} ->
-            for part_attrs <- diagnosis_assoc_attrs[:parts] do
-              case create_diagnosis_part(part_attrs, diagnosis.id) do
-                {:error, diagnosis_part_error_changeset} ->
-                  Repo.rollback(diagnosis_part_error_changeset)
-                _ ->
-                  nil
-              end
-            end
-            Repo.preload(diagnosis, Diagnosis.all_nested_assocs)
-          error ->
-            error
+        diagnosis =
+          diagnosis_changeset
+          |> delete_change(:vehicle_id)
+          |> put_assoc(:vehicle, vehicle)
+          |> Repo.insert!()
+
+        for part_attrs <- diagnosis_changeset.changes[:parts] do
+          case create_diagnosis_part(part_attrs, diagnosis.id) do
+            {:error, diagnosis_part_error_changeset} ->
+              Repo.rollback(diagnosis_part_error_changeset)
+            _ ->
+              nil
+          end
         end
+
+        diagnosis
+        |> Repo.preload(Diagnosis.all_nested_assocs)
+      end
+    else
+      %{valid?: false} = changeset ->
+        {:error, changeset}
+      nil ->
+        {:error, "vehicle does not exist"}
+      error ->
+        error
+    end
+  end
+
+  def update_diagnosis(%Diagnosis{} = diagnosis, attrs) do
+    with diagnosis_changeset = %{valid?: true} <- Diagnosis.update_changeset(diagnosis, attrs) do
+      Repo.transaction fn ->
+        if diagnosis_changeset.changes[:parts] do
+          for diagnosis_part <- diagnosis.diagnosis_parts do
+            {:ok, _} = delete_diagnosis_part(diagnosis_part)
+          end
+          for part_attrs <- diagnosis_changeset.changes[:parts] do
+            case create_diagnosis_part(part_attrs, diagnosis.id) do
+              {:error, diagnosis_part_error_changeset} ->
+                Repo.rollback(diagnosis_part_error_changeset)
+              _ ->
+                nil
+            end
+          end
+        end
+
+        diagnosis_changeset
+        |> Repo.update!()
+
+        get_diagnosis!(diagnosis.id)
       end
     else
       %{valid?: false} = changeset ->
         {:error, changeset}
     end
-  end
-
-  def update_diagnosis(%Diagnosis{} = diagnosis, attrs) do
-    diagnosis
-    |> Diagnosis.update_changeset(attrs)
-    |> Repo.update()
   end
 
   def delete_diagnosis(%Diagnosis{} = diagnosis) do
