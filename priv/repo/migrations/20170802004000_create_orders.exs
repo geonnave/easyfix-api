@@ -8,6 +8,8 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
       add :state_meta, :string
       add :state_due_date, :utc_datetime
       add :conclusion_date, :utc_datetime
+      add :rating, :integer
+      add :rating_comment, :string
 
       add :customer_id, references(:customers, on_delete: :nilify_all)
 

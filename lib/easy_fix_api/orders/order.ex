@@ -7,6 +7,8 @@ defmodule EasyFixApi.Orders.Order do
     field :state_meta, :string
     field :state_due_date, :utc_datetime
     field :conclusion_date, :utc_datetime
+    field :rating, :integer
+    field :rating_comment, :string
 
     has_one :diagnosis, EasyFixApi.Orders.Diagnosis
     belongs_to :customer, EasyFixApi.Accounts.Customer
@@ -38,6 +40,13 @@ defmodule EasyFixApi.Orders.Order do
     struct
     |> cast(attrs, [:accepted_quote_id])
     |> validate_required([:accepted_quote_id])
+  end
+
+  def set_rating_changeset(struct, attrs) do
+    struct
+    |> cast(attrs, [:rating, :rating_comment])
+    |> validate_required([:rating])
+    |> validate_inclusion(:rating, [1, 5])
   end
 
   @assoc_types %{diagnosis: :map, customer_id: :integer}

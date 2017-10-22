@@ -18,10 +18,12 @@ defmodule EasyFixApiWeb.GarageOrderView do
       state_due_date: DateView.render("iso_at_sao_paulo_tz", order.state_due_date),
       opening_date: DateView.render("iso_at_sao_paulo_tz", order.inserted_at),
       conclusion_date: DateView.render("iso_at_sao_paulo_tz", order.conclusion_date),
-      customer_id: order.customer.id,
+      customer_id: order.customer_id,
       diagnosis: render_one(order.diagnosis, EasyFixApiWeb.DiagnosisView, "diagnosis.json"),
       quote: render_one(quote, EasyFixApiWeb.QuoteView, "quote.json"),
       accepted_quote_id: order.accepted_quote_id,
+      rating: order.rating,
+      rating_comment: order.rating_comment,
     }
   end
 end
