@@ -66,13 +66,17 @@ defmodule EasyFixApi.Cars do
          vehicle_assoc_attrs <- Helpers.apply_changes_ensure_atom_keys(vehicle_assoc_changeset) do
 
       model = get_model!(vehicle_assoc_attrs[:model_id])
+
       vehicle_id_number = if vehicle_changeset.changes[:vehicle_id_number] do
         String.upcase(vehicle_changeset.changes[:vehicle_id_number])
+      end
+      plate = if vehicle_changeset.changes[:plate] do
+        String.upcase(vehicle_changeset.changes[:plate])
       end
 
       {:ok, vehicle} =
         vehicle_changeset
-        |> put_change(:plate, String.upcase(vehicle_changeset.changes[:plate]))
+        |> put_change(:plate, plate)
         |> put_change(:vehicle_id_number, vehicle_id_number)
         |> put_assoc(:model, model)
         |> Repo.insert()
