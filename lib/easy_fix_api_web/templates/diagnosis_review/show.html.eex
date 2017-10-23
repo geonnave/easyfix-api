@@ -1,0 +1,77 @@
+<h2>Diagnóstico #<%= @diag.id %> </h2>
+
+<table class="ui celled table">
+  <thead>
+    <tr><th/>Campo</th></th>
+    <th>Valor</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td>Comentário</td>
+      <td>
+        <%= @diag.comment || '(vazio)' %>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Guincho?
+      </td>
+      <td>
+        <%= @diag.need_tow_truck %>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Aceita peças usadas?
+      </td>
+      <td>
+        <%= @diag.accepts_used_parts %>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Expira em
+      </td>
+      <td>
+        <%= EasyFixApiWeb.DateView.render_human("iso_at_sao_paulo_tz", @diag.expiration_date) %>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Peças
+      </td>
+      <td>
+        <%= for diag_part <- @diag.diagnosis_parts do %>
+          <div class="ui grid" id="<%= diag_part.id %>">
+            <div class="row middle aligned" style="padding-left: 12px">
+              <div class="ten wide column">
+                <div class="ui fluid search selection dropdown">
+                  <input type="hidden" name="country" value="<%= diag_part.part.id %>">
+                  <i class="dropdown icon"></i>
+                  <div class="default text">Selecione uma peça</div>
+                  <div class="menu">
+                    <%= for part <- @parts do %>
+                      <div class="item" data-value="<%= part.id %>"> <%= part.name %> </div>
+                    <%= end %>
+                  </div>
+                </div>
+              </div>
+              <div class="four wide column">
+                <div class="ui fluid input">
+                  <input type="number" name="quantity" value="<%= diag_part.quantity %>">
+                </div>
+              </div>
+              <div class="two wide column">
+                <button class="ui large negative icon button">
+                  <i class="trash icon"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        <%= end %>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Cliente</h3>

@@ -1,0 +1,31 @@
+<h2>Diagnósticos disponíveis:</h2>
+
+<table class="ui selectable unstackable celled table">
+  <%# <caption></caption> %>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Cliente</th>
+      <th>Carro</th>
+      <th>Estado</th>
+    </tr>
+  </thead>
+  <%= for diag <- @diagnosis do %>
+    <tbody>
+      <tr>
+        <td>
+          <%= link "#{diag.id}", to: diagnosis_review_path(@conn, :show, diag)%>
+        </td>
+        <td>
+          <%= link "#{diag.order.customer.name}", to: diagnosis_review_path(@conn, :show, diag)%>
+        </td>
+        <td>
+          <%= link "#{diag.vehicle.model.name}", to: diagnosis_review_path(@conn, :show, diag)%>
+        </td>
+        <td>
+          <%= link "#{diag.order.state}", to: diagnosis_review_path(@conn, :show, diag)%>
+        </td>
+      </tr>
+    </tbody>
+  <% end %>
+</table>
