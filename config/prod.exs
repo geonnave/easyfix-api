@@ -22,7 +22,7 @@ config :easy_fix_api, EasyFixApiWeb.Endpoint,
   version: Application.spec(:easy_fix_api, :vsn)
 
 # Do not print debug messages in production
-config :logger, level: :info
+config :logger, level: :debug
 
 # Configure your database (without credentials)
 config :easy_fix_api, EasyFixApi.Repo,
@@ -31,7 +31,26 @@ config :easy_fix_api, EasyFixApi.Repo,
 
 config :easy_fix_api, EasyFixApi.Mailer,
   adapter: Bamboo.MailgunAdapter,
-  domain: "easyfix.net.br"
+  domain: "easyfix.net.br",
+  api_key: "key-49f5d6429dafd96af42d6b65fa5dd3f5"
+
+# Information about state
+config :easy_fix_api, :order_states,
+  started: [],
+  created_with_diagnosis: [
+    timeout: [value: [minutes: 5], event: :to_quoted_by_garages],
+  ],
+  not_quoted_by_garages: [final_state: true, macro_state: :canceled],
+  quoted_by_garages: [
+    timeout: [value: [minutes: 5], event: :to_quote_accepted_by_customer]
+  ],
+  quote_not_accepted_by_customer: [final_state: true, macro_state: :canceled],
+  quote_accepted_by_customer: [
+    timeout: [value: [minutes: 5], event: :to_finish_by_garage]
+  ],
+  finished_by_garage: [final_state: true],
+  # timeout_on_quoted_by_garages: [final_state: true],
+  timeout: [final_state: true]
 
 # ## SSL Support
 #

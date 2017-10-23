@@ -77,15 +77,6 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
         reply_action = {:reply, from, {:error, changeset}}
         {:next_state, :finished_error, put_in(data[:changeset], [reply_action])}
     end
-    # case Orders.update_order_state(order, next_state_attrs) do
-    #   {:ok, updated_order = %{state: state, state_due_date: state_due_date}} ->
-    #     reply_action = {:reply, from, {:ok, updated_order}}
-    #     timeout_action = state_timeout_action(state, state_due_date)
-    #     {:next_state, state, data, [reply_action, timeout_action]}
-    #   {:error, changeset} ->
-    #     reply_action = {:reply, from, {:error, changeset}}
-    #     {:next_state, :finished_error, put_in(data[:changeset], [reply_action])}
-    # end
   end
   def handle_event({:call, from}, {:customer_clicked, :not_accept_quote, attrs}, :quoted_by_garages, data) do
     Logger.debug "{:call, from}, {:customer_clicked, :not_accept_quote, #{inspect attrs}}, :quoted_by_garages"

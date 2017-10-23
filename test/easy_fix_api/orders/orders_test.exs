@@ -174,7 +174,10 @@ defmodule EasyFixApi.OrdersTest do
       quote_total_amount = Orders.calculate_total_amount(quote)
 
       [bpart1, bpart2] = quote.quotes_parts
-      total_amount = bpart1.price |> Money.add(bpart2.price) |> Money.add(quote.service_cost)
+      total_amount =
+        quote.service_cost
+        |> Money.add(Money.multiply(bpart1.price, bpart1.quantity))
+        |> Money.add(Money.multiply(bpart2.price, bpart2.quantity))
 
       assert total_amount == quote_total_amount
     end

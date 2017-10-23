@@ -198,9 +198,7 @@ defmodule EasyFixApi.Orders do
         {:error, "order not found for this customer"}
       diagnosis ->
         diagnosis.quotes
-        |> Enum.map(fn quote ->
-          %{quote | total_amount: calculate_total_amount(quote)}
-        end)
+        |> Enum.map(&with_total_amount/1)
         |> Enum.sort(& &1.total_amount < &2.total_amount)
         |> List.first
         |> case do

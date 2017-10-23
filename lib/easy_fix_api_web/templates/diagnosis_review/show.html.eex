@@ -52,7 +52,7 @@
                   <div class="menu">
                     <%= for part <- @parts do %>
                       <div class="item" data-value="<%= part.id %>"> <%= part.name %> </div>
-                    <%= end %>
+                    <% end %>
                   </div>
                 </div>
               </div>
@@ -68,7 +68,7 @@
               </div>
             </div>
           </div>
-        <%= end %>
+        <% end %>
       </td>
     </tr>
   </tbody>
