@@ -222,8 +222,10 @@ defmodule EasyFixApi.Orders do
   end
   def calculate_total_amount(quotes_parts, service_cost) do
     quotes_parts
-    |> Enum.reduce(service_cost, fn quotes_parts, acc ->
-      Money.add(acc, quotes_parts.price)
+    |> Enum.reduce(service_cost, fn quote_part, acc ->
+      quote_part.price
+      |> Money.multiply(quote_part.quantity)
+      |> Money.add(acc)
     end)
   end
 
