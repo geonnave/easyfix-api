@@ -20,13 +20,17 @@ defmodule EasyFixApi.ProdSeeds do
     |> log_filename()
     |> read_from_path_priv_repo()
     |> parse_vehicles_models()
+    |> Enum.sort(fn {brand_name1, _}, {brand_name2, _} -> brand_name1 <= brand_name2 end)
     |> Enum.map(fn({brand_name, models}) ->
       Repo.transaction(fn ->
         brand = Repo.insert!(%Brand{name: brand_name})
-        for model <- models do
+
+        models
+        |> Enum.sort(fn model1, model2 -> model1 <= model2 end)
+        |> Enum.each(fn model ->
           model = Ecto.build_assoc(brand, :models, %{name: model})
           Repo.insert! model
-        end
+        end)
       end)
     end)
   end
