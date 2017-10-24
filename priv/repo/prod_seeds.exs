@@ -41,7 +41,7 @@ defmodule EasyFixApi.ProdSeeds do
   end
 
   def run_parts do
-    ~w[chassis motor interior exterior eletronica]
+    ~w[chassis motor interior exterior eletronica transmissao]
     |> Enum.each(&run_parts_system/1)
   end
 
