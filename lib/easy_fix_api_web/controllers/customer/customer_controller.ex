@@ -1,7 +1,7 @@
 defmodule EasyFixApiWeb.CustomerController do
   use EasyFixApiWeb, :controller
 
-  alias EasyFixApi.Accounts
+  alias EasyFixApi.{Accounts, Emails, Mailer}
   alias EasyFixApi.Accounts.Customer
 
   action_fallback EasyFixApiWeb.FallbackController
@@ -16,6 +16,8 @@ defmodule EasyFixApiWeb.CustomerController do
   def create(conn, %{"customer" => customer_params}) do
     with {:ok, %Customer{} = customer} <- Accounts.create_customer(customer_params) do
       {:ok, jwt, _full_claims} = Guardian.encode_and_sign(customer.user, :token)
+
+      Emails.new_customer_email(customer) |> Mailer.deliver_now
 
       conn
       |> put_status(:created)
