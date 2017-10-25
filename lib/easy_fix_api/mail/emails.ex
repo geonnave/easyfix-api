@@ -13,8 +13,23 @@ defmodule EasyFixApi.Emails do
     |> Enum.each(&Mailer.deliver_now/1)
   end
 
+  def quoted_by_garages(customer) do
+    ec2_quote_url =  "http://#{@url[:host]}"
+
+    new_email()
+    |> to("#{customer.name} <#{customer.user.email}>")
+    |> from("Easyfix <contato@easyfix.net.br>")
+    |> subject("Seu Orçamento Easyfix chegou!")
+    |> html_body("""
+Olá #{customer.name}, boas notícas!
+<br><br>
+As oficinas EasyFix já orçaram o seu pedido, e nós encontramos o melhor preço pra você.
+Acesse o nosso app e confira: <a href="#{ec2_quote_url}" target="_blank">EasyFix App</a>.
+    """)
+  end
+
   def new_order_email(garage, order) do
-    ec2_quote_url =  "http://#{@url[:host]}:8080/#/orders/#{order.id}"
+    ec2_quote_url =  "http://http://ec2-18-221-115-152.us-east-2.compute.amazonaws.com:8080/#/orders/#{order.id}"
 
     new_email()
     |> to("#{garage.name} <#{garage.user.email}>")
@@ -25,7 +40,7 @@ Olá #{garage.name}!
 <br><br>
 Um cliente acaba de nos enviar um pedido. Ele certamente está ansioso para receber o seu orçamento.
 <br><br>
-E aí, vamos orçar? <a href="#{ec2_quote_url}">Clique aqui</a> para abrir o painel de orçamento Easyfix.
+E aí, vamos orçar? <a href="#{ec2_quote_url}" target="_blank">Clique aqui</a> para abrir o painel de orçamento Easyfix.
     """)
   end
 

@@ -1,7 +1,7 @@
 defmodule EasyFixApi.Orders.OrderStateMachine do
   use GenStateMachine
   require Logger
-  alias EasyFixApi.Orders
+  alias EasyFixApi.{Orders, Emails, Mailer}
 
   # Public API functions
 
@@ -42,8 +42,12 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
       _quotes ->
         order = Orders.get_order!(data[:order_id])
         next_state_attrs = next_state_attrs(:quoted_by_garages)
+
         case Orders.update_order_state(order, next_state_attrs) do
           {:ok, %{state: state, state_due_date: state_due_date}} ->
+            Emails.quoted_by_garages(order.customer)
+            |> Mailer.deliver_later
+
             {:next_state, state, data, [state_timeout_action(state, state_due_date)]}
           {:error, changeset} ->
             {:next_state, :finished_error, put_in(data[:changeset], changeset)}
