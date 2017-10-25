@@ -49,7 +49,7 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
       add :issuer_type, :user_type
       add :issuer_id, references(:users)
 
-      add :diagnosis_id, references(:diagnosis)
+      add :diagnosis_id, references(:diagnosis, on_delete: :nilify_all)
 
       timestamps(type: :timestamptz)
     end

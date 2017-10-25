@@ -187,7 +187,7 @@ defmodule EasyFixApi.Orders do
     end
   end
 
-  def get_customer_best_quote(customer_id, order_id) do
+  def get_customer_order_quotes(customer_id, order_id) do
     from(d in Diagnosis,
       join: o in Order, on: d.order_id == o.id,
       where: o.id == ^order_id and o.customer_id == ^customer_id,
@@ -196,18 +196,63 @@ defmodule EasyFixApi.Orders do
     |> case do
       nil ->
         {:error, "order not found for this customer"}
-      diagnosis ->
-        diagnosis.quotes
-        |> Enum.map(&with_total_amount/1)
-        |> Enum.sort(& &1.total_amount < &2.total_amount)
-        |> List.first
-        |> case do
-          nil ->
+      %Diagnosis{quotes: []} ->
             {:error, "there are no quotes yet"}
-          best_quote ->
-            {:ok, add_customer_fee(best_quote)}
-        end
+      diagnosis ->
+        {:ok, generate_customer_quotes_stats(diagnosis.quotes)}
     end
+  end
+
+  def generate_customer_quotes_stats([]),  do: %{}
+  def generate_customer_quotes_stats(quotes) do
+    sorted_quotes =
+      quotes
+      |> Repo.preload(Quote.all_nested_assocs)
+      |> Enum.map(&with_total_amount/1)
+      |> Enum.map(&add_customer_fee/1)
+      |> sort_quotes_by_total_amount()
+
+    best_price_quote = List.first(sorted_quotes)
+    best_price_quote_issuer = quote_issuer(best_price_quote)
+    worst_price_quote = List.last(sorted_quotes)
+    average_quote_price = average_quote_price(sorted_quotes)
+
+    %{
+      best_price_quote: best_price_quote,
+      best_price_quote_issuer: best_price_quote_issuer,
+      best_price_quote_issuer_type: garage_or_fixer?(best_price_quote_issuer),
+      average_quote_price: average_quote_price,
+      worst_quote_price: worst_price_quote.total_amount.amount,
+      saving_from_worst_quote: worst_price_quote.total_amount.amount - best_price_quote.total_amount.amount,
+      saving_from_average_quote: average_quote_price - best_price_quote.total_amount.amount,
+    }
+  end
+
+  def garage_or_fixer?(issuer) do
+    issuer.garage_categories
+    |> Enum.any?(& &1.name == "Autônomo")
+    |> case do
+      true ->
+        :fixer
+      false ->
+        :garage
+    end
+  end
+
+  def quote_issuer(%{issuer_type: :garage, issuer: issuer}) do
+    issuer.garage
+    |> Repo.preload([:address, :user, :garage_categories])
+  end
+
+  def average_quote_price(quotes) do
+    quotes
+    |> Enum.reduce(0, fn a_quote, acc -> acc + a_quote.total_amount.amount end)
+    |> Kernel./(length(quotes))
+    |> Kernel.round
+  end
+
+  def sort_quotes_by_total_amount(quotes) do
+    Enum.sort(quotes, &(&1.total_amount < &2.total_amount))
   end
 
   def with_total_amount(nil), do: nil

@@ -1,6 +1,6 @@
 defmodule EasyFixApiWeb.CustomerQuoteView do
   use EasyFixApiWeb, :view
-  alias EasyFixApiWeb.{CustomerQuoteView, DateView}
+  alias EasyFixApiWeb.{CustomerQuoteView}
   alias EasyFixApi.{Orders}
 
   def render("index.json", %{customer_quotes: customer_quotes}) do

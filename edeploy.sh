@@ -2,8 +2,8 @@
 
 set -e
 
-mix edeliver build release --verbose
+mix edeliver build release --skip-git-clean --skip-mix-clean --verbose
 mix edeliver deploy release to production --verbose
-mix edeliver start production --verbose
+mix edeliver restart production --verbose
 mix edeliver migrate production up --verbose
 

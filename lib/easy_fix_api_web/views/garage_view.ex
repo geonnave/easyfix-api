@@ -35,4 +35,14 @@ defmodule EasyFixApiWeb.GarageView do
       bank_account: render_one(garage.bank_account, EasyFixApiWeb.BankAccountView, "bank_account.json"),
       cnpj: garage.cnpj}
   end
+
+  def render("garage_contact.json", %{garage: garage}) do
+    %{id: garage.id,
+      name: garage.name,
+      owner_name: garage.owner_name,
+      email: garage.user.email,
+      phone: garage.phone,
+      address: render_one(garage.address, EasyFixApiWeb.AddressView, "address.json"),
+    }
+  end
 end
