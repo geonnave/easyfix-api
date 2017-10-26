@@ -191,13 +191,16 @@ defmodule EasyFixApi.Orders do
     from(d in Diagnosis,
       join: o in Order, on: d.order_id == o.id,
       where: o.id == ^order_id and o.customer_id == ^customer_id,
-      preload: [quotes: [quotes_parts: [part: ^EasyFixApi.Parts.Part.all_nested_assocs], issuer: [:garage]]])
+      preload: [quotes: [quotes_parts: [part: ^EasyFixApi.Parts.Part.all_nested_assocs],
+                issuer: [:garage]], order: []])
     |> Repo.one
     |> case do
       nil ->
         {:error, "order not found for this customer"}
+      %Diagnosis{order: %{state: order_state}} when order_state in [:created_with_diagnosis] ->
+        {:error, "garages are still quoting this order"}
       %Diagnosis{quotes: []} ->
-            {:error, "there are no quotes yet"}
+        {:error, "there are no quotes for this order"}
       diagnosis ->
         {:ok, generate_customer_quotes_stats(diagnosis.quotes)}
     end
