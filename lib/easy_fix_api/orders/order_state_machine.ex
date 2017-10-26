@@ -132,11 +132,11 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
   end
 
   def timeout_value(state) do
-    Application.get_env(:easy_fix_api, :order_states)[state][:timeout][:value][:milliseconds]
+    EasyFixApi.Orders.StateTimeouts.get()[state][:timeout][:value][:milliseconds]
   end
 
   def timeout_event(state) do
-    Application.get_env(:easy_fix_api, :order_states)[state][:timeout][:event]
+    EasyFixApi.Orders.StateTimeouts.get()[state][:timeout][:event]
   end
 
   def state_timeout_action(state, state_due_date) do

@@ -471,7 +471,7 @@ defmodule EasyFixApi.Orders do
   end
 
   def calculate_state_due_date(state) do
-    case Application.get_env(:easy_fix_api, :order_states)[state][:timeout] do
+    case EasyFixApi.Orders.StateTimeouts.get()[state][:timeout] do
       nil ->
         nil
       timeout_data ->

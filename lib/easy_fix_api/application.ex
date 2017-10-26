@@ -1,5 +1,8 @@
 defmodule EasyFixApi.Application do
   use Application
+  alias EasyFixApi.Orders
+  alias EasyFixApi.Orders.OrderStateMachine
+  require Logger
 
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
@@ -11,11 +14,32 @@ defmodule EasyFixApi.Application do
       supervisor(EasyFixApi.Repo, []),
       supervisor(EasyFixApiWeb.Endpoint, []),
       {Registry, [keys: :unique, name: Registry.OrderStateMachine]},
+      worker(EasyFixApi.Orders.StateTimeouts, []),
     ]
+
+    {:ok, pid} = Task.start(&start_state_machines/0)
+    Process.send_after pid, :start_state_machines, 3000
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: EasyFixApi.Supervisor]
     Supervisor.start_link(children, opts)
+  end
+
+  def start_state_machines do
+    receive do
+      :start_state_machines ->
+        Logger.info "Starting state machines..."
+
+        Orders.list_orders
+        |> Enum.each(fn order ->
+          case OrderStateMachine.start_link(order_id: order.id) do
+            {:ok, _} ->
+              Logger.info "Started state machine for order #{order.id}"
+            _ ->
+              nil
+          end
+        end)
+    end
   end
 end
