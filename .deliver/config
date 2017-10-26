@@ -4,8 +4,8 @@ BUILD_HOST="localhost"
 BUILD_USER="geovane"
 BUILD_AT="/tmp/${APP}/builds"
 
-STAGING_HOSTS="ec2-18-221-115-152.us-east-2.compute.amazonaws.com"
-STAGING_USER="ubuntu"
+STAGING_HOSTS="192.168.1.8"
+STAGING_USER="geonnave"
 DELIVER_TO="/test/${APP}/"
 
 PRODUCTION_HOSTS="ec2-18-221-115-152.us-east-2.compute.amazonaws.com"

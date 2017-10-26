@@ -2,8 +2,21 @@
 
 set -e
 
-mix edeliver build release --skip-git-clean --skip-mix-clean --verbose
-mix edeliver deploy release to production --verbose
-mix edeliver restart production --verbose
-mix edeliver migrate production up --verbose
+opts=
+target=staging
+
+while [[ ! -z "$@" ]]; do
+	case "$1" in
+		"fast" )
+			opts="--skip-git-clean --skip-mix-clean";;
+		"prod" )
+			target="production";;
+	esac
+	shift
+done
+
+mix edeliver build release "$opts" --verbose
+mix edeliver deploy release to "$target" --verbose
+mix edeliver restart "$target" --verbose
+mix edeliver migrate "$target" --verbose
 
