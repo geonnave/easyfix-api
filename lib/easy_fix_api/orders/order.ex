@@ -12,6 +12,8 @@ defmodule EasyFixApi.Orders.Order do
 
     has_one :diagnosis, EasyFixApi.Orders.Diagnosis
     belongs_to :customer, EasyFixApi.Accounts.Customer
+
+    belongs_to :best_price_quote, EasyFixApi.Orders.Quote
     belongs_to :accepted_quote, EasyFixApi.Orders.Quote
 
     timestamps(type: :utc_datetime)
@@ -40,6 +42,11 @@ defmodule EasyFixApi.Orders.Order do
     struct
     |> cast(attrs, [:accepted_quote_id])
     |> validate_required([:accepted_quote_id])
+  end
+  def set_best_price_quote_changeset(struct, attrs) do
+    struct
+    |> cast(attrs, [:best_price_quote_id])
+    |> validate_required([:best_price_quote_id])
   end
 
   def set_rating_changeset(struct, attrs) do

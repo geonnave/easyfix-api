@@ -39,16 +39,21 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
           {:error, changeset} ->
             {:next_state, :finished_error, put_in(data[:changeset], changeset)}
         end
-      _quotes ->
+      quotes ->
         order = Orders.get_order!(data[:order_id])
+        %{best_price_quote: best_price_quote} = Orders.generate_customer_quotes_stats(quotes)
+
         next_state_attrs = next_state_attrs(:quoted_by_garages)
+        best_price_attrs = %{best_price_quote_id: best_price_quote.id}
 
-        case Orders.update_order_state(order, next_state_attrs) do
-          {:ok, %{state: state, state_due_date: state_due_date}} ->
-            Emails.quoted_by_garages(order.customer)
-            |> Mailer.deliver_later
+        with {:ok, updated_order} <- Orders.update_order_state(order, next_state_attrs),
+             {:ok, updated_order} <- Orders.set_order_best_price_quote(updated_order, best_price_attrs) do
+          %{state: state, state_due_date: state_due_date} = updated_order
+          Emails.quoted_by_garages(order.customer)
+          |> Mailer.deliver_later
 
-            {:next_state, state, data, [state_timeout_action(state, state_due_date)]}
+          {:next_state, state, data, [state_timeout_action(state, state_due_date)]}
+        else
           {:error, changeset} ->
             {:next_state, :finished_error, put_in(data[:changeset], changeset)}
         end

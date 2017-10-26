@@ -66,6 +66,7 @@ defmodule EasyFixApi.Repo.Migrations.CreateEasyFixApi.Orders do
     create unique_index(:quotes_parts, [:quote_id, :part_id])
 
     alter table(:orders) do
+      add :best_price_quote_id, references(:quotes)
       add :accepted_quote_id, references(:quotes)
     end
   end

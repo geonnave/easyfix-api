@@ -520,6 +520,12 @@ defmodule EasyFixApi.Orders do
     |> Repo.update()
   end
 
+  def set_order_best_price_quote(%Order{} = order, attrs) do
+    order
+    |> Order.set_best_price_quote_changeset(attrs)
+    |> Repo.update()
+  end
+
   def update_order(%Order{} = order, attrs) do
     order
     |> Order.changeset(attrs)

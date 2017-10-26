@@ -36,10 +36,10 @@ Acesse o nosso app e confira: <a href="#{ec2_quote_url}" target="_blank">EasyFix
     |> from("Easyfix <contato@easyfix.net.br>")
     |> subject("Novo Pedido Easyfix!")
     |> html_body("""
-Olá #{garage.name}!
-<br><br>
-Um cliente acaba de nos enviar um pedido. Ele certamente está ansioso para receber o seu orçamento.
-<br><br>
+Olá #{garage.name}!\n
+\n
+Um cliente acaba de nos enviar um pedido. Ele certamente está ansioso para receber o seu orçamento.\n
+\n
 E aí, vamos orçar? <a href="#{ec2_quote_url}" target="_blank">Clique aqui</a> para abrir o painel de orçamento Easyfix.
     """)
   end
@@ -52,14 +52,14 @@ E aí, vamos orçar? <a href="#{ec2_quote_url}" target="_blank">Clique aqui</a> 
     |> from("EasyFix System <contato@easyfix.net.br>")
     |> subject("Novo Cliente Easyfix!")
     |> html_body("""
-Um novo cliente acaba de se cadastrar! Aqui estão seus dados:
-
-Nome: #{customer.name}
-Telefone: #{customer.phone}
-Email: #{customer.user.email}
-
-Veículo: #{vehicle.model.name}
-Ano: #{vehicle.model_year}
+Um novo cliente acaba de se cadastrar! Aqui estão seus dados:\n
+\n
+Nome: #{customer.name}\n
+Telefone: #{customer.phone}\n
+Email: #{customer.user.email}\n
+\n\n
+Veículo: #{vehicle.model.name}\n
+Ano: #{vehicle.model_year}\n
     """)
   end
 end

@@ -55,7 +55,7 @@ defmodule EasyFixApi.Orders.Diagnosis do
   def all_nested_assocs do
     [
       diagnosis_parts: [part: EasyFixApi.Parts.Part.all_nested_assocs],
-      vehicle: [EasyFixApi.Cars.Vehicle.all_nested_assocs]
+      vehicle: [EasyFixApi.Cars.Vehicle.all_nested_assocs],
     ]
   end
 end
