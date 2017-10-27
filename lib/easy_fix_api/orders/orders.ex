@@ -199,6 +199,8 @@ defmodule EasyFixApi.Orders do
         {:error, "order not found for this customer"}
       %Diagnosis{order: %{state: order_state}} when order_state in [:created_with_diagnosis] ->
         {:error, "garages are still quoting this order"}
+      %Diagnosis{order: %{state: order_state}} when order_state in [:not_quoted_by_garages] ->
+        {:error, "this order was not quoted by any garage"}
       %Diagnosis{quotes: []} ->
         {:error, "there are no quotes for this order"}
       diagnosis ->

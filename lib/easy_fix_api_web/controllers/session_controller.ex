@@ -4,9 +4,12 @@ defmodule EasyFixApiWeb.SessionController do
   alias EasyFixApi.Accounts
   alias EasyFixApiWeb.{SessionView, ErrorView}
 
+  require Logger
+
   action_fallback EasyFixApiWeb.FallbackController
 
-  def create(conn, %{"email" => email, "password" => password, "user_type" => user_type}) do
+  def create(conn, params = %{"email" => email, "password" => password, "user_type" => user_type}) do
+    Logger.info "Session data is: #{inspect(params)}"
     with account when not is_nil(account) <- Accounts.get_by_email(user_type, email),
          true <- check_password(account.user, password) do
       {:ok, jwt, _full_claims} = Guardian.encode_and_sign(account.user, :token)
