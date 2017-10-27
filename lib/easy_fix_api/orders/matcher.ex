@@ -20,7 +20,7 @@ defmodule EasyFixApi.Orders.Matcher do
     |> Enum.map(& &1.part)
     |> Enum.all?(fn %{garage_category: part_gc, repair_by_fixer: repair_by_fixer} ->
       Enum.any?(garage_gcs, &part_matches_garage?(part_gc, &1)) ||
-      Enum.any?(garage_gcs, &repair_by_fixer_matches_autonomous_garage?(repair_by_fixer, &1))
+      Enum.any?(garage_gcs, &repair_by_fixer_matches_autonomous_garage?(repair_by_fixer, &1.name))
     end)
   end
 
