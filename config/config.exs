@@ -6,6 +6,10 @@
 use Mix.Config
 
 # General application configuration
+
+config :easy_fix_api,
+  domain: "localhost"
+
 config :easy_fix_api,
   ecto_repos: [EasyFixApi.Repo]
 

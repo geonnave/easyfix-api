@@ -4,8 +4,6 @@ defmodule EasyFixApi.Emails do
   alias EasyFixApi.Orders.Matcher
   alias EasyFixApi.Mailer
 
-  @url Application.get_env(:easy_fix_api, EasyFixApiWeb.Endpoint)[:url]
-
   def send_email_to_matching_garages(new_order) do
     new_order
     |> Matcher.list_garages_matching_order
@@ -14,7 +12,9 @@ defmodule EasyFixApi.Emails do
   end
 
   def quoted_by_garages(customer) do
-    ec2_quote_url =  "http://#{@url[:host]}"
+    # ec2_quote_url =  "http://#{url[:host]}"
+    domain = Application.get_env(:easy_fix_api, :domain)
+    customer_url =  "http://app.#{domain}/"
 
     new_email()
     |> to("#{customer.name} <#{customer.user.email}>")
@@ -24,12 +24,12 @@ defmodule EasyFixApi.Emails do
 Olá #{customer.name}, boas notícas!
 <br><br>
 As oficinas EasyFix já orçaram o seu pedido, e nós encontramos o melhor preço pra você.
-Acesse o nosso app e confira: <a href="#{ec2_quote_url}" target="_blank">EasyFix App</a>.
+Acesse o nosso app e confira: <a href="#{customer_url}" target="_blank">EasyFix App</a>.
     """)
   end
 
   def new_order_email(garage, order) do
-    ec2_quote_url =  "http://http://ec2-18-221-115-152.us-east-2.compute.amazonaws.com:8080/#/orders/#{order.id}"
+    ec2_quote_url =  "http://ec2-18-221-115-152.us-east-2.compute.amazonaws.com:8080/#/orders/#{order.id}"
 
     new_email()
     |> to("#{garage.name} <#{garage.user.email}>")
