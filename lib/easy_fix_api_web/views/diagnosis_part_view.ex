@@ -13,6 +13,7 @@ defmodule EasyFixApiWeb.DiagnosisPartView do
   def render("diagnosis_part.json", %{diagnosis_part: diagnosis_part}) do
     %{id: diagnosis_part.id,
       quantity: diagnosis_part.quantity,
+      comment: diagnosis_part.comment,
       part: render_one(diagnosis_part.part, EasyFixApiWeb.PartView, "part.json"),
     }
   end

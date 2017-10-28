@@ -6,6 +6,7 @@ defmodule EasyFixApi.Orders.DiagnosisPart do
     belongs_to :diagnosis, EasyFixApi.Orders.Diagnosis
     belongs_to :part, EasyFixApi.Parts.Part
     field :quantity, :integer
+    field :comment, :string
 
     timestamps(type: :utc_datetime)
   end
@@ -17,12 +18,12 @@ defmodule EasyFixApi.Orders.DiagnosisPart do
 
   def changeset(struct, attrs) do
     struct
-    |> cast(attrs, [:quantity, :part_id])
+    |> cast(attrs, [:quantity, :comment, :part_id])
     |> validate_required([:quantity, :part_id])
   end
 
   def update_changeset(struct, attrs) do
     struct
-    |> cast(attrs, [:quantity, :part_id])
+    |> cast(attrs, [:quantity, :comment, :part_id])
   end
 end

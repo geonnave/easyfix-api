@@ -46,6 +46,18 @@ defmodule EasyFixApi.OrdersTest do
       assert diagnosis_part.part.id == part.id
       assert diagnosis_part.quantity == diagnosis_part_attrs[:quantity]
     end
+    test "create_diagnosis_part/2 with comments on parts" do
+      diagnosis = insert(:diagnosis)
+      part = insert(:part)
+      diagnosis_part_attrs =
+        params_for(:diagnosis_part)
+        |> put_in([:part_id], part.id)
+        |> put_in([:comment], "some comment")
+
+      {:ok, %DiagnosisPart{} = diagnosis_part} = Orders.create_diagnosis_part(diagnosis_part_attrs, diagnosis.id)
+      assert diagnosis_part.diagnosis.id == diagnosis.id
+      assert diagnosis_part.comment == "some comment"
+    end
   end
 
   describe "quotes_parts" do
