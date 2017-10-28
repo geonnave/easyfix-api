@@ -90,15 +90,21 @@ defmodule EasyFixApi.Parts do
     |> Repo.preload(Part.all_nested_assocs)
   end
 
-  def create_part(attrs \\ %{}) do
-    %Part{}
-    |> part_changeset(attrs)
-    |> Repo.insert()
+  def create_part(attrs \\ %{}, part_sub_group, garage_category) do
+    with changeset = %{valid?: true} <- create_part_changeset(attrs) do
+      changeset
+      |> put_assoc(:part_sub_group, part_sub_group)
+      |> put_assoc(:garage_category, garage_category)
+      |> Repo.insert()
+    else
+      changeset ->
+        {:error, changeset}
+    end
   end
 
   def update_part(%Part{} = part, attrs) do
     part
-    |> part_changeset(attrs)
+    |> Part.changeset(attrs)
     |> Repo.update()
   end
 
@@ -106,13 +112,9 @@ defmodule EasyFixApi.Parts do
     Repo.delete(part)
   end
 
-  def change_part(%Part{} = part) do
-    part_changeset(part, %{})
-  end
-
-  defp part_changeset(%Part{} = part, attrs) do
-    part
-    |> cast(attrs, [:name])
-    |> validate_required([:name])
+  def create_part_changeset(attrs) do
+    %Part{}
+    |> Part.changeset(attrs)
+    |> validate_required([:name, :repair_by_fixer])
   end
 end

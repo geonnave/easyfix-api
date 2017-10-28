@@ -1,5 +1,6 @@
 defmodule EasyFixApi.OrderStateMachineTest do
-  use EasyFixApi.DataCase
+  use EasyFixApi.DataCase, async: false
+
   import EasyFixApi.Factory
 
   alias EasyFixApi.Orders
