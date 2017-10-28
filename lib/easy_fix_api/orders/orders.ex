@@ -433,6 +433,7 @@ defmodule EasyFixApi.Orders do
       end
       %{order: order, quote: quote}
     end)
+    |> Enum.filter(fn %{order: order} -> order.diagnosis.diagnosis_parts != [] end)
   end
 
   def list_customer_orders(customer_id) do
