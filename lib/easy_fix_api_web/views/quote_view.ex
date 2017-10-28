@@ -19,7 +19,7 @@ defmodule EasyFixApiWeb.QuoteView do
       conclusion_date: DateView.render("iso_at_sao_paulo_tz", quote.conclusion_date),
       parts: render_many(quote.quotes_parts, EasyFixApiWeb.QuotePartView, "quote_part.json"),
       total_amount: (if quote.total_amount, do: quote.total_amount.amount, else: nil),
-      is_best_price_quote: quote.is_best_price_quote,
+      is_best_price: quote.is_best_price,
       diagnosis_id: quote.diagnosis_id,
       issuer_type: quote.issuer_type,
       issuer_id: Map.get(quote.issuer, quote.issuer_type).id,

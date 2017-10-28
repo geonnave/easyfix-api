@@ -425,7 +425,12 @@ defmodule EasyFixApi.Orders do
     garage
     |> Matcher.list_orders_matching_garage
     |> Enum.map(fn order ->
-      quote = get_quote_for_order_by_user(garage.user.id, order.diagnosis.id)
+      quote = case get_quote_for_order_by_user(garage.user.id, order.diagnosis.id) do
+        nil ->
+          nil
+        quote ->
+          %{quote | is_best_price: order.best_price_quote_id == quote.id}
+      end
       %{order: order, quote: quote}
     end)
   end
@@ -442,7 +447,12 @@ defmodule EasyFixApi.Orders do
     garage = Accounts.get_garage!(garage_id)
     order = get_order!(order_id)
 
-    quote = get_quote_for_order_by_user(garage.user.id, order.diagnosis.id)
+    quote = case get_quote_for_order_by_user(garage.user.id, order.diagnosis.id) do
+      nil ->
+        nil
+      quote ->
+        %{quote | is_best_price: order.best_price_quote_id == quote.id}
+    end
     %{order: order, quote: quote}
   end
 

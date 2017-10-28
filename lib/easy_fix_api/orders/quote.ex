@@ -16,7 +16,7 @@ defmodule EasyFixApi.Orders.Quote do
 
     field :parts, {:array, :map}, virtual: true
     field :total_amount, Money.Ecto.Type, virtual: true
-    field :is_best_price_quote, :boolean, virtual: true
+    field :is_best_price, :boolean, virtual: true
 
     timestamps(type: :utc_datetime)
   end
