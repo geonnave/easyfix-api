@@ -2,7 +2,7 @@ defmodule EasyFixApi.Emails do
   import Bamboo.Email
 
   alias EasyFixApi.Orders.Matcher
-  alias EasyFixApi.Mailer
+  alias EasyFixApi.{Orders, Mailer}
 
   def send_email_to_matching_garages(new_order) do
     new_order
@@ -21,8 +21,44 @@ defmodule EasyFixApi.Emails do
     |> from("Easyfix <contato@easyfix.net.br>")
     |> subject("Seu Orçamento Easyfix chegou!")
     |> html_body("""
-Olá #{customer.name}, boas notícas!
-<br><br>
+Olá #{customer.name}, boas notícas!<br>
+<br>
+As oficinas EasyFix já orçaram o seu pedido, e nós encontramos o melhor preço pra você.
+Acesse o nosso app e confira: <a href="#{customer_url}" target="_blank">EasyFix App</a>.
+    """)
+  end
+
+  def accepted_by_customer(order = %{customer: customer, accepted_quote: accepted_quote}) do
+    accepted_quote = Orders.with_total_amount(accepted_quote)
+
+    new_email()
+    |> to("Easyfix <contato@easyfix.net.br>")
+    |> from("Easyfix <contato@easyfix.net.br>")
+    |> subject("Cliente clicou em 'comprar' orçamento")
+    |> html_body("""
+O seguinte cliente acaba de comprar um orçamento:<br>
+
+Nome: #{customer.name}<br>
+Telefone: #{customer.phone}<br>
+Email: #{customer.user.email}<br><br>
+<br>
+Valor total do orçamento: #{Money.to_string(accepted_quote.total_amount)}
+Valor total do orçamento (com taxa EasyFix): #{Money.to_string(Orders.add_customer_fee(accepted_quote).total_amount)}
+    """)
+  end
+
+  def quoted_by_garages(customer) do
+    # ec2_quote_url =  "http://#{url[:host]}"
+    domain = Application.get_env(:easy_fix_api, :domain)
+    customer_url =  "http://app.#{domain}/"
+
+    new_email()
+    |> to("#{customer.name} <#{customer.user.email}>")
+    |> from("Easyfix <contato@easyfix.net.br>")
+    |> subject("Seu Orçamento Easyfix chegou!")
+    |> html_body("""
+Olá #{customer.name}, boas notícas!<br>
+<br>
 As oficinas EasyFix já orçaram o seu pedido, e nós encontramos o melhor preço pra você.
 Acesse o nosso app e confira: <a href="#{customer_url}" target="_blank">EasyFix App</a>.
     """)
@@ -36,10 +72,10 @@ Acesse o nosso app e confira: <a href="#{customer_url}" target="_blank">EasyFix 
     |> from("Easyfix <contato@easyfix.net.br>")
     |> subject("Novo Pedido Easyfix!")
     |> html_body("""
-Olá #{garage.name}!\n
-\n
-Um cliente acaba de nos enviar um pedido. Ele certamente está ansioso para receber o seu orçamento.\n
-\n
+Olá #{garage.name}!<br>
+<br>
+Um cliente acaba de nos enviar um pedido. Ele certamente está ansioso para receber o seu orçamento.<br>
+<br>
 E aí, vamos orçar? <a href="#{ec2_quote_url}" target="_blank">Clique aqui</a> para abrir o painel de orçamento Easyfix.
     """)
   end
@@ -52,14 +88,14 @@ E aí, vamos orçar? <a href="#{ec2_quote_url}" target="_blank">Clique aqui</a> 
     |> from("EasyFix System <contato@easyfix.net.br>")
     |> subject("Novo Cliente Easyfix!")
     |> html_body("""
-Um novo cliente acaba de se cadastrar! Aqui estão seus dados:\n
-\n
-Nome: #{customer.name}\n
-Telefone: #{customer.phone}\n
-Email: #{customer.user.email}\n
-\n\n
-Veículo: #{vehicle.model.name}\n
-Ano: #{vehicle.model_year}\n
+Um novo cliente acaba de se cadastrar! Aqui estão seus dados:<br>
+<br>
+Nome: #{customer.name}<br>
+Telefone: #{customer.phone}<br>
+Email: #{customer.user.email}<br><br>
+<br>
+Veículo: #{vehicle.model.name}<br>
+Ano: #{vehicle.model_year}<br>
     """)
   end
 end
