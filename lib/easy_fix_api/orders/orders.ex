@@ -46,6 +46,11 @@ defmodule EasyFixApi.Orders do
     Repo.delete(diagnosis_part)
   end
 
+  def all_repair_by_fixer?(diagnosis_parts) do
+    diagnosis_parts
+    |> Enum.all?(fn %{part: part} -> part.repair_by_fixer end)
+  end
+
   # Diagnosis
 
   def list_diagnosis do
@@ -410,7 +415,7 @@ defmodule EasyFixApi.Orders do
     Repo.delete(quote_part)
   end
 
-  alias EasyFixApi.Orders.{Order, Matcher}
+  alias EasyFixApi.Orders.{Order, OrderStateMachine, Matcher}
 
   def list_orders do
     Repo.all(Order)
@@ -509,7 +514,17 @@ defmodule EasyFixApi.Orders do
         {:ok, diagnosis} = create_diagnosis(order_assoc_attrs[:diagnosis])
 
         state = :created_with_diagnosis
-        state_due_date = OrderStateMachine.calculate_state_due_date(state)
+
+        state_due_date =
+          diagnosis.diagnosis_parts
+          |> all_repair_by_fixer?()
+          |> case do
+            true ->
+              EasyFixApi.Orders.StateTimeouts.get()[state][:fixer_timeout][:value]
+            false ->
+              EasyFixApi.Orders.StateTimeouts.get()[state][:timeout][:value]
+          end
+          |> OrderStateMachine.calculate_due_date_from_now()
 
         {:ok, diagnosis} = update_diagnosis_expiration(diagnosis, %{expiration_date: state_due_date})
 

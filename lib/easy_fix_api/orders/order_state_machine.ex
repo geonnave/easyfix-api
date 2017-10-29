@@ -139,12 +139,16 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     EasyFixApi.Orders.StateTimeouts.get()[state][:timeout][:event]
   end
 
+  def calculate_due_date_from_now(time_span) do
+    Timex.now |> Timex.shift(time_span)
+  end
+
   def calculate_state_due_date(state) do
     case EasyFixApi.Orders.StateTimeouts.get()[state][:timeout] do
       nil ->
         nil
       timeout_data ->
-        Timex.now |> Timex.shift(timeout_data[:value])
+        calculate_due_date_from_now(timeout_data[:value])
     end
   end
 

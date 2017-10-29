@@ -62,6 +62,7 @@ config :easy_fix_api, :order_states,
   started: [],
   created_with_diagnosis: [
     timeout: [value: [minutes: 2], event: :to_quoted_by_garages],
+    fixer_timeout: [value: [minutes: 1], event: :to_quoted_by_garages],
   ],
 
   # interim state, not mapped to database yet
