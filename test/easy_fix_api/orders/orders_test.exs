@@ -257,7 +257,7 @@ defmodule EasyFixApi.OrdersTest do
 
       next_state_attrs = %{
         state: :quoted_by_garages,
-        state_due_date: Orders.calculate_state_due_date(:quoted_by_garages)
+        state_due_date: OrderStateMachine.calculate_state_due_date(:quoted_by_garages)
       }
       assert {:ok, order} = Orders.update_order_state(order, next_state_attrs)
       assert order.state == :quoted_by_garages

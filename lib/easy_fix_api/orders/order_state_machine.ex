@@ -139,6 +139,15 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     EasyFixApi.Orders.StateTimeouts.get()[state][:timeout][:event]
   end
 
+  def calculate_state_due_date(state) do
+    case EasyFixApi.Orders.StateTimeouts.get()[state][:timeout] do
+      nil ->
+        nil
+      timeout_data ->
+        Timex.now |> Timex.shift(timeout_data[:value])
+    end
+  end
+
   def state_timeout_action(state, state_due_date) do
     # the timeout can be negative if the machine's state is being initialized
     # from pre-existing state (e.g. from the database, after a crash or a update with downtime)
@@ -152,7 +161,7 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
   def next_state_attrs(state) do
     %{
       state: state,
-      state_due_date: Orders.calculate_state_due_date(state)
+      state_due_date: calculate_state_due_date(state)
     }
   end
 

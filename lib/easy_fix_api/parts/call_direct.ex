@@ -29,11 +29,15 @@ defmodule EasyFixApi.Parts.CallDirect do
   def part_matches_name_substring?(%{name: nil}, _name_substring), do: false
   def part_matches_name_substring?(part, "vidro") do
     String.downcase(part.name) =~ ~r/vidro/i &&
-    part_matches_exclude_substring?(part, ~r/borracha|mecanismo|máquina|guarnição|canaleta|mangueira|esguicho|botao|levantador/i)
+    part_matches_exclude_substring?(part, ~r/palheta|limpador|borracha|mecanismo|máquina|guarnição|canaleta|mangueira|esguicho|botao|levantador/i)
   end
   def part_matches_name_substring?(part, "retrovisor") do
     String.downcase(part.name) =~ ~r/retrovisor/i &&
     part_matches_exclude_substring?(part, ~r/interno|lâmpada/i)
+  end
+  def part_matches_name_substring?(part, "lâmpada|pisca|break light" = name_substring) do
+    String.downcase(part.name) =~ ~r/#{name_substring}/i &&
+    part_matches_exclude_substring?(part, ~r/pisca.*retrovisor/i)
   end
   def part_matches_name_substring?(part, name_substring) do
     String.downcase(part.name) =~ ~r/#{String.downcase(name_substring)}/i

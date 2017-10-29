@@ -10,12 +10,12 @@ defmodule EasyFixApi.OrderStateMachineTest do
     assert 200 = OrderStateMachine.timeout_value(:created_with_diagnosis)
   end
   test "timeout_from_now/1" do
-    state_due_date = Orders.calculate_state_due_date(:created_with_diagnosis)
+    state_due_date = OrderStateMachine.calculate_state_due_date(:created_with_diagnosis)
     assert Timex.compare(Timex.now, state_due_date) == -1
     timeout_from_now = OrderStateMachine.timeout_from_now(state_due_date)
     assert timeout_from_now > 0
 
-    state_due_date = Orders.calculate_state_due_date(:finished_by_garage)
+    state_due_date = OrderStateMachine.calculate_state_due_date(:finished_by_garage)
     assert is_nil(state_due_date)
   end
 
@@ -145,7 +145,7 @@ defmodule EasyFixApi.OrderStateMachineTest do
   def update_order_state(order, state) do
     next_state_attrs = %{
       state: state,
-      state_due_date: Orders.calculate_state_due_date(state)
+      state_due_date: OrderStateMachine.calculate_state_due_date(state)
     }
     {:ok, order} = Orders.update_order_state(order, next_state_attrs)
     order

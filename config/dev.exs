@@ -63,6 +63,10 @@ config :easy_fix_api, :order_states,
   created_with_diagnosis: [
     timeout: [value: [minutes: 2], event: :to_quoted_by_garages],
   ],
+
+  # interim state, not mapped to database yet
+  created_with_diagnosis_no_parts: [timeout: [value: [minutes: 1]]],
+
   not_quoted_by_garages: [final_state: true, macro_state: :canceled],
   quoted_by_garages: [
     timeout: [value: [minutes: 2], event: :to_quote_accepted_by_customer]
