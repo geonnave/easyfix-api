@@ -14,10 +14,16 @@ defmodule EasyFixApiWeb.GarageOrderQuoteController do
       |> put_in(["issuer_id"], garage_id)
       |> put_in(["issuer_type"], "garage")
 
-    with {:ok, quote} <- Orders.create_quote(quote_params) do
+    with :created_with_diagnosis <- order.state,
+         {:ok, quote} <- Orders.create_quote(quote_params) do
       conn
       |> put_status(:created)
       |> render(EasyFixApiWeb.QuoteView, "show.json", quote: quote)
+    else
+      err = {:error, _} ->
+        err
+      state ->
+        {:error, "cannot create quote at order state #{order.state}"}
     end
   end
 
