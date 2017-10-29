@@ -425,22 +425,16 @@ defmodule EasyFixApi.Orders do
     garage
     |> Matcher.list_orders_matching_garage
     |> Enum.map(fn order ->
-      quote = case get_quote_for_order_by_user(garage.user.id, order.diagnosis.id) do
-        nil ->
-          nil
-        quote ->
-          %{quote | is_best_price: order.best_price_quote_id == quote.id}
-      end
+      quote =
+        garage.user.id
+        |> get_quote_for_order_by_user(order.diagnosis.id)
+        |> quote_with_best_price(order)
+
+      order = order_maybe_with_customer(order, quote)
+
       %{order: order, quote: quote}
     end)
     |> Enum.filter(fn %{order: order} -> order.diagnosis.diagnosis_parts != [] end)
-  end
-
-  def list_customer_orders(customer_id) do
-    from(o in Order,
-      where: o.customer_id == ^customer_id,
-      preload: ^Order.all_nested_assocs)
-    |> Repo.all
   end
 
   # FIXME: make this function return nice error messages
@@ -448,13 +442,34 @@ defmodule EasyFixApi.Orders do
     garage = Accounts.get_garage!(garage_id)
     order = get_order!(order_id)
 
-    quote = case get_quote_for_order_by_user(garage.user.id, order.diagnosis.id) do
-      nil ->
-        nil
-      quote ->
-        %{quote | is_best_price: order.best_price_quote_id == quote.id}
-    end
+    quote =
+      garage.user.id
+      |> get_quote_for_order_by_user(order.diagnosis.id)
+      |> quote_with_best_price(order)
+
+    order = order_maybe_with_customer(order, quote)
+
     %{order: order, quote: quote}
+  end
+
+  def quote_with_best_price(nil, _order), do: nil
+  def quote_with_best_price(quote, order) do
+    %{quote | is_best_price: order.best_price_quote_id == quote.id}
+  end
+
+  def order_maybe_with_customer(order, quote) do
+    if order.state in [:quote_accepted_by_customer] and quote.is_best_price do
+      order
+    else
+      %{order | customer: nil}
+    end
+  end
+
+  def list_customer_orders(customer_id) do
+    from(o in Order,
+      where: o.customer_id == ^customer_id,
+      preload: ^Order.all_nested_assocs)
+    |> Repo.all
   end
 
   def get_customer_order(customer_id, order_id) do
