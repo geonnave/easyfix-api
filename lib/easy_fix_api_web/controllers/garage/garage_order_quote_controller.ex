@@ -23,7 +23,7 @@ defmodule EasyFixApiWeb.GarageOrderQuoteController do
       err = {:error, _} ->
         err
       state ->
-        {:error, "cannot create quote at order state #{order.state}"}
+        {:error, "cannot create quote at order state #{state}"}
     end
   end
 

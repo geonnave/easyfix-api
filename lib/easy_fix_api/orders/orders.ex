@@ -557,6 +557,12 @@ defmodule EasyFixApi.Orders do
     |> Repo.update()
   end
 
+  def set_order_rating(%Order{} = order, attrs) do
+    order
+    |> Order.set_rating_changeset(attrs)
+    |> Repo.update()
+  end
+
   def update_order(%Order{} = order, attrs) do
     order
     |> Order.changeset(attrs)

@@ -50,4 +50,19 @@ defmodule EasyFixApiWeb.CustomerOrderController do
       render(conn, "show.json", customer_order: updated_order)
     end
   end
+
+  def rate(conn, params = %{"rating" => rating_params}) do
+    %{"customer_id" => customer_id, "order_id" => order_id} = params
+
+    with {:ok, order} <- Orders.get_customer_order(customer_id, order_id),
+         :quote_accepted_by_customer <- order.state,
+         {:ok, updated_order} <- Orders.set_order_rating(order, rating_params) do
+      render(conn, "show.json", customer_order: updated_order)
+    else
+      err = {:error, _} ->
+        err
+      state ->
+        {:error, "cannot set order rating at order state #{state}"}
+    end
+  end
 end
