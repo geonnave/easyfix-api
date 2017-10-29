@@ -457,6 +457,7 @@ defmodule EasyFixApi.Orders do
     %{quote | is_best_price: order.best_price_quote_id == quote.id}
   end
 
+  def order_maybe_with_customer(order, nil), do: order
   def order_maybe_with_customer(order, quote) do
     if order.state in [:quote_accepted_by_customer] and quote.is_best_price do
       order
