@@ -7,7 +7,11 @@ defmodule EasyFixApiWeb.CustomerOrderController do
   action_fallback EasyFixApiWeb.FallbackController
 
   def index(conn, _params = %{"customer_id" => customer_id}) do
-    customer_orders = Orders.list_customer_orders(customer_id)
+    customer_orders =
+      customer_id
+      |> Orders.list_customer_orders()
+      |> Enum.sort(& &1.inserted_at >= &2.inserted_at)
+
     render(conn, "index.json", customer_orders: customer_orders)
   end
 

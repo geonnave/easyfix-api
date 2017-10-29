@@ -6,7 +6,11 @@ defmodule EasyFixApiWeb.GarageOrderController do
   action_fallback EasyFixApiWeb.FallbackController
 
   def index(conn, _params = %{"garage_id" => garage_id}) do
-    garage_orders = Orders.list_garage_orders(garage_id)
+    garage_orders =
+      garage_id
+      |> Orders.list_garage_orders()
+      |> Enum.sort(& &1.order.inserted_at >= &2.order.inserted_at)
+
     render(conn, "index.json", garage_orders: garage_orders)
   end
 
