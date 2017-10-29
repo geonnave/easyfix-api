@@ -24,4 +24,13 @@ defmodule EasyFixApiWeb.CustomerView do
       vehicles: render_many(customer.vehicles, EasyFixApiWeb.VehicleView, "vehicle.json"),
     }
   end
+
+  def render("customer_contact.json", %{customer: customer}) do
+    %{id: customer.id,
+      name: customer.name,
+      email: customer.user.email,
+      phone: customer.phone,
+      address: render_one(customer.address, EasyFixApiWeb.AddressView, "address.json"),
+    }
+  end
 end
