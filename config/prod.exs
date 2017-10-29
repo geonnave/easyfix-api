@@ -42,8 +42,8 @@ config :easy_fix_api, EasyFixApi.Mailer,
 config :easy_fix_api, :order_states,
   started: [],
   created_with_diagnosis: [
-    timeout: [value: [minutes: 3], event: :to_quoted_by_garages],
-    fixer_timeout: [value: [minutes: 1], event: :to_quoted_by_garages],
+    timeout: [value: [minutes: 7], event: :to_quoted_by_garages],
+    fixer_timeout: [value: [minutes: 5], event: :to_quoted_by_garages],
   ],
   not_quoted_by_garages: [final_state: true, macro_state: :canceled],
   quoted_by_garages: [
