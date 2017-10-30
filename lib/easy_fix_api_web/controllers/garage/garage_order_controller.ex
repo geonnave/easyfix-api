@@ -9,7 +9,7 @@ defmodule EasyFixApiWeb.GarageOrderController do
     garage_orders =
       garage_id
       |> Orders.list_garage_orders()
-      |> Enum.sort(& &1.order.inserted_at >= &2.order.inserted_at)
+      |> Enum.sort_by(fn %{order: order} -> Timex.to_unix(order.inserted_at) end, &>=/2)
 
     render(conn, "index.json", garage_orders: garage_orders)
   end

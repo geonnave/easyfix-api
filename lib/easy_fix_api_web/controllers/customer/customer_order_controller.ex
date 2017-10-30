@@ -10,7 +10,7 @@ defmodule EasyFixApiWeb.CustomerOrderController do
     customer_orders =
       customer_id
       |> Orders.list_customer_orders()
-      |> Enum.sort(& &1.inserted_at >= &2.inserted_at)
+      |> Enum.sort_by(fn order -> Timex.to_unix(order.inserted_at) end, &>=/2)
 
     render(conn, "index.json", customer_orders: customer_orders)
   end
@@ -57,7 +57,9 @@ defmodule EasyFixApiWeb.CustomerOrderController do
     with {:ok, order} <- Orders.get_customer_order(customer_id, order_id),
          :quote_accepted_by_customer <- order.state,
          {:ok, updated_order} <- Orders.set_order_rating(order, rating_params) do
-      render(conn, "show.json", customer_order: updated_order)
+      conn
+      |> put_status(:created)
+      |> render("show.json", customer_order: updated_order)
     else
       err = {:error, _} ->
         err
