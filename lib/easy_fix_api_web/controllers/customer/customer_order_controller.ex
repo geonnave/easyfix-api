@@ -63,6 +63,8 @@ defmodule EasyFixApiWeb.CustomerOrderController do
     with {:ok, order} <- Orders.get_customer_order(customer_id, order_id),
          :quote_accepted_by_customer <- order.state,
          {:ok, updated_order} <- Orders.set_order_rating(order, rating_params) do
+      Emails.customer_rating_email_to_easyfix(updated_order) |> Mailer.deliver_later
+
       conn
       |> put_status(:created)
       |> render("show.json", customer_order: updated_order)

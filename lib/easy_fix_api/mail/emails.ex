@@ -120,6 +120,19 @@ Ano: #{vehicle.model_year}<br>
     """)
   end
 
+  def customer_rating_email_to_easyfix(order = %{customer: customer}) do
+    new_email()
+    |> to("Easyfix <contato@easyfix.net.br>")
+    |> from("EasyFix System <contato@easyfix.net.br>")
+    |> subject("Avaliação Cliente Easyfix!")
+    |> html_body("""
+O cliente #{customer.name} (\##{customer.id}) acaba de avaliar o pedido \##{order.id}!
+ Ele deu nota #{order.rating}, e comentou:<br>
+<br>
+#{order.rating_comment || "(comentário vazio)"}
+    """)
+  end
+
   def new_customer_email_to_customer(customer) do
     [vehicle] = customer.vehicles
 

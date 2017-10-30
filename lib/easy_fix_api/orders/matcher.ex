@@ -12,7 +12,7 @@ defmodule EasyFixApi.Orders.Matcher do
     Orders.list_orders
     |> Enum.filter(fn order = %{diagnosis: diagnosis} ->
       diagnosis_matches_garage_categories?(diagnosis, garage.garage_categories) &&
-      order.inserted_at >= garage.inserted_at
+      (Timex.to_unix(order.inserted_at) >= Timex.to_unix(garage.inserted_at))
     end)
   end
 
