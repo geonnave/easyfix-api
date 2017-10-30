@@ -37,6 +37,7 @@ environment :prod do
   set include_erts: true
   set include_src: false
   set cookie: :"MBsL!}H4r8T>qSza0@2q<FUv:u9F?tVsByY2;o%]Et&O3V3BF~lrV;@sTRj>RrFz"
+  set run_erl_env: "RUN_ERL_LOG_MAXSIZE=100000000 RUN_ERL_LOG_GENERATIONS=5"
 end
 
 # You may define one or more releases in this file.
