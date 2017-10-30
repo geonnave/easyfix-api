@@ -72,7 +72,7 @@ E aí, vamos orçar? <a href="#{ec2_quote_url}" target="_blank">Clique aqui</a> 
     |> from("EasyFix System <contato@easyfix.net.br>")
     |> subject("Novo Pedido Easyfix!")
     |> html_body("""
-O cliente #{customer.name} acaba de fazer o pedido #{order.id}! Aqui estão seus dados:<br>
+O cliente #{customer.name} acaba de fazer o pedido \##{order.id}! Aqui estão seus dados:<br>
 <br>
 Cliente ID: #{customer.id}<br>
 Nome: #{customer.name}<br>
@@ -84,11 +84,11 @@ Email: #{customer.user.email}<br><br>
 
   def new_order_others_email_to_easyfix(order = %{customer: customer}) do
     new_email()
-    |> to("Easyfix <contato@easyfix.net.br>")
+    |> to(["Easyfix <contato@easyfix.net.br>", "#{customer.name} <#{customer.user.email}>"])
     |> from("EasyFix System <contato@easyfix.net.br>")
     |> subject("Novo Pedido OUTROS Easyfix!")
     |> html_body("""
-O cliente #{customer.name} acaba de fazer o pedido #{order.id}! É um pedido do tipo "outros". Aqui estão seus dados:<br>
+O cliente #{customer.name} acaba de fazer o pedido \##{order.id}! É um pedido do tipo "outros". Aqui estão seus dados:<br>
 <br>
 Cliente ID: #{customer.id}<br>
 Nome: #{customer.name}<br>
