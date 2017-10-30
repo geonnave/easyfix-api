@@ -8,7 +8,7 @@ defmodule EasyFixApi.Emails do
     new_order
     |> Matcher.list_garages_matching_order
     |> Enum.map(&new_order_email(&1, new_order))
-    |> Enum.each(&Mailer.deliver_now/1)
+    |> Enum.each(&Mailer.deliver_later/1)
   end
 
   def quoted_by_garages(order = %{customer: customer}) do
@@ -63,6 +63,22 @@ Olá #{garage.name}!<br>
 Um cliente acaba de nos enviar o pedido \##{order.id}. Ele certamente está ansioso para receber o seu orçamento.<br>
 <br>
 E aí, vamos orçar? <a href="#{ec2_quote_url}" target="_blank">Clique aqui</a> para abrir o painel de orçamento Easyfix.
+    """)
+  end
+
+  def new_order_email_to_easyfix(order = %{customer: customer}) do
+    new_email()
+    |> to("Easyfix <contato@easyfix.net.br>")
+    |> from("EasyFix System <contato@easyfix.net.br>")
+    |> subject("Novo Pedido Easyfix!")
+    |> html_body("""
+O cliente #{customer.name} acaba de fazer o pedido #{order.id}! Aqui estão seus dados:<br>
+<br>
+Cliente ID: #{customer.id}<br>
+Nome: #{customer.name}<br>
+Telefone: #{customer.phone}<br>
+Email: #{customer.user.email}<br><br>
+<br>
     """)
   end
 

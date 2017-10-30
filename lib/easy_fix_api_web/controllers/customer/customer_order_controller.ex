@@ -1,7 +1,7 @@
 defmodule EasyFixApiWeb.CustomerOrderController do
   use EasyFixApiWeb, :controller
 
-  alias EasyFixApi.{Orders}
+  alias EasyFixApi.{Orders, Emails, Mailer}
   alias EasyFixApi.Orders.OrderStateMachine
 
   action_fallback EasyFixApiWeb.FallbackController
@@ -31,7 +31,8 @@ defmodule EasyFixApiWeb.CustomerOrderController do
       |> Orders.create_order_with_diagnosis
 
     OrderStateMachine.start_link(%{order_id: customer_order.id})
-    EasyFixApi.Emails.send_email_to_matching_garages(customer_order)
+    Emails.send_email_to_matching_garages(customer_order)
+    Emails.new_order_email_to_easyfix(customer_order) |> Mailer.deliver_later
 
     conn
     |> put_status(:created)
