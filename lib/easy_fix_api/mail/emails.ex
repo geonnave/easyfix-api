@@ -39,14 +39,14 @@ EasyFix! Nós valorizamos sua mobilidade!
     |> from("EasyFix <contato@easyfix.net.br>")
     |> subject("Cliente clicou em 'comprar' orçamento")
     |> html_body("""
-O seguinte cliente acaba de comprar um orçamento:<br>
+O seguinte cliente acaba de comprar o orçamento \##{accepted_quote.id} para o pedido \##{order.id}:<br>
 
 Nome: #{customer.name}<br>
 Telefone: #{customer.phone}<br>
 Email: #{customer.user.email}<br><br>
 <br>
 Valor total do orçamento: #{Money.to_string(accepted_quote.total_amount)}
-Valor total do orçamento (com taxa EasyFix): #{Money.to_string(Orders.add_customer_fee(accepted_quote).total_amount)}
+Valor total do orçamento <strong>com taxa EasyFix</strong>: #{Money.to_string(Orders.add_customer_fee(accepted_quote).total_amount)}
     """)
   end
 
