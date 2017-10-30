@@ -42,12 +42,12 @@ config :easy_fix_api, EasyFixApi.Mailer,
 config :easy_fix_api, :order_states,
   started: [],
   created_with_diagnosis: [
-    timeout: [value: [minutes: 7], event: :to_quoted_by_garages],
-    fixer_timeout: [value: [minutes: 5], event: :to_quoted_by_garages],
+    timeout: [value: [hours: 8], event: :to_quoted_by_garages],
+    fixer_timeout: [value: [minutes: 30], event: :to_quoted_by_garages],
   ],
   not_quoted_by_garages: [final_state: true, macro_state: :canceled],
   quoted_by_garages: [
-    timeout: [value: [hours: 24], event: :to_quote_accepted_by_customer]
+    timeout: [value: [hours: 2*24], event: :to_quote_accepted_by_customer]
   ],
   quote_not_accepted_by_customer: [final_state: true, macro_state: :canceled],
   quote_accepted_by_customer: [
