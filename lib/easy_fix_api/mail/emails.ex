@@ -90,6 +90,7 @@ E aí, vamos orçar? <a href="#{ec2_quote_url}" target="_blank">Clique aqui</a> 
     |> html_body("""
 Um novo cliente acaba de se cadastrar! Aqui estão seus dados:<br>
 <br>
+ID: #{customer.id}<br>
 Nome: #{customer.name}<br>
 Telefone: #{customer.phone}<br>
 Email: #{customer.user.email}<br><br>
