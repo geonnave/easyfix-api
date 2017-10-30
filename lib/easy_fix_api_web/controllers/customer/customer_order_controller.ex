@@ -31,8 +31,13 @@ defmodule EasyFixApiWeb.CustomerOrderController do
       |> Orders.create_order_with_diagnosis
 
     OrderStateMachine.start_link(%{order_id: customer_order.id})
+
     Emails.send_email_to_matching_garages(customer_order)
-    Emails.new_order_email_to_easyfix(customer_order) |> Mailer.deliver_later
+    if customer_order.diagnosis.diagnosis_parts == [] do
+      Emails.new_order_others_email_to_easyfix(customer_order) |> Mailer.deliver_later
+    else
+      Emails.new_order_email_to_easyfix(customer_order) |> Mailer.deliver_later
+    end
 
     conn
     |> put_status(:created)

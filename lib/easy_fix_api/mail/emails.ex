@@ -82,6 +82,24 @@ Email: #{customer.user.email}<br><br>
     """)
   end
 
+  def new_order_others_email_to_easyfix(order = %{customer: customer}) do
+    new_email()
+    |> to("Easyfix <contato@easyfix.net.br>")
+    |> from("EasyFix System <contato@easyfix.net.br>")
+    |> subject("Novo Pedido OUTROS Easyfix!")
+    |> html_body("""
+O cliente #{customer.name} acaba de fazer o pedido #{order.id}! É um pedido do tipo "outros". Aqui estão seus dados:<br>
+<br>
+Cliente ID: #{customer.id}<br>
+Nome: #{customer.name}<br>
+Telefone: #{customer.phone}<br>
+Email: #{customer.user.email}<br><br>
+<br>
+Veja o que ele escreveu sobre o reparo necessário:<br>
+#{order.diagnosis.comment}
+    """)
+  end
+
   def new_customer_email_to_easyfix(customer) do
     [vehicle] = customer.vehicles
 

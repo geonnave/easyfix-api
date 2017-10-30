@@ -2,6 +2,7 @@ defmodule EasyFixApi.OrdersTest do
   use EasyFixApi.DataCase
 
   alias EasyFixApi.Orders
+  alias EasyFixApi.Orders.OrderStateMachine
 
   describe "diagnosis" do
     alias EasyFixApi.Orders.{Diagnosis}
