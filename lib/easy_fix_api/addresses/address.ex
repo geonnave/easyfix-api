@@ -20,6 +20,11 @@ defmodule EasyFixApi.Addresses.Address do
     |> changeset(attrs)
   end
 
+  def create_basic_changeset(attrs) do
+    %__MODULE__{}
+    |> cast(attrs, @optional_attrs ++ @required_attrs)
+  end
+
   def changeset(address, attrs) do
     address
     |> cast(attrs, @optional_attrs ++ @required_attrs)

@@ -158,6 +158,40 @@ defmodule EasyFixApi.Accounts do
     |> Repo.preload(Customer.all_nested_assocs)
   end
 
+  def create_basic_customer(attrs \\ %{}) do
+    IO.inspect "==============="
+    with customer_changeset = %{valid?: true} <- Customer.create_basic_changeset(attrs),
+         customer_assoc_changeset = %{valid?: true} <- Customer.assoc_changeset(attrs),
+         customer_assoc_attrs <- apply_changes_ensure_atom_keys(customer_assoc_changeset) do
+
+      Repo.transaction fn ->
+        {:ok, user} = create_user(attrs)
+
+        {:ok, address} =
+          customer_assoc_attrs[:address]
+          |> Addresses.create_basic_address()
+
+        vehicles = for vehicle_attrs <- customer_assoc_attrs[:vehicles] do
+          {:ok, vehicle} = Cars.create_vehicle(vehicle_attrs)
+          vehicle
+        end
+
+        customer =
+          customer_changeset
+          |> put_assoc(:user, user)
+          |> put_assoc(:address, address)
+          |> put_assoc(:vehicles, vehicles)
+          |> Repo.insert!()
+
+        customer
+        |> Repo.preload(Customer.all_nested_assocs)
+      end
+    else
+      %{valid?: false} = changeset ->
+        {:error, changeset}
+    end
+  end
+
   def create_customer(attrs \\ %{}) do
     with customer_changeset = %{valid?: true} <- Customer.create_changeset(attrs),
          customer_assoc_changeset = %{valid?: true} <- Customer.assoc_changeset(attrs),

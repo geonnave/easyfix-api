@@ -13,18 +13,26 @@ defmodule EasyFixApiWeb.CustomerController do
     render(conn, "index.json", customers: customers)
   end
 
+  def create(conn, %{"customer" => customer_params, "basic" => "true"}) do
+    with {:ok, %Customer{} = customer} <- Accounts.create_basic_customer(customer_params) do
+      handle_created_customer(conn, customer)
+    end
+  end
   def create(conn, %{"customer" => customer_params}) do
     with {:ok, %Customer{} = customer} <- Accounts.create_customer(customer_params) do
-      {:ok, jwt, _full_claims} = Guardian.encode_and_sign(customer.user, :token)
-
-      Emails.new_customer_email_to_easyfix(customer) |> Mailer.deliver_now
-      Emails.new_customer_email_to_customer(customer) |> Mailer.deliver_now
-
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", customer_path(conn, :show, customer))
-      |> render("show_registration.json", customer: customer, jwt: jwt)
+      handle_created_customer(conn, customer)
     end
+  end
+  defp handle_created_customer(conn, customer) do
+    {:ok, jwt, _full_claims} = Guardian.encode_and_sign(customer.user, :token)
+
+    Emails.new_customer_email_to_easyfix(customer) |> Mailer.deliver_now
+    Emails.new_customer_email_to_customer(customer) |> Mailer.deliver_now
+
+    conn
+    |> put_status(:created)
+    |> put_resp_header("location", customer_path(conn, :show, customer))
+    |> render("show_registration.json", customer: customer, jwt: jwt)
   end
 
   def show(conn, %{"id" => id}) do

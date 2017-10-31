@@ -24,6 +24,12 @@ defmodule EasyFixApi.Accounts.Customer do
     |> changeset(attrs)
   end
 
+  def create_basic_changeset(attrs) do
+    %__MODULE__{}
+    |> cast(attrs, @required_fields)
+    |> validate_required([:name, :phone, :accept_easyfix_policy])
+  end
+
   def changeset(customer, attrs) do
     customer
     |> cast(attrs, @required_fields)
