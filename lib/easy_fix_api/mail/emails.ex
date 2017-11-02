@@ -18,7 +18,7 @@ defmodule EasyFixApi.Emails do
     new_email()
     |> to("#{customer.name} <#{customer.user.email}>")
     |> from("EasyFix <contato@easyfix.net.br>")
-    |> subject("Seu Orçamento Easyfix chegou!")
+    |> subject("Seu Orçamento EasyFix chegou!")
     |> html_body("""
 Olá #{customer.name}, boas notícas!<br>
 <br>
@@ -35,7 +35,7 @@ EasyFix! Nós valorizamos sua mobilidade!
     accepted_quote = Orders.with_total_amount(accepted_quote)
 
     new_email()
-    |> to("Easyfix <contato@easyfix.net.br>")
+    |> to("EasyFix <contato@easyfix.net.br>")
     |> from("EasyFix <contato@easyfix.net.br>")
     |> subject("Cliente clicou em 'comprar' orçamento")
     |> html_body("""
@@ -56,21 +56,21 @@ Valor total do orçamento <strong>com taxa EasyFix</strong>: #{Money.to_string(O
     new_email()
     |> to("#{garage.name} <#{garage.user.email}>")
     |> from("EasyFix <contato@easyfix.net.br>")
-    |> subject("Novo Pedido Easyfix!")
+    |> subject("Novo Pedido EasyFix!")
     |> html_body("""
 Olá #{garage.name}!<br>
 <br>
 Um cliente acaba de nos enviar o pedido \##{order.id}. Ele certamente está ansioso para receber o seu orçamento.<br>
 <br>
-E aí, vamos orçar? <a href="#{ec2_quote_url}" target="_blank">Clique aqui</a> para abrir o painel de orçamento Easyfix.
+E aí, vamos orçar? <a href="#{ec2_quote_url}" target="_blank">Clique aqui</a> para abrir o painel de orçamento EasyFix.
     """)
   end
 
   def new_order_email_to_easyfix(order = %{customer: customer}) do
     new_email()
-    |> to("Easyfix <contato@easyfix.net.br>")
+    |> to("EasyFix <contato@easyfix.net.br>")
     |> from("EasyFix System <contato@easyfix.net.br>")
-    |> subject("Novo Pedido Easyfix!")
+    |> subject("Novo Pedido EasyFix!")
     |> html_body("""
 O cliente #{customer.name} acaba de fazer o pedido \##{order.id}! Aqui estão seus dados:<br>
 <br>
@@ -84,9 +84,9 @@ Email: #{customer.user.email}<br><br>
 
   def new_order_others_email_to_easyfix(order = %{customer: customer}) do
     new_email()
-    |> to(["Easyfix <contato@easyfix.net.br>", "#{customer.name} <#{customer.user.email}>"])
+    |> to(["EasyFix <contato@easyfix.net.br>", "#{customer.name} <#{customer.user.email}>"])
     |> from("EasyFix System <contato@easyfix.net.br>")
-    |> subject("Novo Pedido OUTROS Easyfix!")
+    |> subject("Novo Pedido OUTROS EasyFix!")
     |> html_body("""
 O cliente #{customer.name} acaba de fazer o pedido \##{order.id}! É um pedido do tipo "outros". Aqui estão seus dados:<br>
 <br>
@@ -104,9 +104,9 @@ Veja o que ele escreveu sobre o reparo necessário:<br>
     [vehicle] = customer.vehicles
 
     new_email()
-    |> to("Easyfix <contato@easyfix.net.br>")
+    |> to("EasyFix <contato@easyfix.net.br>")
     |> from("EasyFix System <contato@easyfix.net.br>")
-    |> subject("Novo Cliente Easyfix!")
+    |> subject("Novo Cliente EasyFix!")
     |> html_body("""
 Um novo cliente acaba de se cadastrar! Aqui estão seus dados:<br>
 <br>
@@ -122,9 +122,9 @@ Ano: #{vehicle.model_year}<br>
 
   def customer_rating_email_to_easyfix(order = %{customer: customer}) do
     new_email()
-    |> to("Easyfix <contato@easyfix.net.br>")
+    |> to("EasyFix <contato@easyfix.net.br>")
     |> from("EasyFix System <contato@easyfix.net.br>")
-    |> subject("Avaliação Cliente Easyfix!")
+    |> subject("Avaliação Cliente EasyFix!")
     |> html_body("""
 O cliente #{customer.name} (\##{customer.id}) acaba de avaliar o pedido \##{order.id}!
  Ele deu nota #{order.rating}, e comentou:<br>
@@ -139,7 +139,7 @@ O cliente #{customer.name} (\##{customer.id}) acaba de avaliar o pedido \##{orde
     new_email()
     |> to("#{customer.name} <#{customer.user.email}>")
     |> from("EasyFix System <contato@easyfix.net.br>")
-    |> subject("Novo Cliente Easyfix!")
+    |> subject("Novo Cliente EasyFix!")
     |> html_body("""
 Olá #{customer.name}, bem vindo!<br>
 <br>
