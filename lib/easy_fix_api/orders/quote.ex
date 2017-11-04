@@ -7,6 +7,7 @@ defmodule EasyFixApi.Orders.Quote do
     field :service_cost, Money.Ecto.Type
     field :due_date, :utc_datetime
     field :conclusion_date, :utc_datetime
+    field :comment, :string
 
     field :issuer_type, EasyFixApi.Accounts.UserTypeEnum
     belongs_to :issuer, EasyFixApi.Accounts.User
@@ -21,7 +22,7 @@ defmodule EasyFixApi.Orders.Quote do
     timestamps(type: :utc_datetime)
   end
 
-  @optional_attrs ~w(due_date state)
+  @optional_attrs ~w(due_date state comment)
   @required_attrs ~w(service_cost)a
   @assoc_attrs ~w(diagnosis_id issuer_id issuer_type parts)a
 

@@ -16,6 +16,8 @@ defmodule EasyFixApiWeb.QuoteView do
       opening_date: DateView.render("iso_at_sao_paulo_tz", quote.inserted_at),
       due_date: DateView.render("iso_at_sao_paulo_tz", quote.due_date),
       conclusion_date: DateView.render("iso_at_sao_paulo_tz", quote.conclusion_date),
+      comment: quote.comment,
+
       parts: render_many(quote.quotes_parts, EasyFixApiWeb.QuotePartView, "quote_part.json"),
 
       # FIXME: review this as soon as the frontend is refactored to allow proper number handling

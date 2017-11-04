@@ -13,6 +13,7 @@ defmodule EasyFixApiWeb.QuotePartView do
   def render("quote_part.json", %{quote_part: quote_part}) do
     %{id: quote_part.id,
       quantity: quote_part.quantity,
+      comment: quote_part.comment,
 
       # FIXME: review this as soon as the frontend is refactored to allow proper number handling
       price: __from_cents_to_reais_float(quote_part.price.amount),

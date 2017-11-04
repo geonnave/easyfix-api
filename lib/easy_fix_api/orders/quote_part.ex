@@ -7,13 +7,14 @@ defmodule EasyFixApi.Orders.QuotePart do
     belongs_to :part, EasyFixApi.Parts.Part, on_replace: :nilify
     field :quantity, :integer
     field :price, Money.Ecto.Type
+    field :comment, :string
 
     timestamps(type: :utc_datetime)
   end
 
   def create_changeset(attrs) do
     %__MODULE__{}
-    |> cast(attrs, [:quantity, :price, :part_id])
+    |> cast(attrs, [:quantity, :price, :comment, :part_id])
     |> validate_required([:quantity, :price, :part_id])
   end
 

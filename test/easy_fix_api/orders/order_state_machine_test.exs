@@ -1,5 +1,5 @@
 defmodule EasyFixApi.OrderStateMachineTest do
-  use EasyFixApi.DataCase, async: false
+  use EasyFixApi.DataCase
 
   import EasyFixApi.Factory
 
@@ -39,6 +39,8 @@ defmodule EasyFixApi.OrderStateMachineTest do
       assert {:not_quoted_by_garages, _} = OrderStateMachine.get_state data[:order_id]
     end
 
+    # FIXME: this test fails randomly when running `mix test`.
+    #  when running `mix test $filename:$linenumber`, it never fails.
     test "goes to quoted_by_garages when timeout and quotes size greater than 0" do
       order = create_order_with_diagnosis()
       data = %{order_id: order.id}
@@ -117,9 +119,9 @@ defmodule EasyFixApi.OrderStateMachineTest do
     end
   end
 
-  def gt_timeout(state), do: OrderStateMachine.timeout_value(state) + 10
+  def gt_timeout(state), do: OrderStateMachine.timeout_value(state) + 30
   def half_timeout(state), do: round(OrderStateMachine.timeout_value(state) / 2)
-  def gt_half_timeout(state), do: round(OrderStateMachine.timeout_value(state) / 2) + 10
+  def gt_half_timeout(state), do: round(OrderStateMachine.timeout_value(state) / 2) + 30
 
   def create_order_with_diagnosis do
     customer = insert(:customer)
