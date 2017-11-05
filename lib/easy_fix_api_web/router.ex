@@ -20,6 +20,7 @@ defmodule EasyFixApiWeb.Router do
 
     get "/", PageController, :index
     resources "/diagnosis-review", DiagnosisReviewController, only: [:index, :show]
+    resources "/order-review", OrderReviewController, only: [:index, :show]
   end
 
   scope "/api/v1", EasyFixApiWeb do

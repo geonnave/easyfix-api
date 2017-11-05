@@ -10,20 +10,20 @@
       <th>Estado</th>
     </tr>
   </thead>
-  <%= for diag <- @diagnosis do %>
+  <%= for order <- @orders do %>
     <tbody>
       <tr>
         <td>
-          <%= link "#{diag.id}", to: diagnosis_review_path(@conn, :show, diag)%>
+          <%= link "#{order.id}", to: order_review_path(@conn, :show, order)%>
         </td>
         <td>
-          <%= link "#{diag.order.customer.name}", to: diagnosis_review_path(@conn, :show, diag)%>
+          <%= link "#{order.customer.name}", to: order_review_path(@conn, :show, order)%>
         </td>
         <td>
-          <%= link "#{diag.vehicle.model.name}", to: diagnosis_review_path(@conn, :show, diag)%>
+          <%= link "#{order.diagnosis.vehicle.model.name}", to: order_review_path(@conn, :show, order)%>
         </td>
         <td>
-          <%= link "#{diag.order.state}", to: diagnosis_review_path(@conn, :show, diag)%>
+          <%= link "#{order.state}", to: order_review_path(@conn, :show, order)%>
         </td>
       </tr>
     </tbody>

@@ -68,6 +68,7 @@ defmodule EasyFixApi.Orders.Order do
       diagnosis: [EasyFixApi.Orders.Diagnosis.all_nested_assocs],
       customer: [EasyFixApi.Accounts.Customer.all_nested_assocs],
       accepted_quote: [EasyFixApi.Orders.Quote.all_nested_assocs],
+      best_price_quote: [EasyFixApi.Orders.Quote.all_nested_assocs],
     ]
   end
 end

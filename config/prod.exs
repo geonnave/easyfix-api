@@ -47,11 +47,11 @@ config :easy_fix_api, :order_states,
   ],
   not_quoted_by_garages: [final_state: true, macro_state: :canceled],
   quoted_by_garages: [
-    timeout: [value: [hours: 5*24], event: :to_quote_accepted_by_customer]
+    timeout: [value: [hours: 14*24], event: :to_quote_accepted_by_customer]
   ],
   quote_not_accepted_by_customer: [final_state: true, macro_state: :canceled],
   quote_accepted_by_customer: [
-    timeout: [value: [hours: 5*24], event: :to_finish_by_garage]
+    timeout: [value: [hours: 14*24], event: :to_finish_by_garage]
   ],
   finished_by_garage: [final_state: true],
   # timeout_on_quoted_by_garages: [final_state: true],

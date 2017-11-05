@@ -1,0 +1,168 @@
+<h2>Pedido #<%= @order.id %> - <%= @order.state %> </h2>
+
+<table class="ui celled table">
+  <tbody>
+    <tr>
+      <td>
+        Estado
+      </td>
+      <td>
+        <%= @order.state %>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Mudará de estado em
+      </td>
+      <td>
+        <%= EasyFixApiWeb.DateView.render_human("iso_at_sao_paulo_tz", @order.state_due_date) %>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Orçamento de melhor preço
+      </td>
+      <td>
+        <%= @order.best_price_quote_id %>
+        (oficina #<%= @order.best_price_quote.issuer.garage.id %> - <%= @order.best_price_quote.issuer.garage.name %>)
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Orçamento comprado pelo cliente
+      </td>
+      <td>
+        <%= @order.accepted_quote_id %>
+        (oficina #<%= @order.best_price_quote.issuer.garage.id %> - <%= @order.best_price_quote.issuer.garage.name %>)
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Avaliação
+      </td>
+      <td>
+        <span style="font-size: 20px"><%= if @order.rating == 1, do: "👍", else: "👎" %></span>
+        (<%= @order.rating_comment || "sem comentários" %>)
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Diagnóstico #<%= @diag.id %></h3>
+<table class="ui celled table">
+  <tbody>
+    <%= for diag_part <- @diag.diagnosis_parts do %>
+      <tr>
+        <td>Peça #<%= diag_part.part.id %></td>
+        <td>
+          (x<%= diag_part.quantity %>)
+          <%= diag_part.part.name %>
+        </td>
+      </tr>
+    <% end %>
+    <tr>
+      <td>Comentário</td>
+      <td>
+        <%= @diag.comment %>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Guincho?
+      </td>
+      <td>
+        <%= @diag.need_tow_truck %>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Aceita peças usadas?
+      </td>
+      <td>
+        <%= @diag.accepts_used_parts %>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Expira em
+      </td>
+      <td>
+        <%= EasyFixApiWeb.DateView.render_human("iso_at_sao_paulo_tz", @diag.expiration_date) %>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Cliente #<%= @customer.id %></h3>
+<table class="ui celled table">
+  <tbody>
+    <tr>
+      <td>Nome</td>
+      <td>
+        <%= @customer.name %>
+      </td>
+    </tr>
+    <tr>
+      <td>Email</td>
+      <td>
+        <%= @customer.user.email %>
+      </td>
+    </tr>
+    <tr>
+      <td>Telefone</td>
+      <td>
+        <%= @customer.phone %>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Veículo #<%= @diag.vehicle.id %></h3>
+<table class="ui celled table">
+  <tbody>
+    <tr>
+      <td>Marca</td>
+      <td>
+        <%= @diag.vehicle.brand.name %>
+      </td>
+    </tr>
+    <tr>
+      <td>Modelo</td>
+      <td>
+        <%= @diag.vehicle.model.name %>
+      </td>
+    </tr>
+    <tr>
+      <td>Ano Modelo</td>
+      <td>
+        <%= @diag.vehicle.model_year %>
+      </td>
+    </tr>
+    <tr>
+      <td>Ano Produção</td>
+      <td>
+        <%= @diag.vehicle.production_year %>
+      </td>
+    </tr>
+    <tr>
+      <td>Placa</td>
+      <td>
+        <%= @diag.vehicle.plate %>
+      </td>
+    </tr>
+    <tr>
+      <td>Chassis</td>
+      <td>
+        <%= @diag.vehicle.vehicle_id_number %>
+      </td>
+    </tr>
+    <tr>
+      <td>Kilometragem</td>
+      <td>
+        <%= @diag.vehicle.mileage %>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<br>
