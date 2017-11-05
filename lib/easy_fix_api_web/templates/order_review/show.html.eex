@@ -48,6 +48,9 @@
   </tbody>
 </table>
 
+<h3><%= length(@garages) %> oficinas receberam este pedido:</h3>
+...
+
 <h3>Diagnóstico #<%= @diag.id %></h3>
 <table class="ui celled table">
   <tbody>
