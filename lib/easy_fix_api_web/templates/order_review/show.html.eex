@@ -23,8 +23,10 @@
         Orçamento de melhor preço
       </td>
       <td>
-        <%= @order.best_price_quote_id %>
-        (oficina #<%= @order.best_price_quote.issuer.garage.id %> - <%= @order.best_price_quote.issuer.garage.name %>)
+        <%= if @order.best_price_quote_id do %>
+          <%= @order.best_price_quote_id %>
+          (oficina #<%= @order.best_price_quote.issuer.garage.id %> - <%= @order.best_price_quote.issuer.garage.name %>)
+        <% end %>
       </td>
     </tr>
     <tr>
@@ -32,8 +34,10 @@
         Orçamento comprado pelo cliente
       </td>
       <td>
-        <%= @order.accepted_quote_id %>
-        (oficina #<%= @order.best_price_quote.issuer.garage.id %> - <%= @order.best_price_quote.issuer.garage.name %>)
+        <%= if @order.accepted_quote_id do %>
+          <%= @order.accepted_quote_id %>
+          (oficina #<%= @order.best_price_quote.issuer.garage.id %> - <%= @order.best_price_quote.issuer.garage.name %>)
+        <% end %>
       </td>
     </tr>
     <tr>
@@ -49,7 +53,28 @@
 </table>
 
 <h3><%= length(@garages) %> oficinas receberam este pedido:</h3>
-...
+<div class="ui cards">
+  <%= for garage <- @garages do %>
+    <div class="card">
+      <div class="content">
+        <div class="header">
+          <%= garage.name %>
+        </div>
+        <div class="meta">
+          <%= garage.user.email %>
+        </div>
+      </div>
+      <div class="content">
+        <div class="description">
+          (quote...)
+        </div>
+      </div>
+      <div class="extra content">
+        outros dados...
+      </div>
+    </div>
+  <% end %>
+</div>
 
 <h3>Diagnóstico #<%= @diag.id %></h3>
 <table class="ui celled table">
