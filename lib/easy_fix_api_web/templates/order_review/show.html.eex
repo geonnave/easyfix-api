@@ -42,6 +42,16 @@
     </tr>
     <tr>
       <td>
+        Valor pago pelo cliente
+      </td>
+      <td>
+        <%= if @customer_total_amount do %>
+          <%= @customer_total_amount %>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <td>
         Avaliação
       </td>
       <td>
