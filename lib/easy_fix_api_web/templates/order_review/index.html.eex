@@ -1,31 +1,25 @@
 <h2>Pedidos disponíveis:</h2>
 
-<table class="ui selectable unstackable celled table">
-  <%# <caption></caption> %>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Cliente</th>
-      <th>Carro</th>
-      <th>Estado</th>
-    </tr>
-  </thead>
+<div class="ui two stackable cards">
   <%= for order <- @orders do %>
-    <tbody>
-      <tr>
-        <td>
-          <%= link "#{order.id}", to: order_review_path(@conn, :show, order)%>
-        </td>
-        <td>
-          <%= link "#{order.customer.name}", to: order_review_path(@conn, :show, order)%>
-        </td>
-        <td>
-          <%= link "#{order.diagnosis.vehicle.model.name}", to: order_review_path(@conn, :show, order)%>
-        </td>
-        <td>
-          <%= link "#{order.state}", to: order_review_path(@conn, :show, order)%>
-        </td>
-      </tr>
-    </tbody>
+    <div class="ui card">
+      <div class="content">
+        <a class="header" href="<%= order_review_path(@conn, :show, order) %>">
+          #<%= order.id %> - <%= order.customer.name %>
+        </a>
+        <div class="meta">
+          <%= order.diagnosis.vehicle.model.name %>
+        </div>
+        <div class="description">
+          <span>Criado em <%= EasyFixApiWeb.DateView.render_human("iso_at_sao_paulo_tz", order.inserted_at) %></span>
+        </div>
+      </div>
+      <div class="extra content">
+        <strong><%= order.state %></strong> <br>
+        <%= if order.state_due_date do %>
+          <span>Muda em <%= EasyFixApiWeb.DateView.render_human("iso_at_sao_paulo_tz", order.state_due_date) %></span>
+        <% end %>
+      </div>
+    </div>
   <% end %>
-</table>
+</div>

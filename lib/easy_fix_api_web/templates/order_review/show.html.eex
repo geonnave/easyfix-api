@@ -23,9 +23,9 @@
         Orçamento de melhor preço
       </td>
       <td>
-        <%= if @order.best_price_quote_id do %>
-          <%= @order.best_price_quote_id %>
-          (oficina #<%= @order.best_price_quote.issuer.garage.id %> - <%= @order.best_price_quote.issuer.garage.name %>)
+        <%= if @best_price_quote do %>
+          <%= @best_price_quote.total_amount %>
+          (oficina #<%= @best_price_quote.issuer.garage.id %> - <%= @best_price_quote.issuer.garage.name %>)
         <% end %>
       </td>
     </tr>
@@ -34,9 +34,9 @@
         Orçamento comprado pelo cliente
       </td>
       <td>
-        <%= if @order.accepted_quote_id do %>
-          <%= @order.accepted_quote_id %>
-          (oficina #<%= @order.best_price_quote.issuer.garage.id %> - <%= @order.best_price_quote.issuer.garage.name %>)
+        <%= if @accepted_quote do %>
+          <%= @accepted_quote.total_amount %>
+          (oficina #<%= @accepted_quote.issuer.garage.id %> - <%= @accepted_quote.issuer.garage.name %>)
         <% end %>
       </td>
     </tr>
@@ -45,32 +45,71 @@
         Avaliação
       </td>
       <td>
-        <span style="font-size: 20px"><%= if @order.rating == 1, do: "👍", else: "👎" %></span>
-        (<%= @order.rating_comment || "sem comentários" %>)
+        <span style="font-size: 20px">
+          <%= case @order.rating do
+            1 ->
+              "👎"
+            5 ->
+              "👍"
+            _ ->
+              ""
+          end %>
+        </span>
+        <%= if @order.rating_comment, do: " | " <> @order.rating_comment %>
       </td>
     </tr>
   </tbody>
 </table>
 
-<h3><%= length(@garages) %> oficinas receberam este pedido:</h3>
-<div class="ui cards">
-  <%= for garage <- @garages do %>
+<h3><%= length(@garages_quotes) %> oficinas receberam este pedido:</h3>
+<div class="ui two stackable cards">
+  <%= for {garage, quote} <- @garages_quotes do %>
     <div class="card">
       <div class="content">
         <div class="header">
-          <%= garage.name %>
+          #<%= garage.id %> <%= garage.name %>
         </div>
         <div class="meta">
-          <%= garage.user.email %>
+          <%= if quote, do: "Valor orçado: " <> Money.to_string(quote.total_amount) %>
         </div>
       </div>
       <div class="content">
         <div class="description">
-          (quote...)
+          <%= if quote do %>
+            <table class="ui celled table">
+              <tbody>
+                <%= for quote_part <- quote.quotes_parts do %>
+                  <tr>
+                    <td>Peça #<%= quote_part.part.id %></td>
+                    <td>
+                      (x<%= quote_part.quantity %>)
+                      <%= quote_part.part.name %>
+                    </td>
+                    <td><%= Money.to_string(quote_part.price)%></td>
+                  </tr>
+                <% end %>
+                <tr>
+                  <td>Serviço</td>
+                  <td colspan="2">
+                    <%= quote.service_cost %>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Comentário geral</td>
+                  <td colspan="2">
+                    <%= quote.comment %>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          <% else %>
+            (oficina não orçou)
+          <% end %>
         </div>
       </div>
       <div class="extra content">
-        outros dados...
+        <%= garage.user.email %> - 
+        <%= garage.phone %>
       </div>
     </div>
   <% end %>
