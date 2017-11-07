@@ -34,18 +34,18 @@ defmodule EasyFixApiWeb.OrderReviewController do
         {_, q1}, {_, q2} -> q1.total_amount >= q2.total_amount
       end)
 
-    best_price_quote = order.best_price_quote |> Orders.with_total_amount
     accepted_quote = order.accepted_quote |> Orders.with_total_amount
-    %{total_amount: customer_total_amount} = case accepted_quote do
+    best_price_quote = order.best_price_quote |> Orders.with_total_amount
+    %{total_amount: customer_best_price_total_amount} = case best_price_quote do
       nil -> %{total_amount: nil}
-      accepted_quote -> Orders.add_customer_fee(accepted_quote)
+      best_price_quote -> Orders.add_customer_fee(best_price_quote)
     end
 
     render conn, "show.html",
       order: order,
       best_price_quote: best_price_quote,
       accepted_quote: best_price_quote,
-      customer_total_amount: customer_total_amount,
+      customer_best_price_total_amount: customer_best_price_total_amount,
       diag: diagnosis,
       customer: order.customer,
       garages_quotes: garages_quotes

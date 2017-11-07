@@ -42,11 +42,11 @@
     </tr>
     <tr>
       <td>
-        Valor pago pelo cliente
+        Valor orfertado ao cliente
       </td>
       <td>
-        <%= if @customer_total_amount do %>
-          <%= @customer_total_amount %>
+        <%= if @customer_best_price_total_amount do %>
+          <%= @customer_best_price_total_amount %>
         <% end %>
       </td>
     </tr>
