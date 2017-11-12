@@ -1,7 +1,7 @@
 defmodule EasyFixApiWeb.GarageOrderController do
   use EasyFixApiWeb, :controller
 
-  alias EasyFixApi.{Orders, GarageOrders}
+  alias EasyFixApi.{GarageOrders}
 
   action_fallback EasyFixApiWeb.FallbackController
 

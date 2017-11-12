@@ -61,6 +61,9 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
         end
     end
   end
+  def handle_event({:call, from}, {:customer_clicked, :accept_quote, attrs}, :created_with_diagnosis, data) do
+    handle_clicked_accept_quote(from, attrs, data)
+  end
 
   def handle_event(:state_timeout, :to_quote_accepted_by_customer, :quoted_by_garages, data) do
     Logger.warn ":state_timeout, :to_quote_accepted_by_customer, :quoted_by_garages"
@@ -74,26 +77,7 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     {:next_state, :timeout, data}
   end
   def handle_event({:call, from}, {:customer_clicked, :accept_quote, attrs}, :quoted_by_garages, data) do
-    Logger.debug "{:call, _from}, {:customer_clicked, :accept_quote, #{inspect attrs}}, :quoted_by_garages"
-    next_state_attrs = next_state_attrs(:quote_accepted_by_customer)
-    order = Orders.get_order!(data[:order_id])
-    with {:ok, updated_order} <- Orders.update_order_state(order, next_state_attrs),
-         {:ok, updated_order} <- Orders.set_order_accepted_quote(updated_order, attrs) do
-      updated_order
-      |> Repo.preload([accepted_quote: [Quote.all_nested_assocs], customer: [Customer.all_nested_assocs]])
-      |> Emails.accepted_by_customer
-      |> Mailer.deliver_later
-
-
-      %{state: state, state_due_date: state_due_date} = updated_order
-      reply_action = {:reply, from, {:ok, updated_order}}
-      timeout_action = state_timeout_action(state, state_due_date)
-      {:next_state, state, data, [reply_action, timeout_action]}
-    else
-      {:error, changeset} ->
-        reply_action = {:reply, from, {:error, changeset}}
-        {:next_state, :finished_error, put_in(data[:changeset], [reply_action])}
-    end
+    handle_clicked_accept_quote(from, attrs, data)
   end
   def handle_event({:call, from}, {:customer_clicked, :not_accept_quote, attrs}, :quoted_by_garages, data) do
     Logger.debug "{:call, from}, {:customer_clicked, :not_accept_quote, #{inspect attrs}}, :quoted_by_garages"
@@ -134,6 +118,28 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
   end
 
   # Helper functions
+
+  def handle_clicked_accept_quote(from, attrs, data) do
+    Logger.debug "{:call, from}, {:customer_clicked, :accept_quote, #{inspect attrs}}, :quoted_by_garages"
+    next_state_attrs = next_state_attrs(:quote_accepted_by_customer)
+    order = Orders.get_order!(data[:order_id])
+    with {:ok, updated_order} <- Orders.update_order_state(order, next_state_attrs),
+         {:ok, updated_order} <- Orders.set_order_accepted_quote(updated_order, attrs) do
+      updated_order
+      |> Repo.preload([accepted_quote: [Quote.all_nested_assocs], customer: [Customer.all_nested_assocs]])
+      |> Emails.accepted_by_customer
+      |> Mailer.deliver_later
+
+      %{state: state, state_due_date: state_due_date} = updated_order
+      reply_action = {:reply, from, {:ok, updated_order}}
+      timeout_action = state_timeout_action(state, state_due_date)
+      {:next_state, state, data, [reply_action, timeout_action]}
+    else
+      {:error, changeset} ->
+        reply_action = {:reply, from, {:error, changeset}}
+        {:next_state, :finished_error, put_in(data[:changeset], [reply_action])}
+    end
+  end
 
   def timeout_from_now(state_due_date) do
     Timex.diff(state_due_date, Timex.now, :milliseconds)
