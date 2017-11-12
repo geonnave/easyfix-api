@@ -27,7 +27,7 @@ defmodule EasyFixApi.CustomerOrders do
     end
   end
 
-  def get_customer_order_quotes(customer_id, order_id) do
+  def get_order_quotes(customer_id, order_id) do
     from(d in Diagnosis,
       join: o in Order, on: d.order_id == o.id,
       where: o.id == ^order_id and o.customer_id == ^customer_id,

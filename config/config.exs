@@ -8,8 +8,7 @@ use Mix.Config
 # General application configuration
 
 config :easy_fix_api,
-  domain: "localhost",
-  admin_key: "m5t8vE5MBZ8nLIixaMm6zvcdTzAEaM37"
+  domain: "localhost"
 
 config :easy_fix_api,
   ecto_repos: [EasyFixApi.Repo]

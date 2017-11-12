@@ -342,7 +342,7 @@ defmodule EasyFixApi.Orders do
     Repo.delete(quote_part)
   end
 
-  alias EasyFixApi.Orders.{Order, OrderStateMachine, Matcher}
+  alias EasyFixApi.Orders.{Order, OrderStateMachine}
 
   def list_orders do
     Repo.all(Order)

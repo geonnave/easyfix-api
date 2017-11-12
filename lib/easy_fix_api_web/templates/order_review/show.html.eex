@@ -1,4 +1,4 @@
-<h2>Pedido #<%= @order.id %> - <%= @order.state %> </h2>
+<h2>Pedido #<%= @order.id %> - <%= @customer.name %> - <%= @diag.vehicle.model.name %> </h2>
 
 <table class="ui celled table">
   <tbody>

@@ -4,7 +4,7 @@
   <%= for order <- @orders do %>
     <div class="ui card">
       <div class="content">
-        <a class="header" href="<%= order_review_path(@conn, :show, order) %>">
+        <a class="header" href="<%= order_review_path(@conn, :show, order) %>?key=<%= Application.get_env(:easy_fix_api, EasyFixApiWeb.Endpoint)[:secret_key_base] %>">
           #<%= order.id %> - <%= order.customer.name %>
         </a>
         <div class="meta">

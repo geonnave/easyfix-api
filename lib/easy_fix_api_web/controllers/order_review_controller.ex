@@ -3,7 +3,7 @@ defmodule EasyFixApiWeb.OrderReviewController do
   alias EasyFixApi.{Orders, CustomerOrders, Repo}
   alias EasyFixApi.Orders.{Quote, Matcher}
 
-  @admin_key Application.get_env(:easy_fix_api, :admin_key)
+  @admin_key Application.get_env(:easy_fix_api, EasyFixApiWeb.Endpoint)[:secret_key_base]
 
   def index(conn, _params = %{"key" => @admin_key}) do
     orders = Orders.list_orders |> Enum.sort_by(fn order -> Timex.to_unix(order.inserted_at) end, &>=/2)
@@ -36,7 +36,7 @@ defmodule EasyFixApiWeb.OrderReviewController do
         {_, q1}, {_, q2} -> q1.total_amount >= q2.total_amount
       end)
 
-    accepted_quote = order.accepted_quote |> Orders.with_total_amount
+    # accepted_quote = order.accepted_quote |> Orders.with_total_amount
     best_price_quote = order.best_price_quote |> Orders.with_total_amount
     %{total_amount: customer_best_price_total_amount} = case best_price_quote do
       nil -> %{total_amount: nil}
@@ -46,7 +46,7 @@ defmodule EasyFixApiWeb.OrderReviewController do
     render conn, "show.html",
       order: order,
       best_price_quote: best_price_quote,
-      accepted_quote: accepted_quote,
+      accepted_quote: best_price_quote,
       customer_best_price_total_amount: customer_best_price_total_amount,
       diag: diagnosis,
       customer: order.customer,

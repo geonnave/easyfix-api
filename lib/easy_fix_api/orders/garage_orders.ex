@@ -3,9 +3,9 @@ defmodule EasyFixApi.GarageOrders do
   """
 
   import Ecto.{Query, Changeset}, warn: false
-  alias EasyFixApi.{Orders, Accounts, Repo}
+  alias EasyFixApi.{Orders, Accounts}
 
-  alias EasyFixApi.Orders.{Order, Diagnosis, Quote, Matcher}
+  alias EasyFixApi.Orders.{Matcher}
 
   # must find intersection(garage_id_categories, diagnosis_categories)
   # TODO: write this using Ecto.Query
