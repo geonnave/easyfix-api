@@ -398,26 +398,6 @@ defmodule EasyFixApi.Orders do
     end
   end
 
-  def list_customer_orders(customer_id) do
-    from(o in Order,
-      where: o.customer_id == ^customer_id,
-      preload: ^Order.all_nested_assocs)
-    |> Repo.all
-  end
-
-  def get_customer_order(customer_id, order_id) do
-    from(o in Order,
-      where: o.customer_id == ^customer_id and o.id == ^order_id,
-      preload: ^Order.all_nested_assocs)
-    |> Repo.one
-    |> case do
-      nil ->
-        {:error, "order #{order_id} not found for customer #{customer_id}"}
-      order ->
-        {:ok, order}
-    end
-  end
-
   def get_order!(id) do
     Repo.get!(Order, id)
     |> Repo.preload(Order.all_nested_assocs)

@@ -286,27 +286,27 @@ defmodule EasyFixApi.OrdersTest do
       assert_raise Ecto.NoResultsError, fn -> Orders.get_diagnosis!(order.diagnosis.id) end
     end
 
-    test "list_customer_orders/1 returns the corresponding orders" do
+    test "CustomerOrders.list_orders/1 returns the corresponding orders" do
       customer = insert(:customer)
       [vehicle] = customer.vehicles
       order_attrs = order_with_all_params(customer.id, vehicle.id)
       {:ok, order} = Orders.create_order_with_diagnosis(order_attrs)
 
-      assert [a_order] = Orders.list_customer_orders(customer.id)
+      assert [a_order] = CustomerOrders.list_orders(customer.id)
       assert a_order.id == order.id
-      assert [] = Orders.list_customer_orders(0)
+      assert [] = CustomerOrders.list_orders(0)
     end
-    test "get_customer_order/1 returns the corresponding orders" do
+    test "CustomerOrders.get_order/1 returns the corresponding orders" do
       customer = insert(:customer)
       [vehicle] = customer.vehicles
       order_attrs = order_with_all_params(customer.id, vehicle.id)
       {:ok, order} = Orders.create_order_with_diagnosis(order_attrs)
 
-      assert {:ok, the_order} = Orders.get_customer_order(customer.id, order.id)
+      assert {:ok, the_order} = CustomerOrders.get_order(customer.id, order.id)
       assert the_order.id == order.id
       assert the_order.customer_id == customer.id
-      assert {:error, _} = Orders.get_customer_order(customer.id, 0)
-      assert {:error, _} = Orders.get_customer_order(0, order.id)
+      assert {:error, _} = CustomerOrders.get_order(customer.id, 0)
+      assert {:error, _} = CustomerOrders.get_order(0, order.id)
     end
   end
 end

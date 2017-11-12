@@ -9,6 +9,26 @@ defmodule EasyFixApi.CustomerOrders do
   alias EasyFixApi.Cars.Vehicle
   alias EasyFixApi.Orders.{DiagnosisPart, Order, Diagnosis, Quote}
 
+  def list_orders(customer_id) do
+    from(o in Order,
+      where: o.customer_id == ^customer_id,
+      preload: ^Order.all_nested_assocs)
+    |> Repo.all
+  end
+
+  def get_order(customer_id, order_id) do
+    from(o in Order,
+      where: o.customer_id == ^customer_id and o.id == ^order_id,
+      preload: ^Order.all_nested_assocs)
+    |> Repo.one
+    |> case do
+      nil ->
+        {:error, "order #{order_id} not found for customer #{customer_id}"}
+      order ->
+        {:ok, order}
+    end
+  end
+
   def get_customer_order_quotes(customer_id, order_id) do
     from(d in Diagnosis,
       join: o in Order, on: d.order_id == o.id,

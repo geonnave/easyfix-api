@@ -1,7 +1,7 @@
 defmodule EasyFixApiWeb.CustomerOrderController do
   use EasyFixApiWeb, :controller
 
-  alias EasyFixApi.{Orders, Emails, Mailer}
+  alias EasyFixApi.{Orders, CustomerOrders, Emails, Mailer}
   alias EasyFixApi.Orders.OrderStateMachine
 
   action_fallback EasyFixApiWeb.FallbackController
@@ -9,14 +9,14 @@ defmodule EasyFixApiWeb.CustomerOrderController do
   def index(conn, _params = %{"customer_id" => customer_id}) do
     customer_orders =
       customer_id
-      |> Orders.list_customer_orders()
+      |> CustomerOrders.list_orders()
       |> Enum.sort_by(fn order -> Timex.to_unix(order.inserted_at) end, &>=/2)
 
     render(conn, "index.json", customer_orders: customer_orders)
   end
 
   def show(conn, _params = %{"customer_id" => customer_id, "id" => order_id}) do
-    case Orders.get_customer_order(customer_id, order_id) do
+    case CustomerOrders.get_order(customer_id, order_id) do
       {:ok, customer_order} ->
         render(conn, "show.json", customer_order: customer_order)
       {:error, error} ->
