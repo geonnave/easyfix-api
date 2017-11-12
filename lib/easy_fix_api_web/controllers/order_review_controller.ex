@@ -1,6 +1,6 @@
 defmodule EasyFixApiWeb.OrderReviewController do
   use EasyFixApiWeb, :controller
-  alias EasyFixApi.{Orders, Parts, Repo}
+  alias EasyFixApi.{Orders, CustomerOrders, Parts, Repo}
   alias EasyFixApi.Orders.{Order, Quote, Matcher}
 
   def index(conn, _params) do
@@ -38,7 +38,7 @@ defmodule EasyFixApiWeb.OrderReviewController do
     best_price_quote = order.best_price_quote |> Orders.with_total_amount
     %{total_amount: customer_best_price_total_amount} = case best_price_quote do
       nil -> %{total_amount: nil}
-      best_price_quote -> Orders.add_customer_fee(best_price_quote)
+      best_price_quote -> CustomerOrders.add_customer_fee(best_price_quote)
     end
 
     render conn, "show.html",

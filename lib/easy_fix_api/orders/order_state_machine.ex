@@ -1,7 +1,7 @@
 defmodule EasyFixApi.Orders.OrderStateMachine do
   use GenStateMachine
   require Logger
-  alias EasyFixApi.{Orders, Emails, Mailer, Repo}
+  alias EasyFixApi.{Orders, CustomerOrders, Emails, Mailer, Repo}
   alias EasyFixApi.Accounts.Customer
   alias EasyFixApi.Orders.Quote
 
@@ -43,7 +43,7 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
         end
       quotes ->
         order = Orders.get_order!(data[:order_id])
-        %{best_price_quote: best_price_quote} = Orders.generate_customer_quotes_stats(quotes)
+        %{best_price_quote: best_price_quote} = CustomerOrders.generate_customer_quotes_stats(quotes)
 
         next_state_attrs = next_state_attrs(:quoted_by_garages)
         best_price_attrs = %{best_price_quote_id: best_price_quote.id}

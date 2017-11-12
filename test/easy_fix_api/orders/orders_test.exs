@@ -1,7 +1,7 @@
 defmodule EasyFixApi.OrdersTest do
   use EasyFixApi.DataCase
 
-  alias EasyFixApi.Orders
+  alias EasyFixApi.{Orders, CustomerOrders}
   alias EasyFixApi.Orders.OrderStateMachine
 
   describe "diagnosis" do
@@ -198,8 +198,8 @@ defmodule EasyFixApi.OrdersTest do
     @max_amount Application.get_env(:easy_fix_api, :fees)[:customer_fee_on_quote_by_garage][:max_amount]
     @percent_fee Application.get_env(:easy_fix_api, :fees)[:customer_fee_on_quote_by_garage][:percent_fee]
     test "calculate_customer_percent_fee" do
-      assert 0.0875 == Orders.calculate_customer_percent_fee(Money.new(800_00), Money.new(@max_amount), @percent_fee)
-      assert 0.05 == Orders.calculate_customer_percent_fee(Money.new(1400_00), Money.new(@max_amount), @percent_fee)
+      assert 0.0875 == CustomerOrders.calculate_customer_percent_fee(Money.new(800_00), Money.new(@max_amount), @percent_fee)
+      assert 0.05 == CustomerOrders.calculate_customer_percent_fee(Money.new(1400_00), Money.new(@max_amount), @percent_fee)
     end
 
     test "will add customer @percent_fee to quote" do
@@ -210,7 +210,7 @@ defmodule EasyFixApi.OrdersTest do
         |> with_total_amount(300_00)
       assert quote.total_amount == Orders.calculate_total_amount(quote)
 
-      customer_quote = Orders.add_customer_fee(quote)
+      customer_quote = CustomerOrders.add_customer_fee(quote)
       whole_percent_fee = 1 + @percent_fee
       assert Money.multiply(quote.total_amount, whole_percent_fee) == customer_quote.total_amount
     end
@@ -223,7 +223,7 @@ defmodule EasyFixApi.OrdersTest do
         |> with_total_amount(1400_00)
       assert quote.total_amount == Orders.calculate_total_amount(quote)
 
-      customer_quote = Orders.add_customer_fee(quote)
+      customer_quote = CustomerOrders.add_customer_fee(quote)
       assert Money.add(quote.total_amount, Money.new(@max_amount)) == customer_quote.total_amount
     end
   end

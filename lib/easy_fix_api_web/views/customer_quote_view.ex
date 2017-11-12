@@ -1,7 +1,7 @@
 defmodule EasyFixApiWeb.CustomerQuoteView do
   use EasyFixApiWeb, :view
   alias EasyFixApiWeb.{CustomerQuoteView}
-  alias EasyFixApi.{Orders}
+  alias EasyFixApi.{CustomerOrders, Orders}
 
   def render("index.json", %{customer_quotes: customer_quotes}) do
     %{data: render_many(customer_quotes, CustomerQuoteView, "customer_quote.json")}
@@ -14,7 +14,7 @@ defmodule EasyFixApiWeb.CustomerQuoteView do
   def render("customer_quote.json", %{customer_quote: customer_quote}) do
     customer_quote
     |> Orders.with_total_amount
-    |> Orders.add_customer_fee
+    |> CustomerOrders.add_customer_fee
     |> render_one(EasyFixApiWeb.QuoteView, "quote.json")
   end
 end

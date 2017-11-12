@@ -2,7 +2,7 @@ defmodule EasyFixApi.Emails do
   import Bamboo.Email
 
   alias EasyFixApi.Orders.Matcher
-  alias EasyFixApi.{Orders, Mailer}
+  alias EasyFixApi.{CustomerOrders, Orders, Mailer}
 
   def send_email_to_matching_garages(new_order) do
     new_order
@@ -46,7 +46,7 @@ Telefone: #{customer.phone}<br>
 Email: #{customer.user.email}<br><br>
 <br>
 Valor total do orçamento: #{Money.to_string(accepted_quote.total_amount)}
-Valor total do orçamento <strong>com taxa EasyFix</strong>: #{Money.to_string(Orders.add_customer_fee(accepted_quote).total_amount)}
+Valor total do orçamento <strong>com taxa EasyFix</strong>: #{Money.to_string(CustomerOrders.add_customer_fee(accepted_quote).total_amount)}
     """)
   end
 
@@ -139,13 +139,13 @@ O cliente #{customer.name} (\##{customer.id}) acaba de avaliar o pedido \##{orde
     new_email()
     |> to("#{customer.name} <#{customer.user.email}>")
     |> from("EasyFix System <contato@easyfix.net.br>")
-    |> subject("Novo Cliente EasyFix!")
+    |> subject("Seja bem vindo à EasyFix!")
     |> html_body("""
 Olá #{customer.name}, bem vindo!<br>
 <br>
 Você é exatamente quem esperávamos!<br>
 A partir de agora vai sentir o poder de conseguir para qualquer reparo 
-em seu #{vehicle.model.name} a maior economia, qualidade, conforto e rapidez!!<br>
+em seu #{vehicle.model.name} com a maior economia, qualidade, conforto e rapidez!!<br>
 <br>
 Somos o mecânico de confiança que tanto desejava e esperava!<br>
 Compre via EasyFix e garanta vantagens!<br>
