@@ -1,15 +1,17 @@
 defmodule EasyFixApiWeb.OrderReviewController do
   use EasyFixApiWeb, :controller
-  alias EasyFixApi.{Orders, CustomerOrders, Parts, Repo}
-  alias EasyFixApi.Orders.{Order, Quote, Matcher}
+  alias EasyFixApi.{Orders, CustomerOrders, Repo}
+  alias EasyFixApi.Orders.{Quote, Matcher}
 
-  def index(conn, _params) do
+  @admin_key Application.get_env(:easy_fix_api, :admin_key)
+
+  def index(conn, _params = %{"key" => @admin_key}) do
     orders = Orders.list_orders |> Enum.sort_by(fn order -> Timex.to_unix(order.inserted_at) end, &>=/2)
     render conn, "index.html", orders: orders
   end
 
   # TODO: refactor this ugly function...
-  def show(conn, %{"id" => id}) do
+  def show(conn, %{"id" => id, "key" => @admin_key}) do
     order = Orders.get_order!(id)
     diagnosis = order.diagnosis
     %{quotes: quotes} = order.diagnosis |> Repo.preload(quotes: [Quote.all_nested_assocs])
@@ -44,7 +46,7 @@ defmodule EasyFixApiWeb.OrderReviewController do
     render conn, "show.html",
       order: order,
       best_price_quote: best_price_quote,
-      accepted_quote: best_price_quote,
+      accepted_quote: accepted_quote,
       customer_best_price_total_amount: customer_best_price_total_amount,
       diag: diagnosis,
       customer: order.customer,
