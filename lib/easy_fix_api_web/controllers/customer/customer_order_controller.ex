@@ -48,7 +48,7 @@ defmodule EasyFixApiWeb.CustomerOrderController do
   def update_state(conn, params = %{"event" => event_params}) do
     %{"customer_id" => customer_id, "order_id" => order_id} = params
 
-    {:ok, order} = Orders.get_customer_order(customer_id, order_id)
+    {:ok, order} = CustomerOrders.get_order(customer_id, order_id)
 
     event = event_params["name"] |> String.to_atom
     data_params = event_params["data"]
@@ -60,7 +60,7 @@ defmodule EasyFixApiWeb.CustomerOrderController do
   def rate(conn, params = %{"rating" => rating_params}) do
     %{"customer_id" => customer_id, "order_id" => order_id} = params
 
-    with {:ok, order} <- Orders.get_customer_order(customer_id, order_id),
+    with {:ok, order} <- CustomerOrders.get_order(customer_id, order_id),
          :quote_accepted_by_customer <- order.state,
          {:ok, updated_order} <- Orders.set_order_rating(order, rating_params) do
       Emails.customer_rating_email_to_easyfix(updated_order) |> Mailer.deliver_later

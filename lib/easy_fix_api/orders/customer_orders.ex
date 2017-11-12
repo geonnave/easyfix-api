@@ -3,11 +3,9 @@ defmodule EasyFixApi.CustomerOrders do
   """
 
   import Ecto.{Query, Changeset}, warn: false
-  alias EasyFixApi.{Orders, Parts, Accounts, Repo, Helpers}
+  alias EasyFixApi.{Orders, Repo}
 
-  alias EasyFixApi.Parts.Part
-  alias EasyFixApi.Cars.Vehicle
-  alias EasyFixApi.Orders.{DiagnosisPart, Order, Diagnosis, Quote}
+  alias EasyFixApi.Orders.{Order, Diagnosis, Quote}
 
   def list_orders(customer_id) do
     from(o in Order,

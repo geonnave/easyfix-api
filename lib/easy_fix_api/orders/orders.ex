@@ -349,41 +349,6 @@ defmodule EasyFixApi.Orders do
     |> Repo.preload(Order.all_nested_assocs)
   end
 
-  # must find intersection(garage_id_categories, diagnosis_categories)
-  # TODO: write this using Ecto.Query
-  def list_garage_orders(garage_id) do
-    garage = Accounts.get_garage!(garage_id)
-
-    garage
-    |> Matcher.list_orders_matching_garage
-    |> Enum.map(fn order ->
-      quote =
-        garage.user.id
-        |> get_quote_for_order_by_user(order.diagnosis.id)
-        |> quote_with_best_price(order)
-
-      order = order_maybe_with_customer(order, quote)
-
-      %{order: order, quote: quote}
-    end)
-    |> Enum.filter(fn %{order: order} -> order.diagnosis.diagnosis_parts != [] end)
-  end
-
-  # FIXME: make this function return nice error messages
-  def get_garage_order(garage_id, order_id) do
-    garage = Accounts.get_garage!(garage_id)
-    order = get_order!(order_id)
-
-    quote =
-      garage.user.id
-      |> get_quote_for_order_by_user(order.diagnosis.id)
-      |> quote_with_best_price(order)
-
-    order = order_maybe_with_customer(order, quote)
-
-    %{order: order, quote: quote}
-  end
-
   def quote_with_best_price(nil, _order), do: nil
   def quote_with_best_price(quote, order) do
     %{quote | is_best_price: order.best_price_quote_id == quote.id}

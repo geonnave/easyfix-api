@@ -1,7 +1,7 @@
 defmodule EasyFixApiWeb.GarageOrderQuoteController do
   use EasyFixApiWeb, :controller
 
-  alias EasyFixApi.{Orders}
+  alias EasyFixApi.{Orders, GarageOrders}
 
   action_fallback EasyFixApiWeb.FallbackController
 
@@ -37,7 +37,7 @@ defmodule EasyFixApiWeb.GarageOrderQuoteController do
   end
 
   def update(conn, %{"quote" => quote_params, "garage_id" => garage_id, "order_id" => order_id}) do
-    %{order: _order, quote: quote} = Orders.get_garage_order(garage_id, order_id)
+    %{order: _order, quote: quote} = GarageOrders.get_order(garage_id, order_id)
 
     with {:ok, quote} <- Orders.update_quote(quote, quote_params) do
       render(conn, EasyFixApiWeb.QuoteView, "show.json", quote: quote)
