@@ -260,6 +260,13 @@ defmodule EasyFixApi.Orders do
 
         quote
         |> Repo.preload(Quote.all_nested_assocs)
+        |> with_total_amount()
+        |> case do
+          %{total_amount: %Money{amount: 0}} ->
+            Repo.rollback("Quote total amount cannot be 0")
+          quote ->
+            quote
+        end
       end
     else
       %{valid?: false} = changeset ->
