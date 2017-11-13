@@ -62,7 +62,7 @@ Olá #{garage.name}!<br>
 <br>
 Um cliente acaba de nos enviar o pedido \##{order.id}. Ele certamente está ansioso para receber o seu orçamento.<br>
 <br>
-E aí, vamos orçar? <a href="#{ec2_quote_url}" target="_blank">Clique aqui</a> para abrir o painel de orçamento EasyFix.
+E aí, vamos orçar? Abra o painel de orçamento EasyFix e orce antes que o tempo acabe!
     """)
   end
 
