@@ -62,6 +62,16 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     end
   end
   def handle_event({:call, from}, {:customer_clicked, :accept_quote, attrs}, :created_with_diagnosis, data) do
+    %{best_price_quote: best_price_quote} =
+      data[:order_id]
+      |> Orders.list_quotes_by_order
+      |> CustomerOrders.generate_customer_quotes_stats
+
+    {:ok, _updated_order} =
+      data[:order_id]
+      |> Orders.get_order!
+      |> Orders.set_order_best_price_quote(%{best_price_quote_id: best_price_quote.id})
+
     handle_clicked_accept_quote(from, attrs, data)
   end
 
