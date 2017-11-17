@@ -51,7 +51,7 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
         with {:ok, updated_order} <- Orders.update_order_state(order, next_state_attrs),
              {:ok, updated_order} <- Orders.set_order_best_price_quote(updated_order, best_price_attrs) do
           %{state: state, state_due_date: state_due_date} = updated_order
-          Emails.quoted_by_garages(order)
+          Emails.Customer.order_was_quoted_by_garages(order)
           |> Mailer.deliver_later
 
           {:next_state, state, data, [state_timeout_action(state, state_due_date)]}
@@ -137,7 +137,7 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
          {:ok, updated_order} <- Orders.set_order_accepted_quote(updated_order, attrs) do
       updated_order
       |> Repo.preload([accepted_quote: [Quote.all_nested_assocs], customer: [Customer.all_nested_assocs]])
-      |> Emails.accepted_by_customer
+      |> Emails.Customer.purchase_confirmation
       |> Mailer.deliver_later
 
       %{state: state, state_due_date: state_due_date} = updated_order

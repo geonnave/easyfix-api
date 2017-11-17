@@ -1,0 +1,6 @@
+<p>Ol&aacute; <%= @customer.name %>, Temos novidades!</p>
+<p>A EasyFix conquistou um &oacute;timo or&ccedil;amento, conforme descrito em seu pedido &#35;<%= @order.id %>. Foram consultadas diversas e as melhores oficinas e profissionais.</p>
+<p>Agora s&oacute; resta comprar. N&atilde;o perca esta oportunidade. Os or&ccedil;amentos s&atilde;o v&aacute;lidos apenas por 3 dias.</p>
+<p>Garanta as vantagens de comprar pela EasyFix! Se desejar, parcelamos em at&eacute; 10 vezes no cart&atilde;o de cr&eacute;dito. Seu <%= @vehicle.model.name %> vai ficar pronto rapidinho.</p>
+<p><img src="https://s3-sa-east-1.amazonaws.com/easyfix-storage/assets/logo_text_on_right_small.png" width="220" height="104" /></p>
+<p>Valorizando sua mobilidade!</p>

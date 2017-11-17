@@ -1,0 +1,8 @@
+<p>Ol&aacute; <%= @customer.name %>,</p>
+<p>Obrigado por usar a EasyFix!</p>
+<p>Seu pedido &#35;<%= @order.id %> j&aacute; est&aacute; em an&aacute;lise! A toda hora novos e melhores or&ccedil;amentos est&atilde;o chegando!</p>
+<p>Acompanhe online o avan&ccedil;o do seu pedido, acessando MEUS PEDIDOS no menu do aplicativo. Assim que terminar o per&iacute;odo de or&ccedil;amentos, informaremos por e-mail.</p>
+<p>A EasyFix ir&aacute; conduzir todo o processo, desde negociar seu pedido com os reparadores, at&eacute; a entrega do seu <%= @vehicle.model.name %> arrumadinho e prontinho em suas m&atilde;os. Agora &eacute; tranquilidade para voc&ecirc; e deixa o estresse dos reparos com a gente ;)</p>
+<p>Sabemos que usa seu carro no dia a dia e que depende dele para suas atividades. Garantir sua mobilidade em seu carro &eacute; nossa maior satisfa&ccedil;&atilde;o!</p>
+<p><img src="https://s3-sa-east-1.amazonaws.com/easyfix-storage/assets/logo_text_on_right_small.png" width="220" height="104" /></p>
+<p>Valorizando sua mobilidade!</p>

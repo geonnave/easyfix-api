@@ -33,10 +33,10 @@ defmodule EasyFixApiWeb.CustomerOrderController do
     OrderStateMachine.start_link(%{order_id: customer_order.id})
 
     if customer_order.diagnosis.diagnosis_parts == [] do
-      Emails.new_order_others_email_to_easyfix(customer_order) |> Mailer.deliver_later
+      Emails.Internal.new_order_call_fixer(customer_order) |> Mailer.deliver_later
     else
-      Emails.send_email_to_matching_garages(customer_order)
-      Emails.new_order_email_to_easyfix(customer_order) |> Mailer.deliver_later
+      Emails.Garage.send_email_to_matching_garages(customer_order)
+      Emails.Internal.new_order_call_direct(customer_order) |> Mailer.deliver_later
     end
 
     conn
@@ -63,7 +63,7 @@ defmodule EasyFixApiWeb.CustomerOrderController do
     with {:ok, order} <- CustomerOrders.get_order(customer_id, order_id),
          :quote_accepted_by_customer <- order.state,
          {:ok, updated_order} <- Orders.set_order_rating(order, rating_params) do
-      Emails.customer_rating_email_to_easyfix(updated_order) |> Mailer.deliver_later
+      Emails.Internal.customer_rating(updated_order) |> Mailer.deliver_later
 
       conn
       |> put_status(:created)

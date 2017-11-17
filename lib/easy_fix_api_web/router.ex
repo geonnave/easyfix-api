@@ -69,4 +69,8 @@ defmodule EasyFixApiWeb.Router do
     resources "/part_groups", PartGroupController, except: [:new, :edit]
     resources "/part_sub_groups", PartSubGroupController, except: [:new, :edit]
   end
+
+  if Mix.env == :dev do
+    forward "/sent_emails", Bamboo.EmailPreviewPlug
+  end
 end

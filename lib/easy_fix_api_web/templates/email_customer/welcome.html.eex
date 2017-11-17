@@ -1,0 +1,9 @@
+<p>Ol&aacute; <%= @customer.name %>,</p>
+<p>Voc&ecirc; &eacute; exatamente quem esper&aacute;vamos!</p>
+<p>A partir de agora vai sentir o poder de conseguir para qualquer reparo em seu <%= @vehicle.model.name %> a maior economia, qualidade, conforto e rapidez!!</p>
+<p>Fique &agrave; vontade em fazer pedidos de or&ccedil;amento pelo aplicativo de forma gratuita. Voc&ecirc; vai se surpreender! A gente trata tudo... pe&ccedil;a, servi&ccedil;o e prazo.</p>
+<p>Somos o mec&acirc;nico de confian&ccedil;a que tanto desejava e esperava! Tratamos todos os reparos, dos mais simples aos mais complexos.</p>
+<p>EasyFix &eacute; pe&ccedil;a que faltava para seu carro!</p>
+<p>&nbsp;</p>
+<p><img src="https://s3-sa-east-1.amazonaws.com/easyfix-storage/assets/logo_text_on_right_small.png" width="220" height="104" /></p>
+<p>Valorizando sua mobilidade!</p>

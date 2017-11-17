@@ -1,0 +1,7 @@
+<p>Ol&aacute; <%= @customer.name %>,</p>
+<p>Obrigado por confiar na Easyfix para a execu&ccedil;&atilde;o do servi&ccedil;o referente ao pedido &#35;<%= @order.id %>.</p>
+<p>Faremos contato rapidamente para acertar os detalhes de agendamento, pagamento, execu&ccedil;&atilde;o e entrega do seu carro.</p>
+<p>O pagamento dever&aacute; ser realizado no in&iacute;cio do reparo direto ao profissional / oficina respons&aacute;vel.</p>
+<p>Parab&eacute;ns por garantir economia, qualidade e rapidez! A EasyFix continuar&aacute; cuidando de todo o processo, at&eacute; o carro estar prontinho nas suas m&atilde;os.</p>
+<p><img src="https://s3-sa-east-1.amazonaws.com/easyfix-storage/assets/logo_text_on_right_small.png" width="220" height="104" /></p>
+<p>Valorizando sua mobilidade!</p>

@@ -1,0 +1,4 @@
+<p>Ol&aacute; <%= @garage.name %>!</p>
+<p>Um cliente acaba de nos enviar o pedido &#35;<%= @order.id %>. Ele certamente est&aacute; ansioso para receber o seu or&ccedil;amento.</p>
+<p>E a&iacute;, vamos or&ccedil;ar? Abra o painel de or&ccedil;amento EasyFix e orce antes que o tempo acabe!</p>
+<p><img src="https://s3-sa-east-1.amazonaws.com/easyfix-storage/assets/logo_text_on_right_small.png" width="220" height="104" /></p>
