@@ -10,6 +10,7 @@ defmodule EasyFixApiWeb.SessionController do
 
   def create(conn, params = %{"email" => email, "password" => password, "user_type" => user_type}) do
     Logger.info "Session data is: #{inspect(params)}"
+    email = Accounts.User.process_email(email)
     with account when not is_nil(account) <- Accounts.get_by_email(user_type, email),
          true <- check_password(account.user, password) do
       {:ok, jwt, _full_claims} = Guardian.encode_and_sign(account.user, :token)

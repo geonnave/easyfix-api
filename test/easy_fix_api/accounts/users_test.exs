@@ -52,8 +52,23 @@ defmodule EasyFixApi.AccountsTest do
     assert_raise Ecto.NoResultsError, fn -> Accounts.get_user!(user.id) end
   end
 
-  test "change_user/1 returns a user changeset" do
-    user = fixture(:user)
-    assert %Ecto.Changeset{} = Accounts.change_user(user)
+  test "User.changeset/2 will validate emails" do
+    refute User.changeset(%User{}, %{email: "email"}).valid?
+    refute User.changeset(%User{}, %{email: "email.com"}).valid?
+    refute User.changeset(%User{}, %{email: "@email.com"}).valid?
+    refute User.changeset(%User{}, %{email: "@email"}).valid?
+
+    assert User.changeset(%User{}, %{email: "Some@email.Com"}).valid?
+    assert User.changeset(%User{}, %{email: "some@email.com"}).valid?
+  end
+
+  test "User.process_email/2 will lowercase emails" do
+    email = "Some@email.Com"
+    assert "some@email.com" == User.process_email(email)
+  end
+
+  test "User.changeset/2 will trim emails" do
+    email = " some@email.com  "
+    assert "some@email.com" == User.process_email(email)
   end
 end

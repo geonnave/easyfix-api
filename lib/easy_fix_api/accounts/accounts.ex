@@ -67,10 +67,6 @@ defmodule EasyFixApi.Accounts do
     Repo.delete(user)
   end
 
-  def change_user(%User{} = user) do
-    User.changeset(user, %{})
-  end
-
   def list_garages do
     Repo.all(Garage)
     |> Repo.preload(Garage.all_nested_assocs)

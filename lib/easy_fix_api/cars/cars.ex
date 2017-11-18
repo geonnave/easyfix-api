@@ -97,5 +97,4 @@ defmodule EasyFixApi.Cars do
   def delete_vehicle(%Vehicle{} = vehicle) do
     Repo.delete(vehicle)
   end
-
 end

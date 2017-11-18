@@ -20,8 +20,9 @@ defmodule EasyFixApi.Accounts.User do
     struct
     |> cast(attrs, [:email])
     |> validate_required([:email])
-    |> validate_length(:email, min: 1, max: 255)
-    |> validate_format(:email, ~r/@/)
+    |> validate_length(:email, min: 3, max: 255)
+    |> validate_format(:email, ~r/^(.+)@(.+)$/)
+    |> process_email()
   end
 
   def registration_changeset(struct, attrs) do
@@ -39,5 +40,18 @@ defmodule EasyFixApi.Accounts.User do
       _ ->
         changeset
     end
+  end
+
+  def process_email(%Ecto.Changeset{} = changeset) do
+    if changeset.valid? do
+      update_change(changeset, :email, &process_email/1)
+    else
+      changeset
+    end
+  end
+  def process_email(email) when is_binary(email) do
+    email
+    |> String.downcase
+    |> String.trim
   end
 end
