@@ -19,7 +19,6 @@ defmodule EasyFixApiWeb.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
-    resources "/diagnosis-review", DiagnosisReviewController, only: [:index, :show]
     resources "/order-review", OrderReviewController, only: [:index, :show]
   end
 

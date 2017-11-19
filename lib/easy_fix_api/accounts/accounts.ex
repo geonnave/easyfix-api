@@ -155,7 +155,6 @@ defmodule EasyFixApi.Accounts do
   end
 
   def create_basic_customer(attrs \\ %{}) do
-    IO.inspect "==============="
     with customer_changeset = %{valid?: true} <- Customer.create_basic_changeset(attrs),
          customer_assoc_changeset = %{valid?: true} <- Customer.assoc_changeset(attrs),
          customer_assoc_attrs <- apply_changes_ensure_atom_keys(customer_assoc_changeset) do
