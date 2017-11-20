@@ -39,7 +39,7 @@ defmodule EasyFixApi.Orders.Quote do
 
   def update_changeset(quote, attrs) do
     quote
-    |> cast(attrs, [:service_cost, :parts])
+    |> cast(attrs, [:service_cost, :parts, :comment])
   end
 
   def all_nested_assocs do

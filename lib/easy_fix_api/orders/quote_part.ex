@@ -20,6 +20,6 @@ defmodule EasyFixApi.Orders.QuotePart do
 
   def update_changeset(quote_part, attrs) do
     quote_part
-    |> cast(attrs, [:quantity, :price, :part_id])
+    |> cast(attrs, [:quantity, :price, :comment, :part_id])
   end
 end
