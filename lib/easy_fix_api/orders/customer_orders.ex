@@ -71,30 +71,17 @@ defmodule EasyFixApi.CustomerOrders do
     }
   end
 
-  def add_customer_fee(quote) do
-    whole_percent_fee = get_whole_percent_fee(quote)
-    quotes_parts = Enum.map(quote.quotes_parts, fn quote_part ->
-      %{quote_part | price: Money.multiply(quote_part.price, whole_percent_fee)}
-    end)
-    service_cost = Money.multiply(quote.service_cost, whole_percent_fee)
-    total_amount = Orders.calculate_total_amount(quotes_parts, service_cost)
+  def add_customer_fee(quote = %{service_cost: service_cost, total_amount: total_amount}) do
+    percent_fee = get_percent_fee()
+    easyfix_price = Money.multiply(total_amount, percent_fee)
 
-    %{quote | quotes_parts: quotes_parts, service_cost: service_cost, total_amount: total_amount}
+    service_cost_for_customer = Money.add(service_cost, easyfix_price)
+    total_amount_for_customer = Orders.calculate_total_amount(quote.quotes_parts, service_cost_for_customer)
+
+    %{quote | service_cost: service_cost_for_customer, total_amount: total_amount_for_customer}
   end
 
-  def get_whole_percent_fee(quote) do
-    customer_fee = Application.get_env(:easy_fix_api, :fees)[:customer_fee_on_quote_by_garage]
-
-    quote.total_amount
-    |> calculate_customer_percent_fee(Money.new(customer_fee[:max_amount]), customer_fee[:percent_fee])
-    |> Kernel.+(1)
-  end
-
-  def calculate_customer_percent_fee(total_amount, max_amount, percent_fee) do
-    if Money.multiply(total_amount, percent_fee) > max_amount do
-      (max_amount.amount / total_amount.amount) |> Float.round(4)
-    else
-      percent_fee
-    end
+  def get_percent_fee do
+    Application.get_env(:easy_fix_api, :fees)[:customer_percent_fee_on_quote_by_garage]
   end
 end

@@ -195,13 +195,7 @@ defmodule EasyFixApi.OrdersTest do
       assert total_amount == quote_total_amount
     end
 
-    @max_amount Application.get_env(:easy_fix_api, :fees)[:customer_fee_on_quote_by_garage][:max_amount]
-    @percent_fee Application.get_env(:easy_fix_api, :fees)[:customer_fee_on_quote_by_garage][:percent_fee]
-    test "calculate_customer_percent_fee" do
-      assert 0.0875 == CustomerOrders.calculate_customer_percent_fee(Money.new(800_00), Money.new(@max_amount), @percent_fee)
-      assert 0.05 == CustomerOrders.calculate_customer_percent_fee(Money.new(1400_00), Money.new(@max_amount), @percent_fee)
-    end
-
+    @percent_fee Application.get_env(:easy_fix_api, :fees)[:customer_percent_fee_on_quote_by_garage]
     test "will add customer @percent_fee to quote" do
       quote =
         build(:quote)
@@ -213,18 +207,6 @@ defmodule EasyFixApi.OrdersTest do
       customer_quote = CustomerOrders.add_customer_fee(quote)
       whole_percent_fee = 1 + @percent_fee
       assert Money.multiply(quote.total_amount, whole_percent_fee) == customer_quote.total_amount
-    end
-
-    test "will add at most @max_amount customer fee to quote" do
-      quote =
-        build(:quote)
-        |> with_service_cost(1000_00)
-        |> with_quotes_parts_price(200_00)
-        |> with_total_amount(1400_00)
-      assert quote.total_amount == Orders.calculate_total_amount(quote)
-
-      customer_quote = CustomerOrders.add_customer_fee(quote)
-      assert Money.add(quote.total_amount, Money.new(@max_amount)) == customer_quote.total_amount
     end
   end
 
