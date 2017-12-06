@@ -8,15 +8,21 @@ defmodule EasyFixApi.Orders.Quote do
     field :due_date, :utc_datetime
     field :conclusion_date, :utc_datetime
     field :comment, :string
+    # field :applied_easyfix_customer_fee, :float
 
     field :issuer_type, EasyFixApi.Accounts.UserTypeEnum
     belongs_to :issuer, EasyFixApi.Accounts.User
 
     has_many :quotes_parts, EasyFixApi.Orders.QuotePart, on_delete: :delete_all, on_replace: :nilify
     belongs_to :diagnosis, EasyFixApi.Orders.Diagnosis
+    # belongs_to :order, EasyFixApi.Orders.Order
 
     field :parts, {:array, :map}, virtual: true
+
     field :total_amount, Money.Ecto.Type, virtual: true
+    # field :total_amount_customer, Money.Ecto.Type, virtual: true # total_amount + easyfix_fee
+    # field :total_amount_garage, Money.Ecto.Type, virtual: true # total_amount - card_installment_fee
+
     field :is_best_price, :boolean, virtual: true
 
     timestamps(type: :utc_datetime)
