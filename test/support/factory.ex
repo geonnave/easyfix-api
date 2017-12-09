@@ -8,6 +8,7 @@ defmodule EasyFixApi.Factory do
   alias EasyFixApi.Orders
   alias EasyFixApi.Parts.{Part, PartSubGroup, PartGroup, PartSystem, GarageCategory}
   alias EasyFixApi.Cars.{Model, Brand, Vehicle}
+  alias EasyFixApi.Coupons.{Coupon}
 
   def order_factory do
     %Order{
@@ -283,4 +284,17 @@ defmodule EasyFixApi.Factory do
   def with_name(struct, name) do
     %{struct | name: name}
   end
+
+  def coupon_factory do
+    %Coupon{
+      code: "GEOV4",
+      description: "some coupon",
+      discount: 10_00,
+      discount_type: "value",
+      expiration_date: "2017-08-05 17:44:57.913808Z",
+      type: "customer",
+      owner: build(:customer),
+    }
+  end
+
 end

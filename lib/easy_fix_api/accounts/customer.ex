@@ -13,6 +13,7 @@ defmodule EasyFixApi.Accounts.Customer do
       join_through: "vehicles_customers",
       on_delete: :delete_all
     has_many :orders, EasyFixApi.Orders.Order
+    has_many :coupons, EasyFixApi.Coupons.Coupon
 
     timestamps(type: :utc_datetime)
   end
