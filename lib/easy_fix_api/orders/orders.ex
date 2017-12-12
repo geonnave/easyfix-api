@@ -243,10 +243,13 @@ defmodule EasyFixApi.Orders do
          issuer when not is_nil(issuer) <- Accounts.get_user_by_type_id(issuer_type, issuer_id) do
 
       Repo.transaction fn ->
+        easyfix_customer_fee = Application.get_env(:easy_fix_api, :fees)[:customer_percent_fee_on_quote_by_garage]
+
         quote =
           quote_changeset
           |> delete_change(:issuer_id)
           |> put_assoc(:issuer, issuer)
+          |> put_change(:easyfix_customer_fee, easyfix_customer_fee)
           |> Repo.insert!()
 
         for part_attrs <- quote_changeset.changes[:parts] do

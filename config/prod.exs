@@ -25,7 +25,6 @@ config :easy_fix_api, EasyFixApiWeb.Endpoint,
   root: ".",
   version: Application.spec(:easy_fix_api, :vsn)
 
-# Do not print debug messages in production
 config :logger, level: :debug
 
 # Configure your database (without credentials)
@@ -47,7 +46,7 @@ config :easy_fix_api, :order_states,
   ],
   not_quoted_by_garages: [final_state: true, macro_state: :canceled],
   quoted_by_garages: [
-    timeout: [value: [hours: 14*24], event: :to_quote_accepted_by_customer]
+    timeout: [value: [hours: 3*24], event: :to_quote_accepted_by_customer]
   ],
   quote_not_accepted_by_customer: [final_state: true, macro_state: :canceled],
   quote_accepted_by_customer: [

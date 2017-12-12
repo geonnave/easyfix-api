@@ -46,6 +46,16 @@ defmodule EasyFixApi.CustomerOrders do
     end
   end
 
+  def list_quotes do
+    Orders.list_quotes
+    |> Enum.map(&add_customer_fee/1)
+  end
+
+  def get_quote!(id) do
+    Orders.get_quote!(id)
+    |> add_customer_fee()
+  end
+
   def generate_customer_quotes_stats([]),  do: %{}
   def generate_customer_quotes_stats(quotes) do
     sorted_quotes =
@@ -72,7 +82,7 @@ defmodule EasyFixApi.CustomerOrders do
   end
 
   def add_customer_fee(quote = %{service_cost: service_cost, total_amount: total_amount}) do
-    percent_fee = get_percent_fee()
+    percent_fee = get_percent_fee(quote)
     easyfix_price = Money.multiply(total_amount, percent_fee)
 
     service_cost_for_customer = Money.add(service_cost, easyfix_price)
@@ -81,7 +91,10 @@ defmodule EasyFixApi.CustomerOrders do
     %{quote | service_cost: service_cost_for_customer, total_amount: total_amount_for_customer}
   end
 
-  def get_percent_fee do
+  def get_percent_fee(%{easyfix_customer_fee: nil}) do
     Application.get_env(:easy_fix_api, :fees)[:customer_percent_fee_on_quote_by_garage]
+  end
+  def get_percent_fee(%{easyfix_customer_fee: easyfix_customer_fee}) do
+    Decimal.to_float(easyfix_customer_fee)
   end
 end
