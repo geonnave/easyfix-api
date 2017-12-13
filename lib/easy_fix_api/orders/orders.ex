@@ -219,6 +219,18 @@ defmodule EasyFixApi.Orders do
     Enum.sort(quotes, &(&1.total_amount < &2.total_amount))
   end
 
+  def is_best_price_quote(order, quote_id) do
+    list_quotes_by_order(order.id)
+    |> sort_quotes_by_total_amount()
+    |> List.first()
+    |> case do
+      nil ->
+        false
+      best_price_quote ->
+        best_price_quote.id == quote_id
+    end
+  end
+
   def with_total_amount(nil), do: nil
   def with_total_amount(quote) do
     %{quote | total_amount: calculate_total_amount(quote)}

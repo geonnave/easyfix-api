@@ -1,11 +1,38 @@
-defmodule EasyFixApi.Notifications.Customers do
-  # alias EasyFixApi.{Emails}
+defmodule EasyFixApi.CustomerNotifications do
+  alias EasyFixApi.{Emails, Mailer}
 
-  # def order_was_quoted_by_garages(order = %{customer: customer}, opts \\ [:email, :websocket]) do
-  # end
+  defmodule SMS do
+    def new_best_quote_arrived(order) do
+      IO.inspect """
+      Novo preço na área! Um orçamento para seu pedido \##{order.id} acaba de chegar! Acesse o app e confira ;)
+      """
+    end
+    def order_was_quoted_by_garages(order) do
+      IO.inspect """
+      Boas notícias! A EasyFix concluiu a busca pelo melhor orçamento para o pedido \##{order.id}! Acesse o app e aproveite ;)
+      """
+    end
+  end
+
+  def new_best_quote_arrived(order, opts \\ [:email, :sms]) do
+    cond do
+      :sms in opts ->
+        SMS.new_best_quote_arrived(order)
+    end
+  end
+
+  def order_was_quoted_by_garages(order, opts \\ [:email, :sms]) do
+    cond do
+      :sms in opts ->
+        SMS.order_was_quoted_by_garages(order)
+      :email in opts ->
+        Emails.Customer.order_was_quoted_by_garages(order)
+        |> Mailer.deliver_later
+    end
+  end
 end
 
-defmodule EasyFixApi.Notifications.Garages do
+defmodule EasyFixApi.GarageNotifications do
   # def multicast_new_order_call_direct(garage, new_order, opts \\ [:email, :websocket]) do
   # end
 

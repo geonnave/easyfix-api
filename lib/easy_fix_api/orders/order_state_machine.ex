@@ -4,6 +4,7 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
   alias EasyFixApi.{Orders, CustomerOrders, Emails, Mailer, Repo}
   alias EasyFixApi.Accounts.Customer
   alias EasyFixApi.Orders.Quote
+  alias EasyFixApi.CustomerNotifications
 
   # Public API functions
 
@@ -51,8 +52,7 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
         with {:ok, updated_order} <- Orders.update_order_state(order, next_state_attrs),
              {:ok, updated_order} <- Orders.set_order_best_price_quote(updated_order, best_price_attrs) do
           %{state: state, state_due_date: state_due_date} = updated_order
-          Emails.Customer.order_was_quoted_by_garages(order)
-          |> Mailer.deliver_later
+          CustomerNotifications.order_was_quoted_by_garages(order)
 
           {:next_state, state, data, [state_timeout_action(state, state_due_date)]}
         else
