@@ -42,6 +42,7 @@ defmodule EasyFixApi.Mixfile do
       {:bamboo, "~> 0.8"},
       {:money, "~> 1.2.1"},
       {:hashids, "~> 2.0"},
+      {:tesla, "~> 0.9.0"},
 
       {:ex_machina, "~> 2.0", only: [:dev, :test]},
 

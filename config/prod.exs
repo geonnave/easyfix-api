@@ -37,6 +37,9 @@ config :easy_fix_api, EasyFixApi.Mailer,
   domain: "easyfix.net.br",
   api_key: "key-49f5d6429dafd96af42d6b65fa5dd3f5"
 
+config :easy_fix_api,
+  sms_api: EasyFixApi.TotalVoice
+
 # Information about state
 config :easy_fix_api, :order_states,
   started: [],
