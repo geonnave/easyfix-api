@@ -4,9 +4,9 @@ defmodule EasyFixApi.CustomerNotifications do
   @sms_api Application.get_env(:easy_fix_api, :sms_api)
 
   defmodule SMS do
-    def new_best_quote_arrived(order) do
+    def first_quote_arrived(order) do
       """
-      Novo preço na área! Um orçamento para seu pedido \##{order.id} acaba de chegar! Acesse o app e confira ;)
+      Olha só! A EasyFix já conseguiu o primeiro orçamento para seu pedido \##{order.id}! Confira no App, e fique ligado, que os preços podem cair ainda mais!
       """
     end
     def order_was_quoted_by_garages(order) do
@@ -16,12 +16,12 @@ defmodule EasyFixApi.CustomerNotifications do
     end
   end
 
-  def new_best_quote_arrived(order, opts \\ [:email, :sms]) do
+  def first_quote_arrived(order, opts \\ [:email, :sms]) do
     cond do
       :sms in opts ->
         %{customer: %{phone: phone}} = order
 
-        SMS.new_best_quote_arrived(order)
+        SMS.first_quote_arrived(order)
         |> @sms_api.send_sms(phone)
     end
   end

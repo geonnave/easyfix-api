@@ -14,7 +14,7 @@ defmodule EasyFixApi.Mixfile do
 
   def application do
     [mod: {EasyFixApi.Application, []},
-     extra_applications: [:logger, :runtime_tools]
+     extra_applications: [:logger, :runtime_tools, :inets]
    ]
   end
 

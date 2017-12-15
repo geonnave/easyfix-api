@@ -6,8 +6,8 @@ defmodule EasyFixApi.TotalVoice do
   plug Tesla.Middleware.Headers, %{"Access-Token" => "c2e96c65d7f591e3628ad2602e17fb7c"}
   plug Tesla.Middleware.JSON
 
-  def send_sms(text, _number) do
-    post("/sms", %{"numero_destino" => "11970338405", "mensagem" => text})
+  def send_sms(text, number) do
+    post("/sms", %{"numero_destino" => number, "mensagem" => text})
   end
 
 end
