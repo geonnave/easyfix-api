@@ -1,6 +1,18 @@
-<p>Ol&aacute; <%= @customer.name %>, Temos novidades!</p>
-<p>A EasyFix conquistou um &oacute;timo or&ccedil;amento, conforme descrito em seu pedido &#35;<%= @order.id %>. Foram consultadas diversas e as melhores oficinas e profissionais.</p>
-<p>Agora s&oacute; resta comprar. N&atilde;o perca esta oportunidade. Os or&ccedil;amentos s&atilde;o v&aacute;lidos apenas por 3 dias.</p>
-<p>Garanta as vantagens de comprar pela EasyFix! Se desejar, parcelamos em at&eacute; 10 vezes no cart&atilde;o de cr&eacute;dito. Seu <%= @vehicle.model.name %> vai ficar pronto rapidinho.</p>
+<p style="text-align: justify;">Ol&aacute; <span style="color: #3366ff;"><%= @customer.name %></span>,</p>
+<p style="text-align: justify;">Temos novidades!! A <strong>EasyFix</strong> conquistou um
+&oacute;timo or&ccedil;amento, conforme descrito em seu pedido <span style="color:
+#3366ff;"><%= @order.id %></span>. Foram consultadas diversas e as melhores oficinas e profissionais.
+Desejamos que tenha ficado feliz com a economia.&nbsp;<img src="https://html5-
+editor.net/tinymce/plugins/emoticons/img/smiley-money-mouth.gif" alt="money-mouth" /></p>
+<p style="text-align: justify;">Agora s&oacute; resta comprar. N&atilde;o perca esta oportunidade. Os
+or&ccedil;amentos s&atilde;o v&aacute;lidos apenas por 5 dias.</p>
+<p style="text-align: justify;">Garanta as vantagens&nbsp; de comprar pela EasyFix!! &nbsp;Se desejar,
+parcelamos em at&eacute; 6 vezes no cart&atilde;o de cr&eacute;dito.</p>
+<p style="text-align: justify;">Acesse seu pedido e os valores finais acessando o aplicativo
+no&nbsp;<strong>Menu Principal/Meus pedidos</strong></p>
+<p style="text-align: justify;">Seu&nbsp;<span style="color:
+#3366ff;"><%= @vehicle.model.name %></span>&nbsp; vai ficar pronto rapidinho.</p>
+<p style="text-align: justify;">&nbsp;</p>
+
 <p><img src="https://s3-sa-east-1.amazonaws.com/easyfix-storage/assets/logo_text_on_right_small.png" width="220" height="104" /></p>
 <p>Valorizando sua mobilidade!</p>

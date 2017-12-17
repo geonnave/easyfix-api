@@ -119,9 +119,9 @@ defmodule EasyFixApi.OrderStateMachineTest do
     end
   end
 
-  def gt_timeout(state), do: OrderStateMachine.timeout_value(state) + 50
+  def gt_timeout(state), do: OrderStateMachine.timeout_value(state) + 100
   def half_timeout(state), do: round(OrderStateMachine.timeout_value(state) / 2)
-  def gt_half_timeout(state), do: round(OrderStateMachine.timeout_value(state) / 2) + 50
+  def gt_half_timeout(state), do: round(OrderStateMachine.timeout_value(state) / 2) + 100
 
   def create_order_with_diagnosis do
     customer = insert(:customer)

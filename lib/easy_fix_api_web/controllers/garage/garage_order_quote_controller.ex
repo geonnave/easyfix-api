@@ -17,8 +17,11 @@ defmodule EasyFixApiWeb.GarageOrderQuoteController do
 
     with :created_with_diagnosis <- order.state,
          {:ok, quote} <- Orders.create_quote(quote_params) do
-      if length(Orders.list_quotes_by_order(order.id)) == 1 do
-        CustomerNotifications.first_quote_arrived(order, [:sms])
+      cond do
+        length(Orders.list_quotes_by_order(order.id)) == 1 ->
+          CustomerNotifications.first_quote_arrived(order)
+        Orders.is_best_price_quote(order, quote.id) ->
+          CustomerNotifications.new_best_quote_arrived(order, [:email])
       end
 
       conn

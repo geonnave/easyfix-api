@@ -1,7 +1,18 @@
-<p>Ol&aacute; <%= @customer.name %>,</p>
-<p>Obrigado por usar a EasyFix!</p>
-<p>Seu pedido &#35;<%= @order.id %> j&aacute; est&aacute; em an&aacute;lise! Faremos em breve o contato, via um dos FIXERs (profissional VIP), para definir a lista precisa de pe&ccedil;as e servi&ccedil;os para seu carro e obteremos o melhor or&ccedil;amento muito rapidamente!</p>
-<p>A EasyFix ir&aacute; conduzir todo o processo, desde negociar seu pedido com os reparadores, at&eacute; a entrega do seu <%= @vehicle.model.name %> arrumadinho e prontinho em suas m&atilde;os. Agora &eacute; tranquilidade para voc&ecirc; e deixa o estresse dos reparos com a gente ;)</p>
-<p>Sabemos que usa seu carro no dia a dia e que depende dele para suas atividades. Garantir sua mobilidade em seu carro &eacute; nossa maior satisfa&ccedil;&atilde;o!</p>
+<p>Ol&aacute; <strong><span style="color: #3366ff;"><%= @customer.name %></span></strong>,</p>
+<p style="text-align: justify;">Obrigado por usar a&nbsp;&nbsp;<strong>EasyFix</strong>!</p>
+<p style="text-align: justify;">Seu pedido <span style="color: #0000ff;"><%= @order.id %></span> j&aacute;
+est&aacute; em an&aacute;lise! Faremos em breve o contato, via um dos FIXERs (profissional VIP),
+para definir a lista precisa de pe&ccedil;as e servi&ccedil;os para seu carro e obteremos o melhor
+or&ccedil;amento muito rapidamente!</p>
+<p style="text-align: justify;">A&nbsp;<strong>EasyFix</strong>&nbsp;ir&aacute; conduzir todo o
+processo, desde negociar seu pedido com os reparadores, at&eacute; a entrega do seu&nbsp;<span
+style="color: #3366ff;"><%= @vehicle.model.name %></span>&nbsp; arrumadinho e prontinho em suas
+m&atilde;os. Agora &eacute; tranquilidade para voc&ecirc; e deixa o estresse dos reparos com a
+gente&nbsp; <img src="https://html5-editor.net/tinymce/plugins/emoticons/img/smiley-wink.gif" alt="wink"
+/></p>
+<p style="text-align: justify;"><em>Sabemos que usa seu carro no dia a dia e que depende dele para
+suas atividades! Garantir sua mobilidade em seu carro &eacute; nossa maior
+satisfa&ccedil;&atilde;o.</em></p>
+<p>&nbsp;</p>
 <p><img src="https://s3-sa-east-1.amazonaws.com/easyfix-storage/assets/logo_text_on_right_small.png" width="220" height="104" /></p>
 <p>Valorizando sua mobilidade!</p>

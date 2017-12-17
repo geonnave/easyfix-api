@@ -101,12 +101,12 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     {:next_state, :quote_not_accepted_by_customer, data, [{:reply, from, reply}]}
   end
   def handle_event({:call, from}, {:customer_clicked, event, attrs}, :quoted_by_garages, _data) do
-    Logger.warn "ignoring event: {:call, from}, {:customer_clicked, #{event}, #{inspect attrs}}, :quoted_by_garages"
+    Logger.warn "ignoring event: {:call, from}, {:customer_clicked, :#{event}, #{inspect attrs}}, :quoted_by_garages"
     reply_action = {:reply, from, {:error, "invalid event #{inspect event}"}}
     {:keep_state_and_data, [reply_action]}
   end
   def handle_event({:call, from}, {:customer_clicked, event, attrs}, state, _data) do
-    Logger.warn "ignoring event {:call, _from}, {:customer_clicked, #{event}, #{inspect attrs}}, #{inspect state}"
+    Logger.warn "ignoring event {:call, _from}, {:customer_clicked, :#{event}, #{inspect attrs}}, #{inspect state}"
     {:keep_state_and_data, [{:reply, from, {:error, "invalid event #{inspect event} for state #{state}"}}]}
   end
 
@@ -120,6 +120,10 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
   def handle_event({:call, from}, :get_state, state, data) do
     Logger.debug "{:call, from}, :get_state"
     {:keep_state_and_data, [{:reply, from, {state, data}}]}
+  end
+
+  def handle_event(:info, {:delivered_email, _}, _state, _data) do
+    :keep_state_and_data
   end
 
   def handle_event(event_type, event, state, data) do

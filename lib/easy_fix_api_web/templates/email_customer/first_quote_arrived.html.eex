@@ -1,0 +1,14 @@
+<p style="text-align: justify;">Ol&aacute; <span style="color: #3366ff;"><%= @customer.name %></span>,</p>
+<p style="text-align: justify;">J&aacute; temos um or&ccedil;amento para seu pedido <span style="color:
+#3366ff;"><%= @order.id %></span>. E quer saber mais? Esse &eacute; s&oacute; o primeiro or&ccedil;amento.
+Continuaremos buscando o melhor pre&ccedil;o nas pr&oacute;ximas horas. Se surgir um ainda melhor,
+voc&ecirc; ser&aacute; o primeiro a saber.&nbsp;<img src="https://html5-
+editor.net/tinymce/plugins/emoticons/img/smiley-laughing.gif" alt="laughing" /></p>
+<p style="text-align: justify;">Acesse o valor encontrado at&eacute; o momento no <strong>Menu
+Principal/Meus Pedidos</strong> do seu aplicativo.</p>
+<p style="text-align: justify;">Vamos conseguir o melhor para seu&nbsp;<span style="color:
+#3366ff;"><%= @vehicle.model.name %></span>&nbsp;</p>
+<p>&nbsp;</p>
+
+<p><img src="https://s3-sa-east-1.amazonaws.com/easyfix-storage/assets/logo_text_on_right_small.png" width="220" height="104" /></p>
+<p>Valorizando sua mobilidade!</p>
