@@ -12,6 +12,6 @@ defmodule EasyFixApiWeb.CustomerEmailController do
 
     conn
     |> put_status(201)
-    |> json(message)
+    |> json(%{data: message})
   end
 end
