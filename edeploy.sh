@@ -4,6 +4,7 @@ set -e
 
 opts=
 target=staging
+branch=master
 
 while [[ ! -z "$@" ]]; do
 	case "$1" in
@@ -15,11 +16,16 @@ while [[ ! -z "$@" ]]; do
 			target="production"
 			echo "Will deploy to PRODUCTION"
 			;;
+		"-b" )
+			shift
+			branch="$1"
+			echo "From branch $branch"
+			;;
 	esac
 	shift
 done
 
-mix edeliver build release "$opts" --verbose
+mix edeliver build release "$opts" --branch="$branch" --verbose
 mix edeliver deploy release to "$target" --verbose
 mix edeliver restart "$target" --verbose
 mix edeliver migrate "$target" --verbose
