@@ -65,4 +65,11 @@ O cliente #{customer.name} (\##{customer.id}) acaba de avaliar o pedido \##{orde
 #{order.rating_comment || "(comentário vazio)"}
     """)
   end
+
+  def customer_message(customer, message) do
+    new_email()
+    |> from("#{customer.name} <#{customer.user.email}>")
+    |> subject("Mensagem Cliente EasyFix")
+    |> text_body(message)
+  end
 end
