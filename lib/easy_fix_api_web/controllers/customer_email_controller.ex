@@ -10,6 +10,8 @@ defmodule EasyFixApiWeb.CustomerEmailController do
     message = Emails.Internal.customer_message(order, message)
     Mailer.deliver_later(message)
 
-    json(conn, message)
+    conn
+    |> put_status(201)
+    |> json(message)
   end
 end
