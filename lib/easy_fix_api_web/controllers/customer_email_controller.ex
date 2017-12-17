@@ -1,14 +1,13 @@
 defmodule EasyFixApiWeb.CustomerEmailController do
   use EasyFixApiWeb, :controller
-  alias EasyFixApi.{Accounts, Emails, Mailer}
+  alias EasyFixApi.{CustomerOrders, Emails, Mailer}
 
   action_fallback EasyFixApiWeb.FallbackController
 
-  def create(conn, %{"customer_id" => customer_id, "message" => message}) do
-    message =
-      Accounts.get_customer!(customer_id)
-      |> Emails.Internal.customer_message(message)
+  def create(conn, %{"customer_id" => customer_id, "order_id" => order_id, "message" => message}) do
+    {:ok, order} = CustomerOrders.get_order(customer_id, order_id)
 
+    message = Emails.Internal.customer_message(order, message)
     Mailer.deliver_later(message)
 
     json(conn, message)

@@ -66,10 +66,10 @@ O cliente #{customer.name} (\##{customer.id}) acaba de avaliar o pedido \##{orde
     """)
   end
 
-  def customer_message(customer, message) do
+  def customer_message(order = %{customer: customer}, message) do
     new_email()
     |> from("#{customer.name} <#{customer.user.email}>")
-    |> subject("Mensagem Cliente EasyFix")
-    |> text_body(message)
+    |> subject("Mensagem do Cliente ##{customer.id} sobre o pedido ##{order.id}")
+    |> text_body("Veja o que o #{customer.name} escreveu: \n\n" <> message)
   end
 end
