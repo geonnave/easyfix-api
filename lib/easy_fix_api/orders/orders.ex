@@ -160,6 +160,7 @@ defmodule EasyFixApi.Orders do
     |> with_total_amount()
   end
 
+  # TODO: rename `user` to `issuer` in this function
   def get_quote_for_order_by_user(user_id, diagnosis_id) do
     from(
       b in Quote,
@@ -396,6 +397,22 @@ defmodule EasyFixApi.Orders do
       order ->
         {:ok, Repo.preload(order, Order.all_nested_assocs)}
     end
+  end
+
+  def get_order_for_quote(quote_id) do
+    from(o in Order,
+      join: d in Diagnosis, on: d.order_id == o.id,
+      join: q in Quote, on: q.diagnosis_id == d.id,
+      where: q.id == ^quote_id,
+      preload: ^Order.all_nested_assocs)
+    |> Repo.one
+    # from(b in Quote,
+    #   join: d in Diagnosis, on: d.id == b.diagnosis_id,
+    #   join: o in Order, on: d.order_id == o.id,
+    #   where: o.id == ^order_id,
+    #   select: b,
+    #   preload: ^Quote.all_nested_assocs)
+    # |> Repo.all
   end
 
   def create_order_with_diagnosis(attrs \\ %{}) do
