@@ -5,7 +5,7 @@ defmodule EasyFixApi.Payments do
 
   import Ecto.{Query, Changeset}, warn: false
   import EasyFixApi.Helpers
-  alias EasyFixApi.{Repo, Orders}
+  alias EasyFixApi.{Repo, Orders, Parts}
 
   alias EasyFixApi.Payments.Bank
 
@@ -118,5 +118,43 @@ defmodule EasyFixApi.Payments do
 
   def change_payment(%Payment{} = payment) do
     Payment.changeset(payment, %{})
+  end
+
+
+  alias EasyFixApi.Payments.PaymentPart
+
+  def list_payment_parts do
+    Repo.all(PaymentPart)
+  end
+
+  def get_payment_part!(id), do: Repo.get!(PaymentPart, id)
+
+  def create_payment_part(attrs \\ %{}, payment_id) do
+    with payment_part_changeset = %{valid?: true} <- PaymentPart.create_changeset(attrs) do
+        payment = get_payment!(payment_id)
+        part = Parts.get_part!(payment_part_changeset.changes[:part_id])
+
+        payment_part_changeset
+        |> put_assoc(:part, part)
+        |> put_assoc(:payment, payment)
+        |> Repo.insert()
+    else
+      %{valid?: false} = changeset ->
+        {:error, changeset}
+    end
+  end
+
+  def update_payment_part(%PaymentPart{} = payment_part, attrs) do
+    payment_part
+    |> PaymentPart.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_payment_part(%PaymentPart{} = payment_part) do
+    Repo.delete(payment_part)
+  end
+
+  def change_payment_part(%PaymentPart{} = payment_part) do
+    PaymentPart.changeset(payment_part, %{})
   end
 end

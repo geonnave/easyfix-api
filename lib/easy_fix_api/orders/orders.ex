@@ -406,13 +406,6 @@ defmodule EasyFixApi.Orders do
       where: q.id == ^quote_id,
       preload: ^Order.all_nested_assocs)
     |> Repo.one
-    # from(b in Quote,
-    #   join: d in Diagnosis, on: d.id == b.diagnosis_id,
-    #   join: o in Order, on: d.order_id == o.id,
-    #   where: o.id == ^order_id,
-    #   select: b,
-    #   preload: ^Quote.all_nested_assocs)
-    # |> Repo.all
   end
 
   def create_order_with_diagnosis(attrs \\ %{}) do

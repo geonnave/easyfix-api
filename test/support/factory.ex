@@ -3,7 +3,7 @@ defmodule EasyFixApi.Factory do
 
   alias EasyFixApi.Addresses.{Address, City, State}
   alias EasyFixApi.Accounts.{User, Garage, Customer}
-  alias EasyFixApi.Payments.{Bank, BankAccount}
+  alias EasyFixApi.Payments.{Bank, BankAccount, Payment, PaymentPart}
   alias EasyFixApi.Orders.{Diagnosis, DiagnosisPart, Quote, QuotePart, Order}
   alias EasyFixApi.Orders
   alias EasyFixApi.Parts.{Part, PartSubGroup, PartGroup, PartSystem, GarageCategory}
@@ -297,4 +297,17 @@ defmodule EasyFixApi.Factory do
     }
   end
 
+  def payment_factory do
+    %Payment{
+    }
+  end
+
+  def payment_part_factory do
+    %PaymentPart{
+      part: build(:part),
+      payment: build(:payment),
+      quantity: 1,
+      price: 4200
+    }
+  end
 end

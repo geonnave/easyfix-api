@@ -14,6 +14,7 @@ defmodule EasyFixApi.Payments.Payment do
     field :quote_id, :id
 
     has_one :quote, EasyFixApi.Orders.Quote
+    has_many :payment_parts, EasyFixApi.Payments.PaymentPart
 
     timestamps(type: :utc_datetime)
   end
