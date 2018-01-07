@@ -299,13 +299,20 @@ defmodule EasyFixApi.Factory do
 
   def payment_factory do
     %Payment{
+      amount: 42,
+      factoring_fee: "120.5",
+      iugu_fee: "120.5",
+      installments: 1,
+      iugu_invoice_id: "abcde",
+      payment_method: "credit",
+      quote: build(:quote),
+      payment_parts: build_list(2, :payment_part),
     }
   end
 
   def payment_part_factory do
     %PaymentPart{
       part: build(:part),
-      payment: build(:payment),
       quantity: 1,
       price: 4200
     }

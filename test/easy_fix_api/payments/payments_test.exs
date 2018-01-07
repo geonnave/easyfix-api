@@ -46,92 +46,56 @@ defmodule EasyFixApi.PaymentsTest do
     def payment_fixture(attrs \\ %{}) do
       {:ok, payment} =
         attrs
-        |> Enum.into(@valid_attrs)
+        |> Enum.into(params_for(:payment))
         |> Payments.create_payment()
 
       payment
     end
 
-    test "list_payments/0 returns all payments" do
-      payment = payment_fixture()
-      assert Payments.list_payments() == [payment]
-    end
-
     test "get_payment!/1 returns the payment with given id" do
-      payment = payment_fixture()
-      assert Payments.get_payment!(payment.id) == payment
+      payment = insert(:payment)
+      assert Payments.get_payment!(payment.id).id == payment.id
     end
 
     test "create_payment/1 with valid data creates a payment" do
-      assert {:ok, %Payment{} = payment} = Payments.create_payment(@valid_attrs)
+      quote = insert(:quote)
+      parts = [
+        %{part_id: insert(:part).id, quantity: 1, price: 4200},
+      ]
+
+      payment_attrs =
+        params_for(:payment)
+        |> put_in([:quote_id], quote.id)
+        |> put_in([:parts], parts)
+        |> IO.inspect
+
+      assert {:ok, %Payment{} = payment} = Payments.create_payment(payment_attrs)
       assert payment.amount == 42
-      assert payment.factoring_fee == Decimal.new("120.5")
-      assert payment.installments == 42
-      assert payment.iugu_fee == Decimal.new("120.5")
-      assert payment.iugu_invoice_id == "some iugu_invoice_id"
-      assert payment.payment_method == "some payment_method"
       assert payment.state == "some state"
     end
 
     test "create_payment/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Payments.create_payment(@invalid_attrs)
     end
-
-    test "update_payment/2 with valid data updates the payment" do
-      payment = payment_fixture()
-      assert {:ok, payment} = Payments.update_payment(payment, @update_attrs)
-      assert %Payment{} = payment
-      assert payment.amount == 43
-      assert payment.factoring_fee == Decimal.new("456.7")
-      assert payment.installments == 43
-      assert payment.iugu_fee == Decimal.new("456.7")
-      assert payment.iugu_invoice_id == "some updated iugu_invoice_id"
-      assert payment.payment_method == "some updated payment_method"
-      assert payment.state == "some updated state"
-    end
-
-    test "update_payment/2 with invalid data returns error changeset" do
-      payment = payment_fixture()
-      assert {:error, %Ecto.Changeset{}} = Payments.update_payment(payment, @invalid_attrs)
-      assert payment == Payments.get_payment!(payment.id)
-    end
-
-    test "delete_payment/1 deletes the payment" do
-      payment = payment_fixture()
-      assert {:ok, %Payment{}} = Payments.delete_payment(payment)
-      assert_raise Ecto.NoResultsError, fn -> Payments.get_payment!(payment.id) end
-    end
-
-    test "change_payment/1 returns a payment changeset" do
-      payment = payment_fixture()
-      assert %Ecto.Changeset{} = Payments.change_payment(payment)
-    end
   end
 
   describe "payment_parts" do
     alias EasyFixApi.Payments.PaymentPart
 
-    @valid_attrs %{price: 42, quantity: 42}
-    @update_attrs %{price: 43, quantity: 43}
     @invalid_attrs %{price: nil, quantity: nil}
 
     def payment_part_fixture(attrs \\ %{}) do
-      {:ok, payment_part} =
+      payment = insert(:payment)
+      part = insert(:part)
+      payment_part_attrs =
         attrs
-        |> Enum.into(@valid_attrs)
-        |> Payments.create_payment_part()
+        |> Enum.into(params_for(:payment_part))
+        |> put_in([:payment_id], payment.id)
+        |> put_in([:part_id], part.id)
+
+      {:ok, payment_part} = Payments.create_payment_part(payment_part_attrs, payment.id)
 
       payment_part
-    end
-
-    test "list_payment_parts/0 returns all payment_parts" do
-      payment_part = payment_part_fixture()
-      assert Payments.list_payment_parts() == [payment_part]
-    end
-
-    test "get_payment_part!/1 returns the payment_part with given id" do
-      payment_part = payment_part_fixture()
-      assert Payments.get_payment_part!(payment_part.id) == payment_part
     end
 
     test "create_payment_part/1 with valid data creates a payment_part" do
@@ -149,31 +113,6 @@ defmodule EasyFixApi.PaymentsTest do
 
     test "create_payment_part/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Payments.create_payment_part(@invalid_attrs)
-    end
-
-    test "update_payment_part/2 with valid data updates the payment_part" do
-      payment_part = payment_part_fixture()
-      assert {:ok, payment_part} = Payments.update_payment_part(payment_part, @update_attrs)
-      assert %PaymentPart{} = payment_part
-      assert payment_part.price == 43
-      assert payment_part.quantity == 43
-    end
-
-    test "update_payment_part/2 with invalid data returns error changeset" do
-      payment_part = payment_part_fixture()
-      assert {:error, %Ecto.Changeset{}} = Payments.update_payment_part(payment_part, @invalid_attrs)
-      assert payment_part == Payments.get_payment_part!(payment_part.id)
-    end
-
-    test "delete_payment_part/1 deletes the payment_part" do
-      payment_part = payment_part_fixture()
-      assert {:ok, %PaymentPart{}} = Payments.delete_payment_part(payment_part)
-      assert_raise Ecto.NoResultsError, fn -> Payments.get_payment_part!(payment_part.id) end
-    end
-
-    test "change_payment_part/1 returns a payment_part changeset" do
-      payment_part = payment_part_fixture()
-      assert %Ecto.Changeset{} = Payments.change_payment_part(payment_part)
     end
   end
 end
