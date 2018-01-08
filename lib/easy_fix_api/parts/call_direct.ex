@@ -4,7 +4,7 @@ defmodule EasyFixApi.Parts.CallDirect do
     {"Freios", "pastilha.*freio|discos de freio"},
     {"Bateria", "bateria 12v"},
     {"Lâmpadas", "lâmpada|pisca|break light"},
-    {"Troca de óleo", "óleo de motor"},
+    {"Troca de óleo", "óleo de motor|filtro de óleo"},
     {"Retrovisores", "retrovisor"},
     {"Limpador de Parabrisa", "((brucutu|palheta).*parabrisa)|((palheta|haste|esguicho).*traseiro)"},
     {"Vidros", "vidro"},
