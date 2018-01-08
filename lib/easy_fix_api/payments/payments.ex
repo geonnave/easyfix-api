@@ -98,7 +98,7 @@ defmodule EasyFixApi.Payments do
   end
 
   def check_customer_id(same_id, %{customer: %{id: same_id}}), do: :ok
-  def check_customer_id(_, _), do: {:error, "customer id mismatch"}
+  def check_customer_id(id1, %{customer: %{id: id2}}), do: {:error, "customer id mismatch (#{id1} != #{id2})"}
 
   def create_pending_payment(attrs \\ %{}) do
     %Payment{}

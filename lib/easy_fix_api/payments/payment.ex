@@ -15,15 +15,16 @@ defmodule EasyFixApi.Payments.Payment do
     belongs_to :quote, EasyFixApi.Orders.Quote
     has_many :payment_parts, EasyFixApi.Payments.PaymentPart
 
-    field :parts, {:array, :map}, virtual: true
+    field :token, :string, virtual: true
 
     timestamps(type: :utc_datetime)
   end
 
   def pending_changeset(attrs) do
     %Payment{}
-    |> cast(attrs, [:amount, :parts, :installments, :payment_method, :iugu_fee, :factoring_fee, :quote_id])
-    |> validate_required([:amount, :parts, :installments, :payment_method, :iugu_fee, :factoring_fee, :quote_id])
+    |> cast(attrs, [:amount, :installments, :payment_method, :iugu_fee, :factoring_fee, :quote_id])
+    |> cast_assoc(:payment_parts)
+    |> validate_required([:amount, :installments, :payment_method, :iugu_fee, :factoring_fee, :quote_id])
   end
 
   def changeset(%Payment{} = payment, attrs) do

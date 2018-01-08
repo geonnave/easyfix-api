@@ -2,6 +2,7 @@ defmodule EasyFixApi.Iugu do
   use Tesla
 
   require Logger
+  alias EasyFixApi.Parts
 
   @api_key_header Base.encode64(Application.get_env(:easy_fix_api, :iugu_api_key) <> ":")
 
@@ -11,22 +12,29 @@ defmodule EasyFixApi.Iugu do
   plug Tesla.Middleware.JSON
 
   def charge(pending_changeset, order) do
-    payment = pending_changeset.changes
-    payload = %{
-      token: payment.token,
-      email: order.customer.user.email,
-      months: payment.installments,
-      items: payment.parts
-    }
+    payload = build_payload(pending_changeset, order)
+    {:ok, %{}}
+    # with resp = %{status: 200} <- post("/charge", payload),
+    #      body = %{"sucess" => true, "message" => "Autorizado"} <- resp.body do
+    #   {:ok, body}
+    # else
+    #   error ->
+    #     Logger.debug error
+    #     {:error, error}
+    # end
+  end
 
-    with resp = %{status: 200} <- post("/charge", payload),
-         body = %{"sucess" => true, "message" => "Autorizado"} <- resp.body do
-      {:ok, body}
-    else
-      error ->
-        Logger.debug error
-        {:error, error}
-    end
+  def build_payload(changeset, order) do
+    payload = Ecto.Changeset.apply_changes(changeset)
+    %{
+      token: payload.token,
+      email: order.customer.user.email,
+      months: payload.installments,
+      items: Enum.map(payload.payment_parts, fn payment_part ->
+        part = Parts.get_part!(payment_part.part_id)
+        %{description: part.name, price_cents: payment_part.price, quantity: payment_part.quantity}
+      end)
+    } |> IO.inspect
   end
 
 end

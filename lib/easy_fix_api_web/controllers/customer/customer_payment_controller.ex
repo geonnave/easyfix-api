@@ -11,7 +11,7 @@ defmodule EasyFixApiWeb.CustomerPaymentController do
   end
 
   def create(conn, %{"payment" => payment_params, "customer_id" => customer_id}) do
-    with {:ok, _payment} <- Payments.create_payment(payment_params, customer_id) do
+    with {:ok, _payment} <- Payments.create_payment(payment_params, String.to_integer(customer_id)) do
       render(conn, "show.json", customer_payment: %{})
     else
       payment_changeset = %{valid?: false} ->

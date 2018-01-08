@@ -20,8 +20,8 @@ defmodule EasyFixApi.Payments.PaymentPart do
 
   def changeset(%PaymentPart{} = payment_part, attrs) do
     payment_part
-    |> cast(attrs, [:quantity, :price, :part_id, :payment_id])
-    |> validate_required([:quantity, :price, :part_id, :payment_id])
+    |> cast(attrs, [:quantity, :price, :part_id])
+    |> validate_required([:quantity, :price, :part_id])
     |> validate_number(:quantity, [greater_than: 0])
   end
 end
