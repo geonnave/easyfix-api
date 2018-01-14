@@ -32,4 +32,10 @@ defmodule EasyFixApi.Payments.Payment do
     |> cast(attrs, [:amount, :installments, :state, :payment_method, :iugu_fee, :factoring_fee])
     |> validate_required([:amount, :installments, :payment_method, :iugu_fee, :factoring_fee])
   end
+
+  def all_nested_assocs do
+    [
+      payment_parts: [part: EasyFixApi.Parts.Part.all_nested_assocs],
+    ]
+  end
 end

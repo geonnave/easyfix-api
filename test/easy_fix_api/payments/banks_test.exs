@@ -1,4 +1,4 @@
-defmodule EasyFixApi.PaymentsTest do
+defmodule EasyFixApi.BanksTest do
   use EasyFixApi.DataCase
 
   alias EasyFixApi.Payments

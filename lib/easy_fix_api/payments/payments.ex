@@ -84,16 +84,19 @@ defmodule EasyFixApi.Payments do
 
   def create_payment(attrs \\ %{}, customer_id) do
     with pending_changeset = %{valid?: true} <- Payment.pending_changeset(attrs),
-         order <- Orders.get_order_for_quote(pending_changeset.changes[:quote_id]),
+         order when not is_nil(order) <- Orders.get_order_for_quote(pending_changeset.changes[:quote_id]),
          :ok <- check_customer_id(customer_id, order),
-         {:ok, _iugu_body_resp} <- Iugu.charge(pending_changeset, order) do
-    #   update customer_payment as pending
-      {:ok, %{}}
+         {:ok, invoice_id} <- Iugu.charge(pending_changeset, order) do
+      pending_changeset
+      |> put_change(:iugu_invoice_id, invoice_id)
+      |> Repo.insert
     else
       pending_changeset = %{valid?: false} ->
         {:error, pending_changeset}
       {:error, iugu_resp_body} ->
         {:error, iugu_resp_body}
+      nil ->
+        {:error, "order not found for quote_id"}
     end
   end
 
