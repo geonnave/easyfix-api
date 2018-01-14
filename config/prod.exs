@@ -45,7 +45,7 @@ config :easy_fix_api, :order_states,
   started: [],
   created_with_diagnosis: [
     timeout: [value: [hours: 3*24], event: :to_quoted_by_garages],
-    fixer_timeout: [value: [hours: 24], event: :to_quoted_by_garages],
+    fixer_timeout: [value: [hours: 3*24], event: :to_quoted_by_garages],
   ],
   not_quoted_by_garages: [final_state: true, macro_state: :canceled],
   quoted_by_garages: [

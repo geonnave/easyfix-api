@@ -1,7 +1,7 @@
 defmodule EasyFixApi.Parts.CallDirect do
   @call_direct_part_names [
     {"Pneu", "pneu"},
-    {"Freios", "pastilha.*freio|discos de freio"},
+    {"Freios", "pastilha.*freio|discos de freio|conjunto.*sapatas.*freio"},
     {"Bateria", "bateria 12v"},
     {"Lâmpadas", "lâmpada|pisca|break light"},
     {"Troca de óleo", "óleo de motor|filtro de óleo"},
