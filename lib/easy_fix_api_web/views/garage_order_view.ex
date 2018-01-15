@@ -21,10 +21,15 @@ defmodule EasyFixApiWeb.GarageOrderView do
       customer: render_one(order.customer, EasyFixApiWeb.CustomerView, "customer_contact.json"),
       diagnosis: render_one(order.diagnosis, EasyFixApiWeb.DiagnosisView, "diagnosis.json"),
       quote: render_one(quote, EasyFixApiWeb.QuoteView, "quote.json"),
-      best_price_quote_id: order.best_price_quote_id,
+      best_quote: (if order.best_price_quote, do: __from_cents_to_reais_float(order.best_price_quote.total_amount.amount), else: nil),
       accepted_quote_id: order.accepted_quote_id,
       rating: order.rating,
       rating_comment: order.rating_comment,
     }
+  end
+
+  # FIXME: remove this as soon as the frontend is refactored to allow proper number handling
+  def __from_cents_to_reais_float(amount) do
+    Float.round(amount / 100, 2)
   end
 end

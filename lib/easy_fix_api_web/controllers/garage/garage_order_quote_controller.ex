@@ -45,9 +45,10 @@ defmodule EasyFixApiWeb.GarageOrderQuoteController do
   end
 
   def update(conn, %{"quote" => quote_params, "garage_id" => garage_id, "order_id" => order_id}) do
-    %{order: _order, quote: quote} = GarageOrders.get_order(garage_id, order_id)
+    %{order: order, quote: quote} = GarageOrders.get_order(garage_id, order_id)
 
-    with {:ok, quote} <- Orders.update_quote(quote, quote_params) do
+    with :created_with_diagnosis <- order.state,
+         {:ok, quote} <- Orders.update_quote(quote, quote_params) do
       render(conn, EasyFixApiWeb.QuoteView, "show.json", quote: quote)
     end
   end

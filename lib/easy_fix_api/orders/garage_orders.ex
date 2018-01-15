@@ -19,8 +19,10 @@ defmodule EasyFixApi.GarageOrders do
         garage.user.id
         |> Orders.get_quote_for_order_by_user(order.diagnosis.id)
         |> Orders.quote_with_best_price(order)
+        |> Orders.with_total_amount
 
       order = Orders.order_maybe_with_customer(order, quote)
+      order = %{order | best_price_quote: Orders.with_total_amount(order.best_price_quote)}
 
       %{order: order, quote: quote}
     end)
@@ -36,8 +38,10 @@ defmodule EasyFixApi.GarageOrders do
       garage.user.id
       |> Orders.get_quote_for_order_by_user(order.diagnosis.id)
       |> Orders.quote_with_best_price(order)
+      |> Orders.with_total_amount
 
     order = Orders.order_maybe_with_customer(order, quote)
+    order = %{order | best_price_quote: Orders.with_total_amount(order.best_price_quote)}
 
     %{order: order, quote: quote}
   end
