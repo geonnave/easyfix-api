@@ -3,9 +3,9 @@ defmodule EasyFixApi.GarageOrders do
   """
 
   import Ecto.{Query, Changeset}, warn: false
-  alias EasyFixApi.{Orders, Accounts}
+  alias EasyFixApi.{Orders, Accounts, Repo}
 
-  alias EasyFixApi.Orders.{Matcher}
+  alias EasyFixApi.Orders.{Matcher, Quote}
 
   # must find intersection(garage_id_categories, diagnosis_categories)
   # TODO: write this using Ecto.Query
@@ -22,7 +22,15 @@ defmodule EasyFixApi.GarageOrders do
         |> Orders.with_total_amount
 
       order = Orders.order_maybe_with_customer(order, quote)
-      order = %{order | best_price_quote: Orders.with_total_amount(order.best_price_quote)}
+
+      best_price_quote =
+        order.quotes
+        |> Repo.preload(Quote.all_nested_assocs)
+        |> Enum.map(&Orders.with_total_amount/1)
+        |> Orders.sort_quotes_by_total_amount()
+        |> List.first
+
+      order = %{order | best_price_quote: best_price_quote}
 
       %{order: order, quote: quote}
     end)
@@ -41,7 +49,15 @@ defmodule EasyFixApi.GarageOrders do
       |> Orders.with_total_amount
 
     order = Orders.order_maybe_with_customer(order, quote)
-    order = %{order | best_price_quote: Orders.with_total_amount(order.best_price_quote)}
+
+    best_price_quote =
+      order.quotes
+      |> Repo.preload(Quote.all_nested_assocs)
+      |> Enum.map(&Orders.with_total_amount/1)
+      |> Orders.sort_quotes_by_total_amount()
+      |> List.first
+
+    order = %{order | best_price_quote: best_price_quote}
 
     %{order: order, quote: quote}
   end

@@ -22,6 +22,8 @@ defmodule EasyFixApiWeb.GarageOrderQuoteController do
           CustomerNotifications.first_quote_arrived(order)
         Orders.is_best_price_quote(order, quote.id) ->
           CustomerNotifications.new_best_quote_arrived(order, [:email])
+        true ->
+          nil
       end
 
       conn
