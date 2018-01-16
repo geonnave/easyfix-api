@@ -25,6 +25,14 @@ defmodule EasyFixApiWeb.PartView do
   end
 
   def render("part_call_direct.json", %{part: {title, parts}}) do
+    parts = if title == "Troca de óleo" do
+      # sort oil parts to ensure that 'óleo' comes after 'filtro'
+      # this is needed because of a 'oil viscosity dropdown' in the frontend
+      Enum.sort(parts, & &1.name <= &2.name)
+    else
+      parts
+    end
+
     %{title: title,
       parts: render_many(parts, PartView, "part.json")}
   end
