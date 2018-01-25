@@ -1,8 +1,7 @@
-defmodule EasyFixApi.Iugu do
+defmodule EasyFixApi.Payments.Iugu do
   use Tesla
 
   require Logger
-  alias EasyFixApi.Parts
 
   @api_key_header Base.encode64(Application.get_env(:easy_fix_api, :iugu)[:api_key] <> ":")
 
@@ -14,18 +13,23 @@ defmodule EasyFixApi.Iugu do
   def charge(pending_changeset, order) do
     payload = build_payload(pending_changeset, order)
 
-    # XXX: do this to avoid charging wrong values while developing
-    payload = %{payload | items: [%{description: "test", price_cents: 100, quantity: 1}]}
+    charge_request(payload)
+  end
 
-    {:ok, "123"}
-    # with resp = %{status: 200} <- post("/charge", payload),
-    #      body = %{"sucess" => true, "message" => "Autorizado"} <- resp.body do
-    #   {:ok, body["invoice_id"]}
-    # else
-    #   error ->
-    #     Logger.debug error
-    #     {:error, error}
-    # end
+  def charge_request(payload) do
+    payload = put_in payload[:test], true
+
+    with resp = %{status: 200} <- post("/charge", payload),
+         body = %{"success" => true, "message" => "Autorizado"} <- resp.body do
+      {:ok, body["invoice_id"]}
+    else
+      %{status: _, body: error} ->
+        Logger.debug inspect(error)
+        {:error, error}
+      error ->
+        Logger.debug inspect(error)
+        {:error, error}
+    end
   end
 
   def build_payload(changeset, order) do
@@ -46,7 +50,7 @@ defmodule EasyFixApi.Iugu do
 
 end
 
-defmodule EasyFixApi.MockIugu do
+defmodule EasyFixApi.Payments.MockIugu do
   require Logger
 
   def charge(pending_changeset, order) do

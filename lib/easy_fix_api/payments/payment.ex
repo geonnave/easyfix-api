@@ -23,8 +23,8 @@ defmodule EasyFixApi.Payments.Payment do
 
   def pending_changeset(attrs) do
     %Payment{}
-    |> cast(attrs, [:amount, :installments, :payment_method, :iugu_fee, :factoring_fee, :quote_id, :order_id])
-    |> validate_required([:amount, :installments, :payment_method, :iugu_fee, :factoring_fee, :quote_id, :order_id])
+    |> cast(attrs, [:amount, :installments, :token, :payment_method, :iugu_fee, :factoring_fee, :quote_id, :order_id])
+    |> validate_required([:amount, :installments, :token, :payment_method, :iugu_fee, :factoring_fee, :quote_id, :order_id])
     |> validate_number(:amount, greater_than_or_equal_to: 1_00)
   end
 

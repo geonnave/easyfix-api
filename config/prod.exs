@@ -40,9 +40,6 @@ config :easy_fix_api, EasyFixApi.Mailer,
 config :easy_fix_api,
   sms_api: EasyFixApi.TotalVoice
 
-config :easy_fix_api, :iugu,
-  base_url: "https://api.iugu.com/v1"
-
 # Information about state
 config :easy_fix_api, :order_states,
   started: [],

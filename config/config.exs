@@ -61,7 +61,7 @@ config :easy_fix_api,
 
 config :easy_fix_api, :iugu,
   api_key: "f17e2cd9bdf8fe6224d6e06b5089835d",
-  base_url: "https://api.iugu.dev/v1"
+  base_url: "https://api.iugu.com/v1"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

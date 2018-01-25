@@ -5,9 +5,9 @@ defmodule EasyFixApi.Payments do
 
   import Ecto.{Query, Changeset}, warn: false
   import EasyFixApi.Helpers
-  alias EasyFixApi.{Repo, Orders, Parts, Iugu}
+  alias EasyFixApi.{Repo, Orders, Parts}
 
-  alias EasyFixApi.Payments.Bank
+  alias EasyFixApi.Payments.{Bank, Iugu}
 
   def list_banks do
     Repo.all(Bank)
