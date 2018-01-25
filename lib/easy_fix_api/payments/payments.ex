@@ -78,9 +78,13 @@ defmodule EasyFixApi.Payments do
 
   def list_payments do
     Repo.all(Payment)
+    |> Repo.preload(Payment.all_nested_assocs)
   end
 
-  def get_payment!(id), do: Repo.get!(Payment, id)
+  def get_payment!(id) do
+    Repo.get!(Payment, id)
+    |> Repo.preload(Payment.all_nested_assocs)
+  end
 
   def create_payment(attrs \\ %{}, customer_id) do
     with pending_changeset = %{valid?: true} <- Payment.pending_changeset(attrs),
@@ -89,6 +93,7 @@ defmodule EasyFixApi.Payments do
          {:ok, invoice_id} <- Iugu.charge(pending_changeset, order) do
       pending_changeset
       |> put_change(:iugu_invoice_id, invoice_id)
+      |> put_change(:state, "success")
       |> Repo.insert
     else
       pending_changeset = %{valid?: false} ->

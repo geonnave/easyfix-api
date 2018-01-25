@@ -306,7 +306,7 @@ defmodule EasyFixApi.Factory do
       iugu_invoice_id: "abcde",
       payment_method: "credit",
       quote: build(:quote),
-      payment_parts: build_list(2, :payment_part),
+      order: build(:order)
     }
   end
 

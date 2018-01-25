@@ -13,6 +13,7 @@ defmodule EasyFixApi.Payments.Payment do
     field :state, :string
 
     belongs_to :quote, EasyFixApi.Orders.Quote
+    belongs_to :order, EasyFixApi.Orders.Order
     has_many :payment_parts, EasyFixApi.Payments.PaymentPart
 
     field :token, :string, virtual: true
@@ -22,9 +23,9 @@ defmodule EasyFixApi.Payments.Payment do
 
   def pending_changeset(attrs) do
     %Payment{}
-    |> cast(attrs, [:amount, :installments, :payment_method, :iugu_fee, :factoring_fee, :quote_id])
-    |> cast_assoc(:payment_parts)
-    |> validate_required([:amount, :installments, :payment_method, :iugu_fee, :factoring_fee, :quote_id])
+    |> cast(attrs, [:amount, :installments, :payment_method, :iugu_fee, :factoring_fee, :quote_id, :order_id])
+    |> validate_required([:amount, :installments, :payment_method, :iugu_fee, :factoring_fee, :quote_id, :order_id])
+    |> validate_number(:amount, greater_than_or_equal_to: 1_00)
   end
 
   def changeset(%Payment{} = payment, attrs) do
@@ -34,8 +35,6 @@ defmodule EasyFixApi.Payments.Payment do
   end
 
   def all_nested_assocs do
-    [
-      payment_parts: [part: EasyFixApi.Parts.Part.all_nested_assocs],
-    ]
+    []
   end
 end

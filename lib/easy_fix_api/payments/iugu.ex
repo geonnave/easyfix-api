@@ -34,10 +34,13 @@ defmodule EasyFixApi.Iugu do
       token: payload.token,
       email: order.customer.user.email,
       months: payload.installments,
-      items: Enum.map(payload.payment_parts, fn payment_part ->
-        part = Parts.get_part!(payment_part.part_id)
-        %{description: part.name, price_cents: payment_part.price, quantity: payment_part.quantity}
-      end)
+      items: [
+        %{
+          description: "Pedido \##{payload.order_id}, orçamento \##{payload.quote_id}",
+          price_cents: payload.amount,
+          quantity: 1
+        }
+      ]
     } |> IO.inspect
   end
 
