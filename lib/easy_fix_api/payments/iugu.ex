@@ -21,9 +21,12 @@ defmodule EasyFixApi.Payments.Iugu do
 
     with resp = %{status: 200} <- post("/charge", payload),
          body = %{"success" => true, "message" => "Autorizado"} <- resp.body do
+      Logger.info "Payment authorized by Iugu, invoice id is #{body["invoice_id"]}"
+      Logger.debug inspect(resp)
       {:ok, body["invoice_id"]}
     else
-      %{status: _, body: error} ->
+      resp = %{status: _, body: error} ->
+        Logger.debug inspect(resp)
         Logger.debug inspect(error)
         {:error, error}
       error ->
@@ -41,13 +44,12 @@ defmodule EasyFixApi.Payments.Iugu do
       items: [
         %{
           description: "Pedido \##{payload.order_id}, orçamento \##{payload.quote_id}",
-          price_cents: payload.amount,
+          price_cents: payload.total_amount,
           quantity: 1
         }
       ]
     } |> IO.inspect
   end
-
 end
 
 defmodule EasyFixApi.Payments.MockIugu do

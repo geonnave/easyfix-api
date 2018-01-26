@@ -6,7 +6,7 @@ defmodule EasyFixApi.PaymentsTest do
   describe "payments" do
     alias EasyFixApi.Payments.Payment
 
-    @invalid_attrs %{amount: nil, factoring_fee: nil, installments: nil, iugu_fee: nil, iugu_invoice_id: nil, payment_method: nil, state: nil}
+    @invalid_attrs %{total_amount: nil, factoring_fee: nil, installments: nil, iugu_fee: nil, iugu_invoice_id: nil, payment_method: nil, state: nil}
 
     test "get_payment!/1 returns the payment with given id" do
       payment = insert(:payment)
@@ -15,7 +15,8 @@ defmodule EasyFixApi.PaymentsTest do
 
     test "create pending changeset" do
       assert %{valid?: true} = %{
-        "amount" => 20_00,
+        "token" => "xablau",
+        "total_amount" => 20_00,
         "installments" => 1,
         "payment_method" => "credit",
         "iugu_fee" => 3.21,
@@ -37,7 +38,7 @@ defmodule EasyFixApi.PaymentsTest do
         |> IO.inspect
 
       assert {:ok, %Payment{} = payment} = Payments.create_payment(payment_attrs, customer.id)
-      assert payment.amount == 42
+      assert payment.total_amount == 42
       assert payment.state == "some state"
     end
 

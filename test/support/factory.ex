@@ -299,7 +299,7 @@ defmodule EasyFixApi.Factory do
 
   def payment_factory do
     %Payment{
-      amount: 42,
+      total_amount: 42,
       factoring_fee: "120.5",
       iugu_fee: "120.5",
       installments: 1,

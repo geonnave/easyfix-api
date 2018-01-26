@@ -8,6 +8,7 @@ defmodule EasyFixApi.Payments do
   alias EasyFixApi.{Repo, Orders, Parts}
 
   alias EasyFixApi.Payments.{Bank, Iugu}
+  alias EasyFixApi.Orders.{Order}
 
   def list_banks do
     Repo.all(Bank)
@@ -79,6 +80,13 @@ defmodule EasyFixApi.Payments do
   def list_payments do
     Repo.all(Payment)
     |> Repo.preload(Payment.all_nested_assocs)
+  end
+  def list_payments(customer_id) do
+    from(p in Payment,
+      join: o in Order, on: o.id == p.order_id,
+      where: o.customer_id == ^customer_id,
+      preload: ^Payment.all_nested_assocs)
+    |> Repo.all
   end
 
   def get_payment!(id) do

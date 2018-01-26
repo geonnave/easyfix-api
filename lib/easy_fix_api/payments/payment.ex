@@ -4,7 +4,7 @@ defmodule EasyFixApi.Payments.Payment do
   alias EasyFixApi.Payments.Payment
 
   schema "payments" do
-    field :amount, :integer
+    field :total_amount, :integer
     field :factoring_fee, :decimal
     field :installments, :integer
     field :iugu_fee, :decimal
@@ -23,15 +23,15 @@ defmodule EasyFixApi.Payments.Payment do
 
   def pending_changeset(attrs) do
     %Payment{}
-    |> cast(attrs, [:amount, :installments, :token, :payment_method, :iugu_fee, :factoring_fee, :quote_id, :order_id])
-    |> validate_required([:amount, :installments, :token, :payment_method, :iugu_fee, :factoring_fee, :quote_id, :order_id])
-    |> validate_number(:amount, greater_than_or_equal_to: 1_00)
+    |> cast(attrs, [:total_amount, :installments, :token, :payment_method, :iugu_fee, :factoring_fee, :quote_id, :order_id])
+    |> validate_required([:total_amount, :installments, :token, :payment_method, :iugu_fee, :factoring_fee, :quote_id, :order_id])
+    |> validate_number(:total_amount, greater_than_or_equal_to: 1_00)
   end
 
   def changeset(%Payment{} = payment, attrs) do
     payment
-    |> cast(attrs, [:amount, :installments, :state, :payment_method, :iugu_fee, :factoring_fee])
-    |> validate_required([:amount, :installments, :payment_method, :iugu_fee, :factoring_fee])
+    |> cast(attrs, [:total_amount, :installments, :state, :payment_method, :iugu_fee, :factoring_fee])
+    |> validate_required([:total_amount, :installments, :payment_method, :iugu_fee, :factoring_fee])
   end
 
   def all_nested_assocs do

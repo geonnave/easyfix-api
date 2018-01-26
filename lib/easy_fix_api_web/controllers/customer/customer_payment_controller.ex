@@ -6,10 +6,10 @@ defmodule EasyFixApiWeb.CustomerPaymentController do
 
   action_fallback EasyFixApiWeb.FallbackController
 
-  # def index(conn, _params = %{"customer_id" => customer_id}) do
-  #   payments = Payments.list_payments(customer_id)
-  #   render(conn, "index.json", payments: payments)
-  # end
+  def index(conn, _params = %{"customer_id" => customer_id}) do
+    payments = Payments.list_payments(String.to_integer(customer_id))
+    render(conn, "index.json", customer_payments: payments)
+  end
 
   def create(conn, %{"payment" => payment_params = %{"order_id" => order_id}, "customer_id" => customer_id}) do
     # FIXME: adjust this to *properly* use the OrderStateMachine
@@ -20,7 +20,9 @@ defmodule EasyFixApiWeb.CustomerPaymentController do
          {:ok, payment} <- Payments.create_payment(payment_params, customer_id),
          attrs = %{accepted_quote_id: payment.quote_id},
          {:ok, _updated_order} <- OrderStateMachine.customer_clicked(order.id, :accept_quote, attrs) do
-      render(conn, "show.json", customer_payment: payment)
+      conn
+      |> put_status(:created)
+      |> render("show.json", customer_payment: payment)
     end
   end
 
