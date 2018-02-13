@@ -329,6 +329,11 @@ defmodule EasyFixApi.Orders do
 
   alias EasyFixApi.Orders.QuotePart
 
+  def list_quote_parts do
+    Repo.all(QuotePart)
+    |> Repo.preload([:part])
+  end
+
   def create_quote_part(attrs \\ %{}, quote_id) do
     with quote_part_changeset = %{valid?: true} <- QuotePart.create_changeset(attrs) do
         quote = get_quote!(quote_id)
