@@ -8,6 +8,23 @@ defmodule EasyFixApi.Vouchers do
 
   alias EasyFixApi.Vouchers.IndicationCode
 
+  @coder Hashids.new(
+    salt: "easyfix rules!",
+    alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+  )
+
+  def generate_indication_code(customer) do
+    first_name =
+      customer.name
+      |> String.split(" ")
+      |> List.firstcons
+      |> String.normalize(:nfd)
+      |> String.replace(~r/\W/u, "")
+      |> String.upcase
+
+    first_name <> Hashids.encode(@coder, customer.id)
+  end
+
   def list_indication_codes do
     Repo.all(IndicationCode)
   end
