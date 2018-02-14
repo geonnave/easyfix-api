@@ -12,6 +12,7 @@ defmodule EasyFixApi.Orders.Order do
 
     has_one :diagnosis, EasyFixApi.Orders.Diagnosis
     has_many :quotes, through: [:diagnosis, :quotes]
+    has_one :payment, EasyFixApi.Payments.Payment
     belongs_to :customer, EasyFixApi.Accounts.Customer
 
     belongs_to :best_price_quote, EasyFixApi.Orders.Quote
@@ -71,6 +72,7 @@ defmodule EasyFixApi.Orders.Order do
       customer: [EasyFixApi.Accounts.Customer.all_nested_assocs],
       accepted_quote: [EasyFixApi.Orders.Quote.all_nested_assocs],
       best_price_quote: [EasyFixApi.Orders.Quote.all_nested_assocs],
+      payment: [EasyFixApi.Payments.Payment.all_nested_assocs],
     ]
   end
 end

@@ -5,9 +5,10 @@ defmodule EasyFixApi.Payments do
 
   import Ecto.{Query, Changeset}, warn: false
   import EasyFixApi.Helpers
-  alias EasyFixApi.Repo
+  alias EasyFixApi.{Repo, Orders, Parts}
 
-  alias EasyFixApi.Payments.Bank
+  alias EasyFixApi.Payments.{Bank, Iugu}
+  alias EasyFixApi.Orders.{Order}
 
   def list_banks do
     Repo.all(Bank)
@@ -72,5 +73,98 @@ defmodule EasyFixApi.Payments do
 
   def delete_bank_account(%BankAccount{} = bank_account) do
     Repo.delete(bank_account)
+  end
+
+  alias EasyFixApi.Payments.Payment
+
+  def list_payments do
+    Repo.all(Payment)
+    |> Repo.preload(Payment.all_nested_assocs)
+  end
+  def list_payments(customer_id) do
+    from(p in Payment,
+      join: o in Order, on: o.id == p.order_id,
+      where: o.customer_id == ^customer_id,
+      preload: ^Payment.all_nested_assocs)
+    |> Repo.all
+  end
+
+  def get_payment!(id) do
+    Repo.get!(Payment, id)
+    |> Repo.preload(Payment.all_nested_assocs)
+  end
+
+  def create_payment(attrs \\ %{}, customer_id) do
+    with pending_changeset = %{valid?: true} <- Payment.pending_changeset(attrs),
+         order when not is_nil(order) <- Orders.get_order_for_quote(pending_changeset.changes[:quote_id]),
+         :ok <- check_customer_id(customer_id, order),
+         {:ok, invoice_id} <- Iugu.charge(pending_changeset, order) do
+      pending_changeset
+      |> put_change(:iugu_invoice_id, invoice_id)
+      |> put_change(:state, "success")
+      |> Repo.insert
+    else
+      pending_changeset = %{valid?: false} ->
+        {:error, pending_changeset}
+      {:error, iugu_resp_body} ->
+        {:error, iugu_resp_body}
+      nil ->
+        {:error, "order not found for quote_id"}
+    end
+  end
+
+  def check_customer_id(same_id, %{customer: %{id: same_id}}), do: :ok
+  def check_customer_id(id1, %{customer: %{id: id2}}), do: {:error, "customer id mismatch (#{id1} != #{id2})"}
+
+  def create_pending_payment(attrs \\ %{}) do
+    %Payment{}
+    |> Payment.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def delete_payment(%Payment{} = payment) do
+    Repo.delete(payment)
+  end
+
+  def change_payment(%Payment{} = payment) do
+    Payment.changeset(payment, %{})
+  end
+
+
+  alias EasyFixApi.Payments.PaymentPart
+
+  def list_payment_parts do
+    Repo.all(PaymentPart)
+  end
+
+  def get_payment_part!(id), do: Repo.get!(PaymentPart, id)
+
+  def create_payment_part(attrs \\ %{}, payment_id) do
+    with payment_part_changeset = %{valid?: true} <- PaymentPart.create_changeset(attrs) do
+        payment = get_payment!(payment_id)
+        part = Parts.get_part!(payment_part_changeset.changes[:part_id])
+
+        payment_part_changeset
+        |> put_assoc(:part, part)
+        |> put_assoc(:payment, payment)
+        |> Repo.insert()
+    else
+      %{valid?: false} = changeset ->
+        {:error, changeset}
+    end
+  end
+
+  def update_payment_part(%PaymentPart{} = payment_part, attrs) do
+    payment_part
+    |> PaymentPart.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_payment_part(%PaymentPart{} = payment_part) do
+    Repo.delete(payment_part)
+  end
+
+  def change_payment_part(%PaymentPart{} = payment_part) do
+    PaymentPart.changeset(payment_part, %{})
   end
 end

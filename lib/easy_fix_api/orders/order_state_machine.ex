@@ -12,8 +12,17 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     GenStateMachine.start_link __MODULE__, data, name: name(data[:order_id])
   end
 
+  def reset(order_id) do
+    GenStateMachine.stop name(order_id)
+    start_link(order_id: order_id)
+  end
+
   def customer_clicked(order_id, event, attrs) do
     GenStateMachine.call name(order_id), {:customer_clicked, event, attrs}
+  end
+
+  # FIXME: use this function instead of customer_clicked above
+  def process_payment(_order_id, _payment_params, _customer_id) do
   end
 
   def get_state(order_id) do
@@ -184,7 +193,7 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
 
   def state_timeout_action(state, state_due_date) do
     # the timeout can be negative if the machine's state is being initialized
-    # from pre-existing state (e.g. from the database, after a crash or a update with downtime)
+    # from pre-existing state (e.g. from the database, after a crash or a update with significant downtime)
     if (t = timeout_from_now(state_due_date)) > 0 do
       {:state_timeout, t, timeout_event(state)}
     else

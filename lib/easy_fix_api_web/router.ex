@@ -44,6 +44,7 @@ defmodule EasyFixApiWeb.Router do
         put "/state", CustomerOrderController, :update_state, as: :state
         get "/best-quote", CustomerOrderQuoteController, :best_quote, as: :best_quote
       end
+      resources "/payments", CustomerPaymentController, only: [:index, :show, :create], name: :payment
     end
 
     resources "/customer_leads", CustomerLeadController, except: [:new, :edit]
