@@ -42,7 +42,7 @@ config :easy_fix_api, EasyFixApiWeb.Endpoint,
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
-config :logger, level: :debug
+config :logger, level: :info
 
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
@@ -68,14 +68,14 @@ config :easy_fix_api, :order_states,
   # interim state, not mapped to database yet
   created_with_diagnosis_no_parts: [timeout: [value: [minutes: 1]]],
 
-  not_quoted_by_garages: [final_state: true, macro_state: :canceled],
+  not_quoted_by_garages: [is_final_state: true, macro_state: :canceled],
   quoted_by_garages: [
     timeout: [value: [minutes: 10], event: :to_quote_accepted_by_customer]
   ],
-  quote_not_accepted_by_customer: [final_state: true, macro_state: :canceled],
+  quote_not_accepted_by_customer: [is_final_state: true, macro_state: :canceled],
   quote_accepted_by_customer: [
-    timeout: [value: [minutes: 2], event: :to_finish_by_garage]
+    timeout: [value: [minutes: 2], event: :to_finish_by_garage], is_final_state: true
   ],
-  finished_by_garage: [final_state: true],
-  # timeout_on_quoted_by_garages: [final_state: true],
-  timeout: [final_state: true]
+  finished_by_garage: [is_final_state: true],
+  # timeout_on_quoted_by_garages: [is_final_state: true],
+  timeout: [is_final_state: true]

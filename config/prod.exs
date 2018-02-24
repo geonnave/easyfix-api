@@ -47,17 +47,17 @@ config :easy_fix_api, :order_states,
     timeout: [value: [hours: 3*24], event: :to_quoted_by_garages],
     fixer_timeout: [value: [hours: 3*24], event: :to_quoted_by_garages],
   ],
-  not_quoted_by_garages: [final_state: true, macro_state: :canceled],
+  not_quoted_by_garages: [is_final_state: true, macro_state: :canceled],
   quoted_by_garages: [
     timeout: [value: [hours: 3*24], event: :to_quote_accepted_by_customer]
   ],
-  quote_not_accepted_by_customer: [final_state: true, macro_state: :canceled],
+  quote_not_accepted_by_customer: [is_final_state: true, macro_state: :canceled],
   quote_accepted_by_customer: [
-    timeout: [value: [hours: 14*24], event: :to_finish_by_garage]
+    timeout: [value: [hours: 14*24], event: :to_finish_by_garage], is_final_state: true
   ],
-  finished_by_garage: [final_state: true],
-  # timeout_on_quoted_by_garages: [final_state: true],
-  timeout: [final_state: true]
+  finished_by_garage: [is_final_state: true],
+  # timeout_on_quoted_by_garages: [is_final_state: true],
+  timeout: [is_final_state: true]
 
 # ## SSL Support
 #
