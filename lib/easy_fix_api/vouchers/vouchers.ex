@@ -13,11 +13,13 @@ defmodule EasyFixApi.Vouchers do
     alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
   )
 
+  def coder, do: @coder
+
   def generate_indication_code(customer) do
     first_name =
       customer.name
       |> String.split(" ")
-      |> List.firstcons
+      |> List.first
       |> String.normalize(:nfd)
       |> String.replace(~r/\W/u, "")
       |> String.upcase

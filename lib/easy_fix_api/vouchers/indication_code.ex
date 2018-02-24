@@ -6,11 +6,11 @@ defmodule EasyFixApi.Vouchers.IndicationCode do
   schema "indication_codes" do
     field :code, :string
     field :date_used, :utc_datetime
-    field :type, :string
+    field :type, :string # indication | reward
     field :customer_id, :id
     has_one :customer, EasyFixApi.Accounts.Customer
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

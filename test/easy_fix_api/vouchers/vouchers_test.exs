@@ -19,6 +19,21 @@ defmodule EasyFixApi.VouchersTest do
       indication_code
     end
 
+    test "generate_indication_code" do
+      [
+        {"John Silva", "JOHN"},
+        {"João Silva", "JOAO"},
+        {"Diego", "DIEGO"},
+        {"Svetlana Fydryczewski", "SVETLANA"}
+      ]
+      |> Enum.each(fn {name, capitapized_first_name} ->
+        customer = build(:customer) |> with_name(name) |> insert()
+        expected_code = capitapized_first_name <> Hashids.encode(Vouchers.coder, customer.id)
+
+        assert expected_code == Vouchers.generate_indication_code(customer)
+      end)
+    end
+
     test "list_indication_codes/0 returns all indication_codes" do
       indication_code = indication_code_fixture()
       assert Vouchers.list_indication_codes() == [indication_code]
