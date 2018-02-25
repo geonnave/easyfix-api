@@ -8,8 +8,9 @@ defmodule EasyFixApi.Accounts do
 
   alias EasyFixApi.{Repo, Addresses, Payments}
   alias EasyFixApi.Accounts.{User, Garage, Customer}
-  alias EasyFixApi.Cars
   alias EasyFixApi.Parts.GarageCategory
+  alias EasyFixApi.Vouchers
+  alias EasyFixApi.Cars
 
   def get_by_email("garage", email) do
     from(g in Garage,
@@ -154,6 +155,7 @@ defmodule EasyFixApi.Accounts do
     |> Repo.preload(Customer.all_nested_assocs)
   end
 
+  # TODO: add Vouchers.generate_indication_code/1 and save code
   def create_basic_customer(attrs \\ %{}) do
     with customer_changeset = %{valid?: true} <- Customer.create_basic_changeset(attrs),
          customer_assoc_changeset = %{valid?: true} <- Customer.assoc_changeset(attrs),
@@ -177,6 +179,7 @@ defmodule EasyFixApi.Accounts do
           |> put_assoc(:address, address)
           |> put_assoc(:vehicles, vehicles)
           |> Repo.insert!()
+          |> add_indication_code!()
 
         customer
         |> Repo.preload(Customer.all_nested_assocs)
@@ -210,6 +213,7 @@ defmodule EasyFixApi.Accounts do
           |> put_assoc(:address, address)
           |> put_assoc(:vehicles, vehicles)
           |> Repo.insert!()
+          |> add_indication_code!()
 
         customer
         |> Repo.preload(Customer.all_nested_assocs)
@@ -220,9 +224,15 @@ defmodule EasyFixApi.Accounts do
     end
   end
 
+  def add_indication_code!(%Customer{} = customer) do
+    indication_code = Vouchers.generate_indication_code(customer)
+    {:ok, customer} = update_customer(customer, %{indication_code: indication_code})
+    customer
+  end
+
   def update_customer(%Customer{} = customer, attrs) do
     customer
-    |> Customer.changeset(attrs)
+    |> Customer.update_changeset(attrs)
     |> Repo.update()
   end
 

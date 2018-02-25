@@ -20,6 +20,7 @@ defmodule EasyFixApiWeb.CustomerView do
       email: customer.user.email,
       phone: customer.phone,
       accept_easyfix_policy: customer.accept_easyfix_policy,
+      indication_code: customer.indication_code,
       address: render_one(customer.address, EasyFixApiWeb.AddressView, "address.json"),
       vehicles: render_many(customer.vehicles, EasyFixApiWeb.VehicleView, "vehicle.json"),
     }

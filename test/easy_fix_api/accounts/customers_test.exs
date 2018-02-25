@@ -28,6 +28,7 @@ defmodule EasyFixApi.CustomersTest do
     assert customer.user.email == customer_attrs[:email]
     assert is_map(customer.address)
     assert length(customer.vehicles) == 1
+    assert is_binary(customer.indication_code)
   end
 
   test "create_customer/1 with invalid data returns error changeset" do
