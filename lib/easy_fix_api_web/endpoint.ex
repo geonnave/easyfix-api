@@ -21,7 +21,6 @@ defmodule EasyFixApiWeb.Endpoint do
 
   plug Plug.RequestId
   plug Plug.Logger
-  plug Corsica, origins: "*", allow_headers: ~w(content-type)
 
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
@@ -38,6 +37,8 @@ defmodule EasyFixApiWeb.Endpoint do
     store: :cookie,
     key: "_easy_fix_api_key",
     signing_salt: "NmfOVqLf"
+
+  plug Corsica, origins: "*", allow_headers: ~w(content-type)
 
   plug EasyFixApiWeb.Router
 
