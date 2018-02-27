@@ -6,9 +6,8 @@ defmodule EasyFixApi.Vouchers.IndicationCode do
   schema "indication_codes" do
     field :code, :string
     field :date_used, :utc_datetime
-    field :type, :string # indication | reward
-    field :customer_id, :id
-    has_one :customer, EasyFixApi.Accounts.Customer
+    field :type, :string # indication | indication_reward
+    belongs_to :customer, EasyFixApi.Accounts.Customer
 
     timestamps(type: :utc_datetime)
   end
@@ -18,5 +17,16 @@ defmodule EasyFixApi.Vouchers.IndicationCode do
     indication_code
     |> cast(attrs, [:code, :type, :date_used])
     |> validate_required([:code, :type, :date_used])
+  end
+
+  @doc false
+  def create_changeset(attrs) do
+    %__MODULE__{}
+    |> cast(attrs, [:code, :type])
+    |> validate_required([:code, :type])
+  end
+
+  def all_nested_assocs do
+    [customer: []]
   end
 end

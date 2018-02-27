@@ -155,6 +155,10 @@ defmodule EasyFixApi.Accounts do
     |> Repo.preload(Customer.all_nested_assocs)
   end
 
+  def get_customer_by(clauses) do
+    Repo.get_by(Customer, clauses)
+  end
+
   # TODO: add Vouchers.generate_indication_code/1 and save code
   def create_basic_customer(attrs \\ %{}) do
     with customer_changeset = %{valid?: true} <- Customer.create_basic_changeset(attrs),
@@ -214,6 +218,10 @@ defmodule EasyFixApi.Accounts do
           |> put_assoc(:vehicles, vehicles)
           |> Repo.insert!()
           |> add_indication_code!()
+
+        if friends_code = get_change(customer_changeset, :friends_code) do
+          :ok = Vouchers.create_indication(customer, friends_code)
+        end
 
         customer
         |> Repo.preload(Customer.all_nested_assocs)

@@ -3,7 +3,7 @@ defmodule EasyFixApi.Vouchers do
   The Vouchers context.
   """
 
-  import Ecto.Query, warn: false
+  import Ecto.{Query, Changeset}, warn: false
   alias EasyFixApi.Repo
 
   alias EasyFixApi.Vouchers.IndicationCode
@@ -27,11 +27,35 @@ defmodule EasyFixApi.Vouchers do
     first_name <> Hashids.encode(@coder, customer.id)
   end
 
-  def list_indication_codes do
-    Repo.all(IndicationCode)
+  def create_indication(fresh_customer, friends_code) do
+    %{
+      code: friends_code,
+      customer_id: fresh_customer.id,
+      type: "indication"
+    }
+    |> IndicationCode.create_changeset()
+    |> put_assoc(:customer, fresh_customer)
+    |> case do
+      %{valid?: true} = changeset ->
+        changeset |> Repo.insert()
+      changeset ->
+        {:error, changeset}
+    end
   end
 
-  def get_indication_code!(id), do: Repo.get!(IndicationCode, id)
+  def build_indication_changeset(customer, type) do
+    
+  end
+
+  def list_indication_codes do
+    Repo.all(IndicationCode)
+    |> Repo.preload(IndicationCode.all_nested_assocs)
+  end
+
+  def get_indication_code!(id) do
+    Repo.get!(IndicationCode, id)
+    |> Repo.preload(IndicationCode.all_nested_assocs)
+  end
 
   def create_indication_code(attrs \\ %{}) do
     %IndicationCode{}
