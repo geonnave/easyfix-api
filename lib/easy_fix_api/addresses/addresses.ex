@@ -114,11 +114,9 @@ defmodule EasyFixApi.Addresses do
     end
   end
 
-  # FIXME: ainda não funciona
-  #  dúvida: aprender como fazer update de assocs
   def update_address(%Address{} = address, attrs) do
     address
-    |> Address.changeset(attrs)
+    |> Address.update_changeset(attrs)
     |> Repo.update()
   end
 

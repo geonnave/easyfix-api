@@ -8,7 +8,7 @@ defmodule EasyFixApi.Accounts.Customer do
     field :cpf, :string
     field :accept_easyfix_policy, :utc_datetime
     belongs_to :user, EasyFixApi.Accounts.User
-    belongs_to :address, EasyFixApi.Addresses.Address
+    belongs_to :address, EasyFixApi.Addresses.Address, on_replace: :update
     many_to_many :vehicles, EasyFixApi.Cars.Vehicle,
       join_through: "vehicles_customers",
       on_delete: :delete_all
@@ -35,6 +35,13 @@ defmodule EasyFixApi.Accounts.Customer do
     customer
     |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
+  end
+
+  def update_changeset(customer, attrs) do
+    customer
+    |> cast(attrs, [:cpf])
+    |> cast_assoc(:address, with: &EasyFixApi.Addresses.Address.update_changeset/2)
+    |> validate_required([:cpf])
   end
 
   @assoc_types %{address: :map, vehicles: {:array, :map}}

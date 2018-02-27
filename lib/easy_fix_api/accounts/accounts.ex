@@ -222,7 +222,7 @@ defmodule EasyFixApi.Accounts do
 
   def update_customer(%Customer{} = customer, attrs) do
     customer
-    |> Customer.changeset(attrs)
+    |> Customer.update_changeset(attrs)
     |> Repo.update()
   end
 
