@@ -10,6 +10,8 @@ defmodule EasyFixApi.Parts.CallDirect do
     {"Vidros", "vidro"},
     {"Alinhamento, Balanceamento e Cambagem", "alinhamento|balanceamento|cambagem"},
     {"Filtros", "elemento filtro de ar"},
+    {"Embreagem", "kit.*embreagem"},
+    {"Suspensão", "(^amortecedor.*(dianteiro|traseiro))|(mola.*suspensão)|(batente.*torre.*amort.*(direit|esquerd))|(guarda.*pó.*dianteiro)|(bieleta.*estabilizadora.*(direita|esquerda))"},
   ]
 
   def filter_parts_call_direct(parts, names_substrings \\ @call_direct_part_names) do
