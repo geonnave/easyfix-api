@@ -5,6 +5,8 @@ defmodule EasyFixApiWeb.CustomerPaymentController do
   alias EasyFixApi.Orders.OrderStateMachine
 
   action_fallback EasyFixApiWeb.FallbackController
+  plug Guardian.Plug.EnsureAuthenticated,
+    [handler: EasyFixApiWeb.SessionController] when not action in [:create]
 
   def index(conn, _params = %{"customer_id" => customer_id}) do
     payments = Payments.list_payments(String.to_integer(customer_id))
