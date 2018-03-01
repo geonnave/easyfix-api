@@ -38,7 +38,7 @@ defmodule EasyFixApiWeb.Endpoint do
     key: "_easy_fix_api_key",
     signing_salt: "NmfOVqLf"
 
-  plug Corsica, origins: "*", allow_headers: ~w(content-type)
+  plug Corsica, origins: "*", allow_headers: ~w(authorization content-type)
 
   plug EasyFixApiWeb.Router
 
