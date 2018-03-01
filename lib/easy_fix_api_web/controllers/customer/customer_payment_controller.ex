@@ -11,6 +11,11 @@ defmodule EasyFixApiWeb.CustomerPaymentController do
     render(conn, "index.json", customer_payments: payments)
   end
 
+  def show(conn, %{"id" => id}) do
+    payment = Payments.get_payment!(id)
+    render(conn, "show.json", customer_payment: payment)
+  end
+
   def create(conn, %{"payment" => payment_params = %{"order_id" => order_id}, "customer_id" => customer_id}) do
     # FIXME: adjust this to *properly* use the OrderStateMachine
 

@@ -13,7 +13,9 @@ defmodule EasyFixApiWeb.CustomerPaymentView do
   def render("customer_payment.json", %{customer_payment: customer_payment}) do
     %{
       id: customer_payment.id,
+      order_id: customer_payment.order_id,
       iugu_invoice_id: customer_payment.iugu_invoice_id,
+      installments: customer_payment.installments,
       total_amount: customer_payment.total_amount,
       state: customer_payment.state
     }
