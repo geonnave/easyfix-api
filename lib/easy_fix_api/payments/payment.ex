@@ -12,7 +12,7 @@ defmodule EasyFixApi.Payments.Payment do
     field :payment_method, :string
     field :state, :string
     field :card_brand, :string
-    field :card_last_digitis, :string
+    field :card_last_digits, :string
 
     belongs_to :quote, EasyFixApi.Orders.Quote
     belongs_to :order, EasyFixApi.Orders.Order
@@ -26,7 +26,7 @@ defmodule EasyFixApi.Payments.Payment do
   def pending_changeset(attrs) do
     %Payment{}
     |> cast(attrs, [
-      :total_amount, :installments, :token, :payment_method, :card_brand, :card_last_digitis,
+      :total_amount, :installments, :token, :payment_method, :card_brand, :card_last_digits,
       :iugu_fee, :factoring_fee, :quote_id, :order_id
     ])
     |> validate_required([

@@ -19,7 +19,7 @@ defmodule EasyFixApiWeb.CustomerPaymentView do
       total_amount: customer_payment.total_amount,
       state: customer_payment.state,
       card_brand: customer_payment.card_brand,
-      card_last_digitis: customer_payment.card_last_digitis,
+      card_last_digits: customer_payment.card_last_digits,
     }
   end
 end
