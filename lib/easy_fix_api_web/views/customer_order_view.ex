@@ -22,6 +22,7 @@ defmodule EasyFixApiWeb.CustomerOrderView do
       accepted_quote: render_one(customer_order.accepted_quote, EasyFixApiWeb.CustomerQuoteView, "customer_quote.json"),
       rating: customer_order.rating,
       rating_comment: customer_order.rating_comment,
+      payment: render_one(customer_order.payment, EasyFixApiWeb.CustomerPaymentView, "customer_payment.json"),
     }
   end
 end
