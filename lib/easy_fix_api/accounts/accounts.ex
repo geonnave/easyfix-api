@@ -182,8 +182,9 @@ defmodule EasyFixApi.Accounts do
           |> put_assoc(:user, user)
           |> put_assoc(:address, address)
           |> put_assoc(:vehicles, vehicles)
+          |> maybe_put_assoc_indication_codes()
           |> Repo.insert!()
-          |> add_indication_code!()
+          |> add_own_indication_code!()
 
         customer
         |> Repo.preload(Customer.all_nested_assocs)
@@ -216,12 +217,9 @@ defmodule EasyFixApi.Accounts do
           |> put_assoc(:user, user)
           |> put_assoc(:address, address)
           |> put_assoc(:vehicles, vehicles)
+          |> maybe_put_assoc_indication_codes()
           |> Repo.insert!()
-          |> add_indication_code!()
-
-        if friends_code = get_change(customer_changeset, :friends_code) do
-          :ok = Vouchers.create_indication(customer, friends_code)
-        end
+          |> add_own_indication_code!()
 
         customer
         |> Repo.preload(Customer.all_nested_assocs)
@@ -232,7 +230,17 @@ defmodule EasyFixApi.Accounts do
     end
   end
 
-  def add_indication_code!(%Customer{} = customer) do
+  def maybe_put_assoc_indication_codes(customer_changeset) do
+    case get_change(customer_changeset, :friends_code) do
+      nil ->
+        customer_changeset
+      friends_code ->
+        {:ok, friends_indication} = Vouchers.create_indication(friends_code)
+        put_assoc(customer_changeset, :indication_codes, [friends_indication])
+    end
+  end
+
+  def add_own_indication_code!(%Customer{} = customer) do
     indication_code = Vouchers.generate_indication_code(customer)
     {:ok, customer} = update_customer(customer, %{indication_code: indication_code})
     customer

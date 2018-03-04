@@ -8,7 +8,7 @@ defmodule EasyFixApi.Factory do
   alias EasyFixApi.Orders
   alias EasyFixApi.Parts.{Part, PartSubGroup, PartGroup, PartSystem, GarageCategory}
   alias EasyFixApi.Cars.{Model, Brand, Vehicle}
-  alias EasyFixApi.Coupons.{}
+  alias EasyFixApi.Vouchers.{IndicationCode}
 
   def order_factory do
     %Order{
@@ -303,6 +303,11 @@ defmodule EasyFixApi.Factory do
       part: build(:part),
       quantity: 1,
       price: 4200
+    }
+  end
+
+  def indication_code_factory do
+    %IndicationCode{
     }
   end
 end

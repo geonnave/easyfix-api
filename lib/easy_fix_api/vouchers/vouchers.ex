@@ -27,14 +27,12 @@ defmodule EasyFixApi.Vouchers do
     first_name <> Hashids.encode(@coder, customer.id)
   end
 
-  def create_indication(fresh_customer, friends_code) do
+  def create_indication(friends_code) do
     %{
       code: friends_code,
-      customer_id: fresh_customer.id,
       type: "indication"
     }
     |> IndicationCode.create_changeset()
-    |> put_assoc(:customer, fresh_customer)
     |> case do
       %{valid?: true} = changeset ->
         changeset |> Repo.insert()
