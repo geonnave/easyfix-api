@@ -5,8 +5,9 @@ defmodule EasyFixApi.Vouchers do
 
   import Ecto.{Query, Changeset}, warn: false
   alias EasyFixApi.Repo
-
   alias EasyFixApi.Vouchers.IndicationCode
+  alias EasyFixApi.Accounts.{Customer}
+
 
   @coder Hashids.new(
     salt: "easyfix rules!",
@@ -41,13 +42,33 @@ defmodule EasyFixApi.Vouchers do
     end
   end
 
-  def build_indication_changeset(customer, type) do
-    
-  end
-
   def list_indication_codes do
     Repo.all(IndicationCode)
     |> Repo.preload(IndicationCode.all_nested_assocs)
+  end
+
+  def list_available_indication_codes do
+    from(ic in IndicationCode,
+      where: is_nil(ic.date_used),
+      preload: ^IndicationCode.all_nested_assocs
+    )
+    |> Repo.all()
+  end
+
+  def list_customer_indication_codes(customer_id) do
+    from(ic in IndicationCode,
+      join: c in Customer, on: c.id == ic.customer_id,
+      where: c.id == ^customer_id
+    )
+    |> Repo.all()
+  end
+
+  def list_customer_available_indication_codes(customer_id) do
+    from(ic in IndicationCode,
+      join: c in Customer, on: c.id == ic.customer_id,
+      where: c.id == ^customer_id and is_nil(ic.date_used)
+    )
+    |> Repo.all()
   end
 
   def get_indication_code!(id) do
