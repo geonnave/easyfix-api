@@ -11,6 +11,8 @@ defmodule EasyFixApi.Payments.Payment do
     field :iugu_invoice_id, :string
     field :payment_method, :string
     field :state, :string
+    field :card_brand, :string
+    field :card_last_digitis, :string
 
     belongs_to :quote, EasyFixApi.Orders.Quote
     belongs_to :order, EasyFixApi.Orders.Order
@@ -23,8 +25,14 @@ defmodule EasyFixApi.Payments.Payment do
 
   def pending_changeset(attrs) do
     %Payment{}
-    |> cast(attrs, [:total_amount, :installments, :token, :payment_method, :iugu_fee, :factoring_fee, :quote_id, :order_id])
-    |> validate_required([:total_amount, :installments, :token, :payment_method, :iugu_fee, :factoring_fee, :quote_id, :order_id])
+    |> cast(attrs, [
+      :total_amount, :installments, :token, :payment_method, :card_brand, :card_last_digitis,
+      :iugu_fee, :factoring_fee, :quote_id, :order_id
+    ])
+    |> validate_required([
+      :total_amount, :installments, :token, :payment_method,
+      :iugu_fee, :factoring_fee, :quote_id, :order_id
+    ])
     |> validate_number(:total_amount, greater_than_or_equal_to: 1_00)
   end
 

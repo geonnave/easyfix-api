@@ -17,7 +17,9 @@ defmodule EasyFixApiWeb.CustomerPaymentView do
       iugu_invoice_id: customer_payment.iugu_invoice_id,
       installments: customer_payment.installments,
       total_amount: customer_payment.total_amount,
-      state: customer_payment.state
+      state: customer_payment.state,
+      card_brand: customer_payment.card_brand,
+      card_last_digitis: customer_payment.card_last_digitis,
     }
   end
 end
