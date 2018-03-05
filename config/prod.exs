@@ -40,6 +40,9 @@ config :easy_fix_api, EasyFixApi.Mailer,
 config :easy_fix_api,
   sms_api: EasyFixApi.TotalVoice
 
+config :easy_fix_api, :iugu,
+  test?: false
+
 # Information about state
 config :easy_fix_api, :order_states,
   started: [],
