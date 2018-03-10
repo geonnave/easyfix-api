@@ -148,11 +148,17 @@ defmodule EasyFixApi.Accounts do
   def list_customers do
     Repo.all(Customer)
     |> Repo.preload(Customer.all_nested_assocs)
+    |> Enum.map(&with_available_vouchers/1)
   end
 
   def get_customer!(id) do
     Repo.get!(Customer, id)
     |> Repo.preload(Customer.all_nested_assocs)
+    |> with_available_vouchers()
+  end
+
+  def with_available_vouchers(customer) do
+    %{customer | available_vouchers: Vouchers.list_available_indication_codes(customer.id)}
   end
 
   def get_customer_by(clauses) do
@@ -182,7 +188,7 @@ defmodule EasyFixApi.Accounts do
           |> put_assoc(:user, user)
           |> put_assoc(:address, address)
           |> put_assoc(:vehicles, vehicles)
-          |> maybe_put_assoc_indication_codes()
+          |> maybe_add_friends_code()
           |> Repo.insert!()
           |> add_own_indication_code!()
 
@@ -217,7 +223,7 @@ defmodule EasyFixApi.Accounts do
           |> put_assoc(:user, user)
           |> put_assoc(:address, address)
           |> put_assoc(:vehicles, vehicles)
-          |> maybe_put_assoc_indication_codes()
+          |> maybe_add_friends_code()
           |> Repo.insert!()
           |> add_own_indication_code!()
 
@@ -230,7 +236,7 @@ defmodule EasyFixApi.Accounts do
     end
   end
 
-  def maybe_put_assoc_indication_codes(customer_changeset) do
+  def maybe_add_friends_code(customer_changeset) do
     case get_change(customer_changeset, :friends_code) do
       nil ->
         customer_changeset

@@ -9,8 +9,6 @@ defmodule EasyFixApi.Accounts.Customer do
     field :accept_easyfix_policy, :utc_datetime
     field :indication_code, :string
 
-    field :friends_code, :string, virtual: true
-
     belongs_to :user, EasyFixApi.Accounts.User
     belongs_to :address, EasyFixApi.Addresses.Address
     many_to_many :vehicles, EasyFixApi.Cars.Vehicle,
@@ -18,6 +16,9 @@ defmodule EasyFixApi.Accounts.Customer do
       on_delete: :delete_all
     has_many :orders, EasyFixApi.Orders.Order
     has_many :indication_codes, EasyFixApi.Vouchers.IndicationCode
+
+    field :friends_code, :string, virtual: true
+    field :available_vouchers, {:array, :map}, virtual: true, default: []
 
     timestamps(type: :utc_datetime)
   end
@@ -53,6 +54,6 @@ defmodule EasyFixApi.Accounts.Customer do
   end
 
   def all_nested_assocs do
-    [user: [], address: [:city], vehicles: [:model, :brand]]
+    [user: [], address: [:city], vehicles: [:model, :brand], indication_codes: []]
   end
 end

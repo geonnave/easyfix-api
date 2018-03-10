@@ -42,9 +42,31 @@ defmodule EasyFixApi.Vouchers do
     end
   end
 
+  def create_reward(from_code, customer) do
+    %{
+      code: from_code,
+      type: "reward"
+    }
+    |> IndicationCode.create_changeset()
+    |> put_assoc(:customer, customer)
+    |> case do
+      %{valid?: true} = changeset ->
+        changeset |> Repo.insert()
+      changeset ->
+        {:error, changeset}
+    end
+  end
+
   def list_indication_codes do
     Repo.all(IndicationCode)
     |> Repo.preload(IndicationCode.all_nested_assocs)
+  end
+  def list_indication_codes(customer_id) do
+    from(ic in IndicationCode,
+      join: c in Customer, on: c.id == ic.customer_id,
+      where: c.id == ^customer_id
+    )
+    |> Repo.all()
   end
 
   def list_available_indication_codes do
@@ -54,16 +76,7 @@ defmodule EasyFixApi.Vouchers do
     )
     |> Repo.all()
   end
-
-  def list_customer_indication_codes(customer_id) do
-    from(ic in IndicationCode,
-      join: c in Customer, on: c.id == ic.customer_id,
-      where: c.id == ^customer_id
-    )
-    |> Repo.all()
-  end
-
-  def list_customer_available_indication_codes(customer_id) do
+  def list_available_indication_codes(customer_id) do
     from(ic in IndicationCode,
       join: c in Customer, on: c.id == ic.customer_id,
       where: c.id == ^customer_id and is_nil(ic.date_used)
