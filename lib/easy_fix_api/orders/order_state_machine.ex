@@ -53,7 +53,7 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
         end
       quotes ->
         order = Orders.get_order!(data[:order_id])
-        %{best_price_quote: best_price_quote} = CustomerOrders.generate_customer_quotes_stats(quotes)
+        %{best_price_quote: best_price_quote} = CustomerOrders.generate_customer_quotes_stats(quotes, order.customer_id)
 
         next_state_attrs = next_state_attrs(:quoted_by_garages)
         best_price_attrs = %{best_price_quote_id: best_price_quote.id}
@@ -71,10 +71,11 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     end
   end
   def handle_event({:call, from}, {:customer_clicked, :accept_quote, attrs}, :created_with_diagnosis, data) do
+    order = Orders.get_order!(data[:order_id])
     %{best_price_quote: best_price_quote} =
       data[:order_id]
       |> Orders.list_quotes_by_order
-      |> CustomerOrders.generate_customer_quotes_stats
+      |> CustomerOrders.generate_customer_quotes_stats(order.customer_id)
 
     {:ok, _updated_order} =
       data[:order_id]

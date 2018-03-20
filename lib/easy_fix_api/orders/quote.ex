@@ -21,6 +21,8 @@ defmodule EasyFixApi.Orders.Quote do
     field :total_amount, Money.Ecto.Type, virtual: true
 
     field :is_best_price, :boolean, virtual: true
+    field :voucher_discount, Money.Ecto.Type, virtual: true
+    field :voucher_extra_fee, :decimal, virtual: true
 
     timestamps(type: :utc_datetime)
   end

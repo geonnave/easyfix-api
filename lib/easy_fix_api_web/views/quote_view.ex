@@ -11,7 +11,8 @@ defmodule EasyFixApiWeb.QuoteView do
   end
 
   def render("quote.json", %{quote: quote}) do
-    %{id: quote.id,
+    %{
+      id: quote.id,
       state: quote.state,
       opening_date: DateView.render("iso_at_sao_paulo_tz", quote.inserted_at),
       due_date: DateView.render("iso_at_sao_paulo_tz", quote.due_date),
@@ -23,6 +24,7 @@ defmodule EasyFixApiWeb.QuoteView do
       # FIXME: review this as soon as the frontend is refactored to allow proper number handling
       service_cost: __from_cents_to_reais_float(quote.service_cost.amount),
       total_amount: (if quote.total_amount, do: __from_cents_to_reais_float(quote.total_amount.amount), else: nil),
+      voucher_discount: (if quote.voucher_discount, do: render_one(quote.voucher_discount, EasyFixApiWeb.CustomerVoucherView, "customer_voucher.json"), else: nil),
 
       is_best_price: quote.is_best_price,
       diagnosis_id: quote.diagnosis_id,

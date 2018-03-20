@@ -3,7 +3,7 @@ defmodule EasyFixApi.CustomerOrders do
   """
 
   import Ecto.{Query, Changeset}, warn: false
-  alias EasyFixApi.{Orders, Repo}
+  alias EasyFixApi.{Orders, Vouchers, Repo}
 
   alias EasyFixApi.Orders.{Order, Diagnosis, Quote}
 
@@ -42,7 +42,7 @@ defmodule EasyFixApi.CustomerOrders do
       %Diagnosis{quotes: []} ->
         {:error, "there are no quotes for this order"}
       diagnosis ->
-        {:ok, generate_customer_quotes_stats(diagnosis.quotes)}
+        {:ok, generate_customer_quotes_stats(diagnosis.quotes, customer_id)}
     end
   end
 
@@ -56,8 +56,8 @@ defmodule EasyFixApi.CustomerOrders do
     |> add_customer_fee()
   end
 
-  def generate_customer_quotes_stats([]),  do: %{}
-  def generate_customer_quotes_stats(quotes) do
+  def generate_customer_quotes_stats([], _),  do: %{}
+  def generate_customer_quotes_stats(quotes, customer_id) do
     sorted_quotes =
       quotes
       |> Repo.preload(Quote.all_nested_assocs)
@@ -65,7 +65,11 @@ defmodule EasyFixApi.CustomerOrders do
       |> Enum.map(&add_customer_fee/1)
       |> Orders.sort_quotes_by_total_amount()
 
-    best_price_quote = List.first(sorted_quotes)
+    best_price_quote =
+      sorted_quotes
+      |> List.first()
+      |> maybe_add_voucher_discount(customer_id)
+
     best_price_quote_issuer = Orders.quote_issuer(best_price_quote)
     worst_price_quote = List.last(sorted_quotes)
     average_quote_price = Orders.average_quote_price(sorted_quotes)
@@ -79,6 +83,18 @@ defmodule EasyFixApi.CustomerOrders do
       saving_from_worst_quote: worst_price_quote.total_amount.amount - best_price_quote.total_amount.amount,
       saving_from_average_quote: average_quote_price - best_price_quote.total_amount.amount,
     }
+  end
+
+  def maybe_add_voucher_discount(quote, customer_id) do
+    customer_id
+    |> Vouchers.list_available_indication_codes()
+    |> case do
+      [] ->
+        quote
+      [voucher_discount | _] ->
+        # calculate and add voucher_extra_fee
+        %{quote | voucher_discount: voucher_discount}
+    end
   end
 
   def add_customer_fee(quote = %{service_cost: service_cost, total_amount: total_amount}) do

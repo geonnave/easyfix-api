@@ -64,7 +64,8 @@ defmodule EasyFixApi.Vouchers do
   def list_indication_codes(customer_id) do
     from(ic in IndicationCode,
       join: c in Customer, on: c.id == ic.customer_id,
-      where: c.id == ^customer_id
+      where: c.id == ^customer_id,
+      order_by: ic.inserted_at
     )
     |> Repo.all()
   end
@@ -79,7 +80,8 @@ defmodule EasyFixApi.Vouchers do
   def list_available_indication_codes(customer_id) do
     from(ic in IndicationCode,
       join: c in Customer, on: c.id == ic.customer_id,
-      where: c.id == ^customer_id and is_nil(ic.date_used)
+      where: c.id == ^customer_id and is_nil(ic.date_used),
+      order_by: ic.inserted_at
     )
     |> Repo.all()
   end
