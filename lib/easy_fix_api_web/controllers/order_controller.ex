@@ -13,6 +13,7 @@ defmodule EasyFixApiWeb.OrderController do
 
   def create(conn, %{"order" => order_params}) do
     with {:ok, %Order{} = order} <- Orders.create_order_with_diagnosis(order_params) do
+      # if this is the first order of a customer, verify if an indication reward shall be given
       conn
       |> put_status(:created)
       |> put_resp_header("location", order_path(conn, :show, order))
