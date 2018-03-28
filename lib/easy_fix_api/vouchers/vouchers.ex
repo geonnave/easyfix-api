@@ -6,6 +6,7 @@ defmodule EasyFixApi.Vouchers do
   import Ecto.{Query, Changeset}, warn: false
   alias EasyFixApi.Repo
   alias EasyFixApi.Vouchers.IndicationCode
+  alias EasyFixApi.Accounts
   alias EasyFixApi.Accounts.{Customer}
 
 
@@ -42,19 +43,30 @@ defmodule EasyFixApi.Vouchers do
     end
   end
 
-  def create_reward(from_code, customer) do
+  def create_reward(from_code, customer_id) do
     %{
       code: from_code,
+      customer_id: customer_id,
       type: "reward"
     }
     |> IndicationCode.create_changeset()
-    |> put_assoc(:customer, customer)
     |> case do
       %{valid?: true} = changeset ->
         changeset |> Repo.insert()
       changeset ->
         {:error, changeset}
     end
+  end
+
+  def use_voucher(voucher_id) do
+    voucher_id
+    |> get_indication_code!()
+    |> update_indication_code(%{date_used: DateTime.utc_now})
+  end
+
+  def reward_voucher(voucher_code) do
+    customer = Accounts.get_customer_by(indication_code: voucher_code)
+    create_reward(voucher_code, customer.id)
   end
 
   def list_indication_codes do

@@ -22,7 +22,7 @@ defmodule EasyFixApi.Vouchers.IndicationCode do
   @doc false
   def create_changeset(attrs) do
     %__MODULE__{}
-    |> cast(attrs, [:code, :type])
+    |> cast(attrs, [:code, :type, :customer_id])
     |> validate_required([:code, :type])
   end
 

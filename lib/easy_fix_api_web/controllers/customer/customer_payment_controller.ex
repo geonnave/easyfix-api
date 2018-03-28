@@ -1,7 +1,7 @@
 defmodule EasyFixApiWeb.CustomerPaymentController do
   use EasyFixApiWeb, :controller
 
-  alias EasyFixApi.{Payments, CustomerOrders}
+  alias EasyFixApi.{Payments, CustomerOrders, Vouchers}
   alias EasyFixApi.Orders.OrderStateMachine
 
   action_fallback EasyFixApiWeb.FallbackController
@@ -27,6 +27,12 @@ defmodule EasyFixApiWeb.CustomerPaymentController do
          {:ok, payment} <- Payments.create_payment(payment_params, customer_id),
          attrs = %{accepted_quote_id: payment.quote_id},
          {:ok, _updated_order} <- OrderStateMachine.customer_clicked(order.id, :accept_quote, attrs) do
+
+      if applied_voucher_code = payment_params["applied_voucher_code"] do
+        Vouchers.use_voucher(payment_params["applied_voucher_id"])
+        Vouchers.reward_voucher(applied_voucher_code)
+      end
+
       conn
       |> put_status(:created)
       |> render("show.json", customer_payment: payment)

@@ -19,12 +19,6 @@ defmodule EasyFixApi.Payments.Iugu do
   end
 
   def charge_request(payload) do
-    payload = if @test? do
-      put_in payload[:test], true
-    else
-      payload
-    end
-
     with resp = %{status: 200} <- post("/charge", payload),
          body = %{"success" => true, "message" => "Autorizado"} <- resp.body do
       Logger.info "Payment authorized by Iugu, invoice id is #{body["invoice_id"]}"
