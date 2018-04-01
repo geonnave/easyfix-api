@@ -57,10 +57,7 @@ defmodule EasyFixApi.Payments.Iugu do
           quantity: 1
         }
       ],
-      # TODO: use custom_variables if possible
-      # custom_variables: [
-      #   %{name: "garage_name", value: "EasyFix Personal"}
-      # ],
+      discount_cents: payload.discount,
     } |> IO.inspect
   end
 end

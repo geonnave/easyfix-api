@@ -5,6 +5,7 @@ defmodule EasyFixApi.Payments.Payment do
 
   schema "payments" do
     field :total_amount, :integer
+    field :discount, :integer
     field :factoring_fee, :decimal
     field :installments, :integer
     field :iugu_fee, :decimal
@@ -26,7 +27,7 @@ defmodule EasyFixApi.Payments.Payment do
   def pending_changeset(attrs) do
     %Payment{}
     |> cast(attrs, [
-      :total_amount, :installments, :token, :payment_method, :card_brand, :card_last_digits,
+      :total_amount, :discount, :installments, :token, :payment_method, :card_brand, :card_last_digits,
       :iugu_fee, :factoring_fee, :quote_id, :order_id
     ])
     |> validate_required([
