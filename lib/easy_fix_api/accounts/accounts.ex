@@ -194,6 +194,7 @@ defmodule EasyFixApi.Accounts do
 
         customer
         |> Repo.preload(Customer.all_nested_assocs)
+        |> with_available_vouchers()
       end
     else
       %{valid?: false} = changeset ->
@@ -229,6 +230,7 @@ defmodule EasyFixApi.Accounts do
 
         customer
         |> Repo.preload(Customer.all_nested_assocs)
+        |> with_available_vouchers()
       end
     else
       %{valid?: false} = changeset ->
