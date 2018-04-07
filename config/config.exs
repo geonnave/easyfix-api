@@ -65,8 +65,7 @@ config :easy_fix_api, :iugu,
   test?: true
 
 config :easy_fix_api, :indication_coupons,
-  indication: [discount: 30_00],
-  reward: [discount: 30_00]
+  discount: 30_00
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

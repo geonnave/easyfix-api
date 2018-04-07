@@ -93,14 +93,48 @@ defmodule EasyFixApi.CustomerOrders do
         quote
       [voucher_discount | _] ->
         # calculate and add voucher_extra_fee
+        quote = add_voucher_extra_fee(quote)
         %{quote | voucher_discount: voucher_discount}
     end
   end
 
+  @doc """
+  Add Voucher fee to compensate discount, when discount is greater than profit.
+
+  If applicable, voucher_extra_fee = (discount - profit) / total_without_profit
+  """
+  def add_voucher_extra_fee(quote = %{service_cost: service_cost, total_amount: total_amount}) do
+    discount = Money.new(Application.get_env(:easy_fix_api, :indication_coupons)[:discount])
+    %{total_amount: total_amount_no_profit} = get_quote_without_customer_fee(quote.id)
+    easyfix_profit = Money.subtract(total_amount, total_amount_no_profit)
+
+    difference = Money.subtract(discount, easyfix_profit)
+    if difference.amount > 0 do
+      voucher_extra_fee = (difference.amount / total_amount_no_profit.amount)
+
+      service_cost_with_voucher_fee = Money.add(service_cost, difference)
+      total_amount_with_voucher_fee = Orders.calculate_total_amount(quote.quotes_parts, service_cost_with_voucher_fee)
+
+      %{quote |
+        service_cost: service_cost_with_voucher_fee,
+        total_amount: total_amount_with_voucher_fee,
+        voucher_extra_fee: voucher_extra_fee,
+      }
+    else
+      quote
+    end
+  end
+
+  def get_quote_without_customer_fee(quote_id) do
+    Repo.get(Orders.Quote, quote_id)
+    |> Repo.preload(:quotes_parts)
+    |> Orders.with_total_amount
+  end
+
   def add_customer_fee(quote = %{service_cost: service_cost, total_amount: total_amount}) do
     percent_fee = get_percent_fee(quote)
-    easyfix_price = Money.multiply(total_amount, percent_fee)
 
+    easyfix_price = Money.multiply(total_amount, percent_fee)
     service_cost_for_customer = Money.add(service_cost, easyfix_price)
     total_amount_for_customer = Orders.calculate_total_amount(quote.quotes_parts, service_cost_for_customer)
 

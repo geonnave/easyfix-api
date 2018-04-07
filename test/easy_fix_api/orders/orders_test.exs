@@ -208,6 +208,54 @@ defmodule EasyFixApi.OrdersTest do
       whole_percent_fee = 1 + @percent_fee
       assert Money.multiply(quote.total_amount, whole_percent_fee) == customer_quote.total_amount
     end
+
+    @discount Money.new(Application.get_env(:easy_fix_api, :indication_coupons)[:discount]).amount
+    test "will add voucher extra fee" do
+      assert 30_00 = @discount
+
+      quote =
+        build(:quote)
+        |> with_service_cost(10_00)
+        |> with_quotes_parts_price(120_00)
+        |> with_total_amount(250_00)
+        |> insert
+        |> CustomerOrders.add_customer_fee
+
+      total_amount = 10_00 + 25_00
+      assert ^total_amount = quote.service_cost.amount
+      assert 275_00 = quote.total_amount.amount
+
+      difference = (@discount - 25_00)
+      voucher_extra_fee = 0.02 = difference / 250_00
+      service_cost_with_extra_fee = 40_00 = quote.service_cost.amount + difference
+      total_amount_with_extra_fee = 280_00 = quote.total_amount.amount + difference
+
+      added_quote = CustomerOrders.add_voucher_extra_fee(quote)
+
+      assert ^voucher_extra_fee = added_quote.voucher_extra_fee
+      assert ^service_cost_with_extra_fee = added_quote.service_cost.amount
+      assert ^total_amount_with_extra_fee = added_quote.total_amount.amount
+    end
+
+    test "will not add voucher extra fee" do
+      assert 30_00 = @discount
+
+      quote =
+        build(:quote)
+        |> with_service_cost(50_00)
+        |> with_quotes_parts_price(150_00)
+        |> with_total_amount(350_00)
+        |> insert
+        |> CustomerOrders.add_customer_fee
+
+      total_amount = 50_00 + 35_00
+      assert ^total_amount = quote.service_cost.amount
+      assert 385_00 = quote.total_amount.amount
+
+      _difference = (@discount - 35_00)
+      added_quote = CustomerOrders.add_voucher_extra_fee(quote)
+      assert is_nil(added_quote.voucher_extra_fee)
+    end
   end
 
   describe "orders" do
