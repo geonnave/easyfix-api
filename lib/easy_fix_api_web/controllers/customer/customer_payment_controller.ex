@@ -28,9 +28,8 @@ defmodule EasyFixApiWeb.CustomerPaymentController do
          attrs = %{accepted_quote_id: payment.quote_id},
          {:ok, _updated_order} <- OrderStateMachine.customer_clicked(order.id, :accept_quote, attrs) do
 
-      if applied_voucher_code = payment_params["applied_voucher_code"] do
-        Vouchers.use_voucher(payment_params["applied_voucher_id"])
-        Vouchers.reward_voucher(applied_voucher_code)
+      if payment_params["applied_voucher_id"] do
+        Vouchers.process_applied_voucher(payment_params["applied_voucher_id"])
       end
 
       conn

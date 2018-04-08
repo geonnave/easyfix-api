@@ -5,6 +5,7 @@ defmodule EasyFixApi.Vouchers.IndicationCode do
 
   schema "indication_codes" do
     field :code, :string
+    field :discount, :integer
     field :date_used, :utc_datetime
     field :type, :string # indication | indication_reward
     belongs_to :customer, EasyFixApi.Accounts.Customer

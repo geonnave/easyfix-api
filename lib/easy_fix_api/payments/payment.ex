@@ -17,6 +17,7 @@ defmodule EasyFixApi.Payments.Payment do
 
     belongs_to :quote, EasyFixApi.Orders.Quote
     belongs_to :order, EasyFixApi.Orders.Order
+    belongs_to :applied_voucher, EasyFixApi.Vouchers.IndicationCode
     has_many :payment_parts, EasyFixApi.Payments.PaymentPart
 
     field :token, :string, virtual: true
@@ -27,8 +28,8 @@ defmodule EasyFixApi.Payments.Payment do
   def pending_changeset(attrs) do
     %Payment{}
     |> cast(attrs, [
-      :total_amount, :discount, :installments, :token, :payment_method, :card_brand, :card_last_digits,
-      :iugu_fee, :factoring_fee, :quote_id, :order_id
+      :total_amount, :installments, :token, :payment_method, :card_brand, :card_last_digits,
+      :applied_voucher_id, :iugu_fee, :factoring_fee, :quote_id, :order_id
     ])
     |> validate_required([
       :total_amount, :installments, :token, :payment_method,

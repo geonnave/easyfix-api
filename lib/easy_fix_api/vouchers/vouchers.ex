@@ -58,15 +58,23 @@ defmodule EasyFixApi.Vouchers do
     end
   end
 
+  def process_applied_voucher(voucher_id) do
+    use_voucher(voucher_id)
+    maybe_reward_voucher(voucher_id)
+  end
+
   def use_voucher(voucher_id) do
     voucher_id
     |> get_indication_code!()
     |> update_indication_code(%{date_used: DateTime.utc_now})
   end
 
-  def reward_voucher(voucher_code) do
-    customer = Accounts.get_customer_by(indication_code: voucher_code)
-    create_reward(voucher_code, customer.id)
+  def maybe_reward_voucher(voucher_id) do
+    indication_code = get_indication_code!(voucher_id)
+    if indication_code.type != "reward" do
+      customer = Accounts.get_customer_by(indication_code: indication_code.code)
+      create_reward(indication_code.code, customer.id)
+    end
   end
 
   def list_indication_codes do
@@ -96,6 +104,10 @@ defmodule EasyFixApi.Vouchers do
       order_by: ic.inserted_at
     )
     |> Repo.all()
+  end
+
+  def get_discount_value!(indication_code_id) do
+    get_indication_code!(indication_code_id).discount
   end
 
   def get_indication_code!(id) do

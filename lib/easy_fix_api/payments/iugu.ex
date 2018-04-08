@@ -15,6 +15,7 @@ defmodule EasyFixApi.Payments.Iugu do
     pending_changeset
     |> build_payload(order)
     |> maybe_enable_test()
+    |> IO.inspect
     |> charge_request()
   end
 
@@ -57,8 +58,8 @@ defmodule EasyFixApi.Payments.Iugu do
           quantity: 1
         }
       ],
-      discount_cents: payload.discount,
-    } |> IO.inspect
+      discount_cents: EasyFixApi.Vouchers.get_discount_value!(payload.applied_voucher_id),
+    }
   end
 end
 

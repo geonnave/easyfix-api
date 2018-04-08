@@ -86,13 +86,34 @@ defmodule EasyFixApi.CustomerOrders do
   end
 
   def maybe_add_voucher_discount(quote, customer_id) do
+    order = Repo.get(Order, quote.diagnosis.order_id) |> Repo.preload(payment: [:applied_voucher])
+    case order.state do
+      :quote_accepted_by_customer ->
+        maybe_add_used_voucher(quote, order, customer_id)
+      :created_with_diagnosis ->
+        maybe_add_available_voucher(quote, customer_id)
+      _ ->
+        quote
+    end
+  end
+
+  def maybe_add_used_voucher(quote, order = %{payment: payment}, customer_id) do
+    case payment.applied_voucher do
+      nil ->
+        quote
+      applied_voucher ->
+        quote = add_voucher_extra_fee(quote)
+        %{quote | voucher_discount: applied_voucher}
+    end
+  end
+
+  def maybe_add_available_voucher(quote, customer_id) do
     customer_id
     |> Vouchers.list_available_indication_codes()
     |> case do
       [] ->
         quote
       [voucher_discount | _] ->
-        # calculate and add voucher_extra_fee
         quote = add_voucher_extra_fee(quote)
         %{quote | voucher_discount: voucher_discount}
     end
