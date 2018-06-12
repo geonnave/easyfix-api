@@ -5,6 +5,7 @@ set -e
 opts=
 target=staging
 branch=master
+migrate=true
 
 while [[ ! -z "$@" ]]; do
 	case "$1" in
@@ -15,6 +16,10 @@ while [[ ! -z "$@" ]]; do
 		"prod" )
 			target="production"
 			echo "Will deploy to PRODUCTION"
+			;;
+		"nomigrate" )
+			migrate=false
+			echo "Will NOT run migrations"
 			;;
 		"-b" )
 			shift
@@ -28,4 +33,4 @@ done
 mix edeliver build release "$opts" --branch="$branch" --verbose
 mix edeliver deploy release to "$target" --verbose
 mix edeliver restart "$target" --verbose
-mix edeliver migrate "$target" --verbose
+$migrate == "true" && mix edeliver migrate "$target" --verbose

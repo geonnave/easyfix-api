@@ -124,7 +124,7 @@ defmodule EasyFixApi.Discover do
   import Bamboo.Email
   def discover_price(%{"subject" => subject, "body" => body}) do
     random_name = Enum.random(["Wilson", "Geovane", "Fábio", "Diego"])
-    body = String.replace(body, "<nome>", random_name)
+    body = String.replace(body, "<nome>", random_name) |> String.replace("\n", "<br>")
 
     new_email()
     |> from("#{random_name} <contato@easyfix.net.br>")
