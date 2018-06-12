@@ -82,7 +82,9 @@ defmodule EasyFixApi.Discover do
       }
     end
 
-    File.write(make_filename("emails_complete.json"), Poison.encode!(emails), [:write])
+    emails = emails |> Enum.shuffle |> Poison.encode!
+
+    File.write(make_filename("emails_complete.json"), emails, [:write])
   end
 
   def serialize_parts(parts) do
