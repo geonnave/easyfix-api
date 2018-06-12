@@ -15,6 +15,7 @@ defmodule EasyFixApi.Application do
       supervisor(EasyFixApiWeb.Endpoint, []),
       {Registry, [keys: :unique, name: Registry.OrderStateMachine]},
       worker(EasyFixApi.Orders.StateTimeouts, []),
+      worker(EasyFixApi.Discover, []),
     ]
 
     {:ok, pid} = Task.start(&start_state_machines/0)

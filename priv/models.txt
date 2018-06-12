@@ -1,0 +1,51 @@
+		Marca for mail	Modelo for mail
+1	Chevrolet Onix	GM	ONIX HATCH LS 1.0 8V FlexPower 5p Mec.
+2	Hyundai HB20	Hyundai	HB20 Comfort Style 1.0 TB Flex 12V Mec.
+3	Ford Ka (hatch)	Ford	Ka 1.0 SEL TiCVT Flex 5p
+4	Chevrolet Prisma	GM	PRISMA Sed. LT 1.0 8V FlexPower 4p
+5	Toyota Corolla	Toyota	Corolla XLi 1.8/1.8 Flex 16V Aut.
+6	Fiat Palio	Fiat	Palio ELX 1.0/ 1.0 Fire Flex 8V 2p
+7	Renault Sandero	Renault	SANDERO Authentique Hi-Flex 1.0 16V 5p
+8	Fiat Strada	Fiat	Strada 1.4 mpi Fire Flex 8V CE
+9	Volkswagen Gol	VW	Gol (novo) 1.0 Mi Total Flex 8V 4p
+10	Honda HR-V	Honda	HR-V EXL 1.8 Flexone 16V 5p Aut.
+11	Jeep Renegade	Jeep	Renegade Sport 1.8 4x2 Flex 16V Mec.
+12	Hyundai HB20S	Hyundai	HB20S C.Plus/C.Style 1.6 Flex 16V Mec.4p
+13	Volkswagen Fox	VW	Fox Comfortline 1.0 Flex 12V 5p
+14	Fiat Toro	Fiat	Toro Freedom 1.8 16V Flex Aut.
+15	Volkswagen Up!	VW	up! cross 1.0 T. Flex 12V 5p
+16	Toyota Etios (hatch)	Toyota	ETIOS X 1.3 Flex 16V 5p Mec.
+17	Fiat Uno	Fiat	UNO ATTRACTI. Celeb.1.4 EVO F.Flex 8V 4p
+18	Toyota Hilux	Toyota	Hilux 4x2 2.4 Diesel
+19	Volkswagen Saveiro	VW	Saveiro Trendline 1.6 T.Flex 8V
+20	Fiat Siena / Grand Siena	Fiat	Grand Siena ATTRAC. 1.4 EVO F.Flex 8V
+21	Toyota Etios (sedã)	Toyota	ETIOS X Sedan 1.5 Flex 16V 4p Mec.
+22	Fiat Mobi	Fiat	MOBI DRIVE 1.0 Flex 6V 5p
+23	Honda Fit	Honda	Fit CX 1.4 Flex 16V 5p Mec.
+24	Ford EcoSport	Ford	EcoSport FREESTYLE 1.6 16V Flex 5p
+25	Chevrolet S10	GM	S10 Blazer 2.4 MPFI 8v 128cv 4p
+26	Volkswagen Voyage	VW	VOYAGE Trendline 1.0 T.Flex 8V 4p
+27	Renault Duster	Renault	DUSTER 1.6 Hi-Flex 16V Mec
+28	Ford Ka+ (sedã)	Ford	Ka+ Sedan 1.0 SEL TiCVT Flex 4p
+29	Renault Logan	Renault	LOGAN Authentique Hi-Flex 1.0 16V 4p
+30	Chevrolet Spin	GM	SPIN ACTIV 1.8 8V Econo. Flex 5p Aut.
+31	Chevrolet Cobalt	GM	COBALT ADVANTAGE 1.4 MPFI 8V F.Power 4p
+32	Nissan Versa	Nissan	VERSA 1.0 12V FlexStart 4p Mec.
+33	Honda Civic	Honda	Civic Sed. LXL/ LXL SE 1.8 Flex 16V Mec
+34	Nissan March	Nissan	MARCH 1.0 12V Flex 5p
+35	Ford New Fiesta (hatch)	Ford	Fiesta TITANIUM 1.6 16V Flex Mec.
+36	Ford Ranger	Ford	Ranger XLT 2.8 8v 135cv 4x2 CD TB Diesel
+37	Honda City	Honda	CITY Sedan EX 1.5 Flex 16V 4p Mec.
+38	Chevrolet Montana	GM	MONTANA 1.4 8V Conquest ECONOFLEX 2p
+39	Renault Duster Oroch	Renault	DUSTER OROCH Dyna. 1.6 Hi-Flex 16V Mec
+40	Toyota SW4	Toyota	Hilux SW4 SRV D4-D 4x4 3.0 TDI Dies. Mec
+41	Chevrolet Cruze (sedã)	GM	CRUZE HB Sport LTZ 1.8 16V FlexP. 5p Mec
+42	Citroën C3	Citroen	C3 Exclusive 1.5 Flex 8V 5p Mec.
+43	Chevrolet Classic	GM	Classic ADVANTAGE 1.0 VHC FlexPower 4p
+44	Hyundai Tucson	Hyundai	Tucson 2.0 16V Flex Mec.
+45	Renault Clio	Renault	Clio Authentique Hi-Flex 1.0 16V 3p
+46	Peugeot 208	Peugeot	208 Allure 1.5 Flex 8V 5p
+47	Nissan Kicks	Nissan	KICKS Rio 2016 1.6 16V FlexStar 5p Aut.
+48	Peugeot 2008	Peugeot	2008 Allure 1.6 Flex 16V 5p Mec.
+49	Hyundai ix35	Hyundai	ix35 2.0 16V 2WD Flex Aut.
+50	Mitsubishi L200	Mitsubishi	L200 2.5 4x2 CD Turbo Diesel
