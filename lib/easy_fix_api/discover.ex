@@ -54,10 +54,11 @@ defmodule EasyFixApi.Discover do
   end
 
   def setup(_divide_parts \\ 2) do
-    all_parts =
+    [first | rest] =
       read("parts_call_direct.txt")
       |> String.split("\n")
-      |> Enum.chunk_every(21)
+      |> Enum.chunk_every(10)
+    all_parts = [(first ++ List.last(rest)) | Enum.drop(rest, -1)]
 
     models = read("models.txt") |> TabCSV.parse_string
     emails =
