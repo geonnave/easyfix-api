@@ -5,7 +5,7 @@ defmodule EasyFixApi.Discover do
   NimbleCSV.define(TabCSV, separator: "\t")
 
   @weekdays 1..6
-  @workinghours 0..23
+  @workinghours 8..18
 
   @one_hour 1000 * 60 * 60
   @fifteen_minutes 1000 * 60 * 15
@@ -131,7 +131,7 @@ defmodule EasyFixApi.Discover do
 
     new_email()
     |> from("#{random_name} <contato@easyfix.net.br>")
-    |> to("EasyFixApi <contato@easyfix.net.br>")
+    |> to("Mercado Car <telepreco.orcamento@mercadocar.com.br>")
     |> subject(subject)
     |> html_body(body)
   end
