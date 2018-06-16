@@ -34,9 +34,12 @@ defmodule EasyFixApi.Discover do
       {:noreply, state}
     else
       :stop ->
+        Logger.warn("Will stop Discover emails")
         {:noreply, state}
       false ->
+        Logger.warn("Skipping not working hour")
         Process.send_after(self(), :next_message, compute_delay_for_next_message())
+        {:noreply, state}
     end
   end
 
