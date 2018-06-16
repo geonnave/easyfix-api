@@ -23,7 +23,7 @@ defmodule EasyFixApi.Discover do
   end
 
   def init(_) do
-    Process.send_after(self(), :next_message, 30_000)
+    # Process.send_after(self(), :next_message, 30_000)
     {:ok, %{}}
   end
 
