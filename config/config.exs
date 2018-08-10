@@ -24,7 +24,7 @@ config :easy_fix_api, :fees,
 
 # Configures the endpoint
 config :easy_fix_api, EasyFixApiWeb.Endpoint,
-  secret_key_base: "GXA/2t6xovuVZHkDqMEie6sTQ0aypucKoOGe5oQtfvGzw2iDsL1v5AkdhvHEdhlV",
+  secret_key_base: System.get_env("SECRET_KEY_BASE"),
   url: [host: "localhost"],
   render_errors: [view: EasyFixApiWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: EasyFixApi.PubSub,
@@ -45,7 +45,7 @@ config :guardian, Guardian,
   ttl: { 30, :days },
   verify_issuer: true, # optional
   # TODO: move the value of the key "k" to System.get_env("GUARDIAN_SECRET_KEY")
-  secret_key: %{"kty" => "oct", "k" => "YPx2Y7xdKEoS1zP7D9rZzVJMuo96DlAT8Sc7NQbPvAg1WfyhuKwuiuhHMSXKGsKBOfOCX3FTdJDkNH8nY-7HMA"},
+  secret_key: %{"kty" => "oct", "k" => System.get_env("GUARDIAN_SECRET_KEY")},
   serializer: EasyFixApi.GuardianSerializer
 
 config :money,
@@ -60,7 +60,7 @@ config :easy_fix_api,
   sms_api: EasyFixApi.MockVoice
 
 config :easy_fix_api, :iugu,
-  api_key: "f17e2cd9bdf8fe6224d6e06b5089835d",
+  api_key: System.get_env("IUGU_KEY"),
   base_url: "https://api.iugu.com/v1",
   test?: true
 

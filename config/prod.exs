@@ -35,7 +35,7 @@ config :easy_fix_api, EasyFixApi.Repo,
 config :easy_fix_api, EasyFixApi.Mailer,
   adapter: Bamboo.MailgunAdapter,
   domain: "easyfix.net.br",
-  api_key: "key-49f5d6429dafd96af42d6b65fa5dd3f5"
+  api_key: System.get_env("MAILGUN_KEY")
 
 config :easy_fix_api,
   sms_api: EasyFixApi.TotalVoice
