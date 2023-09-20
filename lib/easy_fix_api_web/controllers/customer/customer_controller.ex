@@ -26,8 +26,8 @@ defmodule EasyFixApiWeb.CustomerController do
   defp handle_created_customer(conn, customer) do
     {:ok, jwt, _full_claims} = Guardian.encode_and_sign(customer.user, :token)
 
-    Emails.Internal.new_customer(customer) |> Mailer.deliver_now
-    Emails.Customer.welcome(customer) |> Mailer.deliver_now
+    Emails.Internal.new_customer(customer) |> Mailer.deliver_later
+    Emails.Customer.welcome(customer) |> Mailer.deliver_later
 
     conn
     |> put_status(:created)

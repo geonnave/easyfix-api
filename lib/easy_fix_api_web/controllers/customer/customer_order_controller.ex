@@ -35,6 +35,7 @@ defmodule EasyFixApiWeb.CustomerOrderController do
     if customer_order.diagnosis.diagnosis_parts == [] do
       Emails.Customer.new_order_call_fixer(customer_order) |> Mailer.deliver_later
       Emails.Internal.new_order_call_fixer(customer_order) |> Mailer.deliver_later
+      Emails.Customer.new_order_call_fixer(customer_order) |> Mailer.deliver_later
     else
       Emails.Garage.send_email_to_matching_garages(customer_order)
       Emails.Customer.new_order_call_direct(customer_order) |> Mailer.deliver_later

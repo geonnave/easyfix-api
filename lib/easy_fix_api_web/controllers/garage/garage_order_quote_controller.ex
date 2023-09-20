@@ -2,6 +2,7 @@ defmodule EasyFixApiWeb.GarageOrderQuoteController do
   use EasyFixApiWeb, :controller
 
   alias EasyFixApi.{Orders, GarageOrders}
+  alias EasyFixApi.CustomerNotifications
 
   action_fallback EasyFixApiWeb.FallbackController
 
@@ -16,6 +17,15 @@ defmodule EasyFixApiWeb.GarageOrderQuoteController do
 
     with :created_with_diagnosis <- order.state,
          {:ok, quote} <- Orders.create_quote(quote_params) do
+      cond do
+        length(Orders.list_quotes_by_order(order.id)) == 1 ->
+          CustomerNotifications.first_quote_arrived(order)
+        Orders.is_best_price_quote(order, quote.id) ->
+          CustomerNotifications.new_best_quote_arrived(order, [:email])
+        true ->
+          nil
+      end
+
       conn
       |> put_status(:created)
       |> render(EasyFixApiWeb.QuoteView, "show.json", quote: quote)
@@ -37,9 +47,10 @@ defmodule EasyFixApiWeb.GarageOrderQuoteController do
   end
 
   def update(conn, %{"quote" => quote_params, "garage_id" => garage_id, "order_id" => order_id}) do
-    %{order: _order, quote: quote} = GarageOrders.get_order(garage_id, order_id)
+    %{order: order, quote: quote} = GarageOrders.get_order(garage_id, order_id)
 
-    with {:ok, quote} <- Orders.update_quote(quote, quote_params) do
+    with :created_with_diagnosis <- order.state,
+         {:ok, quote} <- Orders.update_quote(quote, quote_params) do
       render(conn, EasyFixApiWeb.QuoteView, "show.json", quote: quote)
     end
   end

@@ -1,0 +1,11 @@
+<p style="text-align: justify;">Ol&aacute; <span style="color: #3366ff;"><%= @customer.name %></span>,</p>
+<p style="text-align: justify;">Um or&ccedil;amento ainda melhor para seu pedido <span style="color:
+#3366ff;"><%= @order.id %></span>. acaba de chegar! Continuaremos buscando o melhor pre&ccedil;o nas
+pr&oacute;ximas horas. Enquanto voc&ecirc; espera, a gente negocia e consegue o melhor pre&ccedil;o
+em pe&ccedil;as e servi&ccedil;os!</p>
+<p style="text-align: justify;">Acesse o melhor valor encontrado at&eacute; o momento no <strong>Menu
+Principal/Meus Pedidos</strong> do seu aplicativo.</p>
+<p>&nbsp;</p>
+
+<p><img src="https://s3-sa-east-1.amazonaws.com/easyfix-storage/assets/logo_text_on_right_small.png" width="220" height="104" /></p>
+<p>Valorizando sua mobilidade!</p>

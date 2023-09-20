@@ -160,6 +160,7 @@ defmodule EasyFixApi.Orders do
     |> with_total_amount()
   end
 
+  # TODO: rename `user` to `issuer` in this function
   def get_quote_for_order_by_user(user_id, diagnosis_id) do
     from(
       b in Quote,
@@ -219,6 +220,18 @@ defmodule EasyFixApi.Orders do
     Enum.sort(quotes, &(&1.total_amount < &2.total_amount))
   end
 
+  def is_best_price_quote(order, quote_id) do
+    list_quotes_by_order(order.id)
+    |> sort_quotes_by_total_amount()
+    |> List.first()
+    |> case do
+      nil ->
+        false
+      best_price_quote ->
+        best_price_quote.id == quote_id
+    end
+  end
+
   def with_total_amount(nil), do: nil
   def with_total_amount(quote) do
     %{quote | total_amount: calculate_total_amount(quote)}
@@ -243,10 +256,13 @@ defmodule EasyFixApi.Orders do
          issuer when not is_nil(issuer) <- Accounts.get_user_by_type_id(issuer_type, issuer_id) do
 
       Repo.transaction fn ->
+        easyfix_customer_fee = Application.get_env(:easy_fix_api, :fees)[:customer_percent_fee_on_quote_by_garage]
+
         quote =
           quote_changeset
           |> delete_change(:issuer_id)
           |> put_assoc(:issuer, issuer)
+          |> put_change(:easyfix_customer_fee, easyfix_customer_fee)
           |> Repo.insert!()
 
         for part_attrs <- quote_changeset.changes[:parts] do
@@ -312,6 +328,11 @@ defmodule EasyFixApi.Orders do
   end
 
   alias EasyFixApi.Orders.QuotePart
+
+  def list_quote_parts do
+    Repo.all(QuotePart)
+    |> Repo.preload([:part])
+  end
 
   def create_quote_part(attrs \\ %{}, quote_id) do
     with quote_part_changeset = %{valid?: true} <- QuotePart.create_changeset(attrs) do
@@ -381,6 +402,15 @@ defmodule EasyFixApi.Orders do
       order ->
         {:ok, Repo.preload(order, Order.all_nested_assocs)}
     end
+  end
+
+  def get_order_for_quote(quote_id) do
+    from(o in Order,
+      join: d in Diagnosis, on: d.order_id == o.id,
+      join: q in Quote, on: q.diagnosis_id == d.id,
+      where: q.id == ^quote_id,
+      preload: ^Order.all_nested_assocs)
+    |> Repo.one
   end
 
   def create_order_with_diagnosis(attrs \\ %{}) do

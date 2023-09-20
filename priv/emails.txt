@@ -1,0 +1,19 @@
+Pedido de Orçamento
+Olá,
+
+Gostaria de solicitar orçamento para o carro <carro> ano 2017 para as seguintes peças:
+
+<pecas>
+
+Obrigado,
+<nome>.
+--
+Solicitação de Orçamento
+Boa tarde,
+
+Necessito orçamento para as seguintes peças do veículo <carro> ano 2017:
+
+<pecas>
+
+Obrigado,
+<nome>.

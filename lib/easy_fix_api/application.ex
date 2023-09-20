@@ -15,6 +15,7 @@ defmodule EasyFixApi.Application do
       supervisor(EasyFixApiWeb.Endpoint, []),
       {Registry, [keys: :unique, name: Registry.OrderStateMachine]},
       worker(EasyFixApi.Orders.StateTimeouts, []),
+      worker(EasyFixApi.Discover, []),
     ]
 
     {:ok, pid} = Task.start(&start_state_machines/0)
@@ -30,8 +31,10 @@ defmodule EasyFixApi.Application do
     receive do
       :start_state_machines ->
         Logger.info "Starting state machines..."
+        order_states = Application.get_env(:easy_fix_api, :order_states)
 
         Orders.list_orders
+        |> Enum.reject(& order_states[&1.state][:is_final_state])
         |> Enum.each(fn order ->
           case OrderStateMachine.start_link(order_id: order.id) do
             {:ok, _} ->

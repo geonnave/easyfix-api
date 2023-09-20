@@ -25,7 +25,6 @@ config :easy_fix_api, EasyFixApiWeb.Endpoint,
   root: ".",
   version: Application.spec(:easy_fix_api, :vsn)
 
-# Do not print debug messages in production
 config :logger, level: :debug
 
 # Configure your database (without credentials)
@@ -36,26 +35,32 @@ config :easy_fix_api, EasyFixApi.Repo,
 config :easy_fix_api, EasyFixApi.Mailer,
   adapter: Bamboo.MailgunAdapter,
   domain: "easyfix.net.br",
-  api_key: "key-49f5d6429dafd96af42d6b65fa5dd3f5"
+  api_key: System.get_env("MAILGUN_KEY")
+
+config :easy_fix_api,
+  sms_api: EasyFixApi.TotalVoice
+
+config :easy_fix_api, :iugu,
+  test?: false
 
 # Information about state
 config :easy_fix_api, :order_states,
   started: [],
   created_with_diagnosis: [
-    timeout: [value: [hours: 24], event: :to_quoted_by_garages],
-    fixer_timeout: [value: [hours: 24], event: :to_quoted_by_garages],
+    timeout: [value: [hours: 3*24], event: :to_quoted_by_garages],
+    fixer_timeout: [value: [hours: 3*24], event: :to_quoted_by_garages],
   ],
-  not_quoted_by_garages: [final_state: true, macro_state: :canceled],
+  not_quoted_by_garages: [is_final_state: true, macro_state: :canceled],
   quoted_by_garages: [
-    timeout: [value: [hours: 14*24], event: :to_quote_accepted_by_customer]
+    timeout: [value: [hours: 3*24], event: :to_quote_accepted_by_customer]
   ],
-  quote_not_accepted_by_customer: [final_state: true, macro_state: :canceled],
+  quote_not_accepted_by_customer: [is_final_state: true, macro_state: :canceled],
   quote_accepted_by_customer: [
-    timeout: [value: [hours: 14*24], event: :to_finish_by_garage]
+    timeout: [value: [hours: 14*24], event: :to_finish_by_garage], is_final_state: true
   ],
-  finished_by_garage: [final_state: true],
-  # timeout_on_quoted_by_garages: [final_state: true],
-  timeout: [final_state: true]
+  finished_by_garage: [is_final_state: true],
+  # timeout_on_quoted_by_garages: [is_final_state: true],
+  timeout: [is_final_state: true]
 
 # ## SSL Support
 #

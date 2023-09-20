@@ -14,7 +14,7 @@ defmodule EasyFixApi.Mixfile do
 
   def application do
     [mod: {EasyFixApi.Application, []},
-     extra_applications: [:logger, :runtime_tools]
+     extra_applications: [:logger, :runtime_tools, :inets]
    ]
   end
 
@@ -42,6 +42,7 @@ defmodule EasyFixApi.Mixfile do
       {:bamboo, "~> 0.8"},
       {:money, "~> 1.2.1"},
       {:hashids, "~> 2.0"},
+      {:tesla, "~> 0.9.0"},
 
       {:ex_machina, "~> 2.0", only: [:dev, :test]},
 

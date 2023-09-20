@@ -4,6 +4,7 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
   alias EasyFixApi.{Orders, CustomerOrders, Emails, Mailer, Repo}
   alias EasyFixApi.Accounts.Customer
   alias EasyFixApi.Orders.Quote
+  alias EasyFixApi.CustomerNotifications
 
   # Public API functions
 
@@ -11,8 +12,17 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     GenStateMachine.start_link __MODULE__, data, name: name(data[:order_id])
   end
 
+  def reset(order_id) do
+    GenStateMachine.stop name(order_id)
+    start_link(order_id: order_id)
+  end
+
   def customer_clicked(order_id, event, attrs) do
     GenStateMachine.call name(order_id), {:customer_clicked, event, attrs}
+  end
+
+  # FIXME: use this function instead of customer_clicked above
+  def process_payment(_order_id, _payment_params, _customer_id) do
   end
 
   def get_state(order_id) do
@@ -43,7 +53,7 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
         end
       quotes ->
         order = Orders.get_order!(data[:order_id])
-        %{best_price_quote: best_price_quote} = CustomerOrders.generate_customer_quotes_stats(quotes)
+        %{best_price_quote: best_price_quote} = CustomerOrders.generate_customer_quotes_stats(quotes, order.customer_id)
 
         next_state_attrs = next_state_attrs(:quoted_by_garages)
         best_price_attrs = %{best_price_quote_id: best_price_quote.id}
@@ -51,8 +61,7 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
         with {:ok, updated_order} <- Orders.update_order_state(order, next_state_attrs),
              {:ok, updated_order} <- Orders.set_order_best_price_quote(updated_order, best_price_attrs) do
           %{state: state, state_due_date: state_due_date} = updated_order
-          Emails.Customer.order_was_quoted_by_garages(order)
-          |> Mailer.deliver_later
+          CustomerNotifications.order_was_quoted_by_garages(order)
 
           {:next_state, state, data, [state_timeout_action(state, state_due_date)]}
         else
@@ -62,10 +71,11 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     end
   end
   def handle_event({:call, from}, {:customer_clicked, :accept_quote, attrs}, :created_with_diagnosis, data) do
+    order = Orders.get_order!(data[:order_id])
     %{best_price_quote: best_price_quote} =
       data[:order_id]
       |> Orders.list_quotes_by_order
-      |> CustomerOrders.generate_customer_quotes_stats
+      |> CustomerOrders.generate_customer_quotes_stats(order.customer_id)
 
     {:ok, _updated_order} =
       data[:order_id]
@@ -101,12 +111,12 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     {:next_state, :quote_not_accepted_by_customer, data, [{:reply, from, reply}]}
   end
   def handle_event({:call, from}, {:customer_clicked, event, attrs}, :quoted_by_garages, _data) do
-    Logger.warn "ignoring event: {:call, from}, {:customer_clicked, #{event}, #{inspect attrs}}, :quoted_by_garages"
+    Logger.warn "ignoring event: {:call, from}, {:customer_clicked, :#{event}, #{inspect attrs}}, :quoted_by_garages"
     reply_action = {:reply, from, {:error, "invalid event #{inspect event}"}}
     {:keep_state_and_data, [reply_action]}
   end
   def handle_event({:call, from}, {:customer_clicked, event, attrs}, state, _data) do
-    Logger.warn "ignoring event {:call, _from}, {:customer_clicked, #{event}, #{inspect attrs}}, #{inspect state}"
+    Logger.warn "ignoring event {:call, _from}, {:customer_clicked, :#{event}, #{inspect attrs}}, #{inspect state}"
     {:keep_state_and_data, [{:reply, from, {:error, "invalid event #{inspect event} for state #{state}"}}]}
   end
 
@@ -122,6 +132,10 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     {:keep_state_and_data, [{:reply, from, {state, data}}]}
   end
 
+  def handle_event(:info, {:delivered_email, _}, _state, _data) do
+    :keep_state_and_data
+  end
+
   def handle_event(event_type, event, state, data) do
     Logger.warn "ignoring unknown event #{inspect({event_type, event, state, data})}"
     :keep_state_and_data
@@ -135,10 +149,12 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
     order = Orders.get_order!(data[:order_id])
     with {:ok, updated_order} <- Orders.update_order_state(order, next_state_attrs),
          {:ok, updated_order} <- Orders.set_order_accepted_quote(updated_order, attrs) do
-      updated_order
-      |> Repo.preload([accepted_quote: [Quote.all_nested_assocs], customer: [Customer.all_nested_assocs]])
-      |> Emails.Customer.purchase_confirmation
-      |> Mailer.deliver_later
+      updated_order =
+        updated_order
+        |> Repo.preload([accepted_quote: [Quote.all_nested_assocs], customer: [Customer.all_nested_assocs]])
+
+      updated_order |> Emails.Customer.purchase_confirmation |> Mailer.deliver_later
+      updated_order |> Emails.Internal.notify_customer_purchase |> Mailer.deliver_later
 
       %{state: state, state_due_date: state_due_date} = updated_order
       reply_action = {:reply, from, {:ok, updated_order}}
@@ -178,7 +194,7 @@ defmodule EasyFixApi.Orders.OrderStateMachine do
 
   def state_timeout_action(state, state_due_date) do
     # the timeout can be negative if the machine's state is being initialized
-    # from pre-existing state (e.g. from the database, after a crash or a update with downtime)
+    # from pre-existing state (e.g. from the database, after a crash or a update with significant downtime)
     if (t = timeout_from_now(state_due_date)) > 0 do
       {:state_timeout, t, timeout_event(state)}
     else

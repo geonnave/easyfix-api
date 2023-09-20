@@ -8,8 +8,9 @@ defmodule EasyFixApi.Accounts do
 
   alias EasyFixApi.{Repo, Addresses, Payments}
   alias EasyFixApi.Accounts.{User, Garage, Customer}
-  alias EasyFixApi.Cars
   alias EasyFixApi.Parts.GarageCategory
+  alias EasyFixApi.Vouchers
+  alias EasyFixApi.Cars
 
   def get_by_email("garage", email) do
     from(g in Garage,
@@ -147,13 +148,24 @@ defmodule EasyFixApi.Accounts do
   def list_customers do
     Repo.all(Customer)
     |> Repo.preload(Customer.all_nested_assocs)
+    |> Enum.map(&with_available_vouchers/1)
   end
 
   def get_customer!(id) do
     Repo.get!(Customer, id)
     |> Repo.preload(Customer.all_nested_assocs)
+    |> with_available_vouchers()
   end
 
+  def with_available_vouchers(customer) do
+    %{customer | available_vouchers: Vouchers.list_available_indication_codes(customer.id)}
+  end
+
+  def get_customer_by(clauses) do
+    Repo.get_by(Customer, clauses)
+  end
+
+  # TODO: add Vouchers.generate_indication_code/1 and save code
   def create_basic_customer(attrs \\ %{}) do
     with customer_changeset = %{valid?: true} <- Customer.create_basic_changeset(attrs),
          customer_assoc_changeset = %{valid?: true} <- Customer.assoc_changeset(attrs),
@@ -176,10 +188,13 @@ defmodule EasyFixApi.Accounts do
           |> put_assoc(:user, user)
           |> put_assoc(:address, address)
           |> put_assoc(:vehicles, vehicles)
+          |> maybe_add_friends_code()
           |> Repo.insert!()
+          |> add_own_indication_code!()
 
         customer
         |> Repo.preload(Customer.all_nested_assocs)
+        |> with_available_vouchers()
       end
     else
       %{valid?: false} = changeset ->
@@ -209,10 +224,13 @@ defmodule EasyFixApi.Accounts do
           |> put_assoc(:user, user)
           |> put_assoc(:address, address)
           |> put_assoc(:vehicles, vehicles)
+          |> maybe_add_friends_code()
           |> Repo.insert!()
+          |> add_own_indication_code!()
 
         customer
         |> Repo.preload(Customer.all_nested_assocs)
+        |> with_available_vouchers()
       end
     else
       %{valid?: false} = changeset ->
@@ -220,9 +238,25 @@ defmodule EasyFixApi.Accounts do
     end
   end
 
+  def maybe_add_friends_code(customer_changeset) do
+    case get_change(customer_changeset, :friends_code) do
+      nil ->
+        customer_changeset
+      friends_code ->
+        {:ok, friends_indication} = Vouchers.create_indication(friends_code)
+        put_assoc(customer_changeset, :indication_codes, [friends_indication])
+    end
+  end
+
+  def add_own_indication_code!(%Customer{} = customer) do
+    indication_code = Vouchers.generate_indication_code(customer)
+    {:ok, customer} = update_customer(customer, %{indication_code: indication_code})
+    customer
+  end
+
   def update_customer(%Customer{} = customer, attrs) do
     customer
-    |> Customer.changeset(attrs)
+    |> Customer.update_changeset(attrs)
     |> Repo.update()
   end
 

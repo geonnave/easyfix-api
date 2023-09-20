@@ -8,6 +8,7 @@ defmodule EasyFixApi.Orders.Quote do
     field :due_date, :utc_datetime
     field :conclusion_date, :utc_datetime
     field :comment, :string
+    field :easyfix_customer_fee, :decimal
 
     field :issuer_type, EasyFixApi.Accounts.UserTypeEnum
     belongs_to :issuer, EasyFixApi.Accounts.User
@@ -16,8 +17,12 @@ defmodule EasyFixApi.Orders.Quote do
     belongs_to :diagnosis, EasyFixApi.Orders.Diagnosis
 
     field :parts, {:array, :map}, virtual: true
+
     field :total_amount, Money.Ecto.Type, virtual: true
+
     field :is_best_price, :boolean, virtual: true
+    field :voucher_discount, Money.Ecto.Type, virtual: true
+    field :voucher_extra_fee, :decimal, virtual: true
 
     timestamps(type: :utc_datetime)
   end

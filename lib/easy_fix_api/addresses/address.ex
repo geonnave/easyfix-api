@@ -31,6 +31,12 @@ defmodule EasyFixApi.Addresses.Address do
     |> validate_required(@required_attrs)
   end
 
+  def update_changeset(address, attrs) do
+    address
+    |> cast(attrs, @optional_attrs ++ @required_attrs)
+    |> validate_required(@required_attrs)
+  end
+
   @assoc_types %{city_id: :integer}
   def assoc_changeset(attrs) do
     {attrs, @assoc_types}

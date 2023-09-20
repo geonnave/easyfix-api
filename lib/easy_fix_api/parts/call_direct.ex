@@ -1,15 +1,17 @@
 defmodule EasyFixApi.Parts.CallDirect do
   @call_direct_part_names [
     {"Pneu", "pneu"},
-    {"Freios", "pastilha.*freio"},
+    {"Freios", "pastilha.*freio|discos de freio|conjunto.*sapatas.*freio"},
     {"Bateria", "bateria 12v"},
     {"Lâmpadas", "lâmpada|pisca|break light"},
-    {"Troca de óleo", "óleo de motor"},
+    {"Troca de óleo", "óleo de motor|filtro de óleo"},
     {"Retrovisores", "retrovisor"},
     {"Limpador de Parabrisa", "((brucutu|palheta).*parabrisa)|((palheta|haste|esguicho).*traseiro)"},
     {"Vidros", "vidro"},
     {"Alinhamento, Balanceamento e Cambagem", "alinhamento|balanceamento|cambagem"},
     {"Filtros", "elemento filtro de ar"},
+    {"Embreagem", "kit.*embreagem"},
+    {"Suspensão", "(^amortecedor.*(dianteiro|traseiro))|(mola.*suspensão)|(batente.*torre.*amort.*(direit|esquerd))|(guarda.*pó.*dianteiro)|(bieleta.*estabilizadora.*(direita|esquerda))"},
   ]
 
   def filter_parts_call_direct(parts, names_substrings \\ @call_direct_part_names) do

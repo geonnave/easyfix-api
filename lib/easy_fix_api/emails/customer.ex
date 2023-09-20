@@ -42,6 +42,28 @@ defmodule EasyFixApi.Emails.Customer do
     |> html_body(content)
   end
 
+  def first_quote_arrived(order = %{customer: customer}) do
+    [vehicle] = customer.vehicles
+    assigns = %{order: order, customer: customer, vehicle: vehicle}
+    content = Phoenix.View.render_to_string(EmailCustomerView, "first_quote_arrived.html", assigns)
+
+    customer
+    |> new_email()
+    |> subject("EasyFix é rapidez! Já chegou um primeiro orçamento! 😊")
+    |> html_body(content)
+  end
+
+  def new_best_quote_arrived(order = %{customer: customer}) do
+    [vehicle] = customer.vehicles
+    assigns = %{order: order, customer: customer, vehicle: vehicle}
+    content = Phoenix.View.render_to_string(EmailCustomerView, "new_best_quote_arrived.html", assigns)
+
+    customer
+    |> new_email()
+    |> subject("EasyFix é melhorar preço sem parar! Chegou um valor ainda melhor 😊")
+    |> html_body(content)
+  end
+
   def order_was_quoted_by_garages(order = %{customer: customer}) do
     domain = Application.get_env(:easy_fix_api, :domain)
     customer_url =  "http://app.#{domain}/"
@@ -61,7 +83,7 @@ defmodule EasyFixApi.Emails.Customer do
 
     customer
     |> new_email()
-    |> subject("Confirmação de compra EasyFix")
+    |> subject("Confirmação de interesse de compra EasyFix")
     |> html_body(content)
   end
 end

@@ -11,6 +11,8 @@ defmodule EasyFixApi.Orders.Order do
     field :rating_comment, :string
 
     has_one :diagnosis, EasyFixApi.Orders.Diagnosis
+    has_many :quotes, through: [:diagnosis, :quotes]
+    has_one :payment, EasyFixApi.Payments.Payment
     belongs_to :customer, EasyFixApi.Accounts.Customer
 
     belongs_to :best_price_quote, EasyFixApi.Orders.Quote
@@ -66,9 +68,11 @@ defmodule EasyFixApi.Orders.Order do
   def all_nested_assocs do
     [
       diagnosis: [EasyFixApi.Orders.Diagnosis.all_nested_assocs],
+      quotes: [EasyFixApi.Orders.Quote.all_nested_assocs],
       customer: [EasyFixApi.Accounts.Customer.all_nested_assocs],
       accepted_quote: [EasyFixApi.Orders.Quote.all_nested_assocs],
       best_price_quote: [EasyFixApi.Orders.Quote.all_nested_assocs],
+      payment: [EasyFixApi.Payments.Payment.all_nested_assocs],
     ]
   end
 end

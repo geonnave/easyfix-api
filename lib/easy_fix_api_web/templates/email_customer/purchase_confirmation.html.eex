@@ -1,7 +1,15 @@
-<p>Ol&aacute; <%= @customer.name %>,</p>
-<p>Obrigado por confiar na Easyfix para a execu&ccedil;&atilde;o do servi&ccedil;o referente ao pedido &#35;<%= @order.id %>.</p>
-<p>Faremos contato rapidamente para acertar os detalhes de agendamento, pagamento, execu&ccedil;&atilde;o e entrega do seu carro.</p>
-<p>O pagamento dever&aacute; ser realizado no in&iacute;cio do reparo direto ao profissional / oficina respons&aacute;vel.</p>
-<p>Parab&eacute;ns por garantir economia, qualidade e rapidez! A EasyFix continuar&aacute; cuidando de todo o processo, at&eacute; o carro estar prontinho nas suas m&atilde;os.</p>
+<p>Ol&aacute; <span style="color: #0000ff;"><%= @customer.name %></span>,</p>
+<p style="text-align: justify;">Identificamos seu interesse de compra do servi&ccedil;o de reparo via
+EasyFix</p>
+<p style="text-align: justify;">Obrigado por confiar na <strong>EasyFix</strong> para a execu&ccedil;&atilde;o
+do servi&ccedil;o referente ao pedido <span style="color: #0000ff;"><%= @order.id %></span>.</p>
+<p style="text-align: justify;">Faremos contato rapidamente para acertar os detalhes de agendamento,
+pagamento, execu&ccedil;&atilde;o e entrega do seu carro.</p>
+<p style="text-align: justify;">O pagamento dever&aacute; ser realizado no in&iacute;cio do reparo direto ao
+profissional / oficina respons&aacute;vel.</p>
+<p style="text-align: justify;">Parab&eacute;ns por garantir economia, qualidade e rapidez! A
+<strong>EasyFix</strong> continuar&aacute; cuidando de todo o processo, at&eacute; o carro estar prontinho
+nas suas m&atilde;os.</p>
+
 <p><img src="https://s3-sa-east-1.amazonaws.com/easyfix-storage/assets/logo_text_on_right_small.png" width="220" height="104" /></p>
 <p>Valorizando sua mobilidade!</p>
